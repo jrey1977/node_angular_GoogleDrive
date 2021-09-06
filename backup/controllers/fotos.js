@@ -3,11 +3,11 @@ const {google} = require('googleapis');
 const getFotos = async(req,res) => {
     const service = google.drive('v3');
     const respuesta = await service.files.list({
-      pageSize: 100,
-      fields: 'nextPageToken, files(id, name)',
+      pageSize: 50,
+      fields: 'nextPageToken, files',
     });
     const files = respuesta.data.files;
-    let arrayFiles = [];
+    /*let arrayFiles = [];
     if (files.length === 0) {
       console.log('No files found.');
     } else {
@@ -16,10 +16,10 @@ const getFotos = async(req,res) => {
         console.log(`${file.name} (${file.id})`);
         arrayFiles.push(file.name);
       }
-    }
+    }*/
     res.json({
         ok: true,
-        files: arrayFiles
+        files: files
     });
 }
 

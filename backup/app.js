@@ -4,6 +4,8 @@ require('dotenv').config()
 // Importo librerías
 const createError = require('http-errors');
 const express = require('express');
+const cors = require('cors');
+const { dbConnection } = require('./database/config');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -24,6 +26,15 @@ liveReloadServer.server.once("connection", () => {
 
 // Arranco el server
 var app = express();
+
+// Configurar CORS
+app.use( cors() );
+
+// Base de datos
+dbConnection();
+
+// Lectura y parseo del body
+app.use( express.json() );
 
 // Aplico middleware de LiveReload
 app.use(connectLiveReload());

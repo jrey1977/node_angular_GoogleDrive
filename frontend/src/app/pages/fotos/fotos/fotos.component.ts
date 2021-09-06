@@ -16,9 +16,10 @@ export class FotosComponent implements OnInit {
     this.getFotos();
   }
 
-  async getFotos(){
-    let fotos = await this.fotosService.getFotos();
-    console.log('fotos:', fotos);
+async getFotos(){
+    this.fotosService.getFotos().subscribe( (respuesta)=>{
+        console.log('fotosss:', respuesta);
+    });
   }
 
 }
