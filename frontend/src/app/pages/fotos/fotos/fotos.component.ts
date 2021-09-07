@@ -1,3 +1,4 @@
+import { Foto } from './../interfaces/fotos.interface';
 import { FotosService } from './../../../services/fotos.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -11,16 +12,12 @@ export class FotosComponent implements OnInit {
   constructor(private fotosService: FotosService) {}
 
   ngOnInit(): void {
-    this.getFotos();
+    this.getFotos('hoila');
   }
 
-  async getFotos() {
+  async getFotos(token?:string) {
     this.fotosService.getFotos().subscribe((respuesta) => {
-      console.log('fotos filtradas, pág. ' + this.pag + ':', respuesta);
-      this.pag++;
-      if (this.pag < 5) {
-        this.getFotos();
-      }
+        console.log('fotos filtradas, pág. ' + this.pag + ':', respuesta);
     });
   }
 }
