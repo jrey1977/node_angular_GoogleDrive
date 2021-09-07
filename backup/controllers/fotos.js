@@ -6,6 +6,7 @@ const getFotos = async(req,res) => {
     const respuesta = await service.files.list({
       pageSize: 5,
       fields: 'nextPageToken, files',
+      orderBy: 'recency desc'
     })
     respuesta.data.files.map(
       (fotoIterada)=>{
@@ -44,8 +45,6 @@ const getFotos = async(req,res) => {
           webContentLink,
           webViewLink
         };
-        /*newObject['uno'] = createdTime;
-        newObject['dos'] = kind;*/
         console.log();
         arrayFilteredFiles.push(fotoFiltrada);
       }
