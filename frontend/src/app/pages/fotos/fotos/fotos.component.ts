@@ -8,16 +8,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./fotos.component.scss'],
 })
 export class FotosComponent implements OnInit {
-  pag: number = 1;
   constructor(private fotosService: FotosService) {}
 
   ngOnInit(): void {
-    this.getFotos('hoila');
+    this.getFotos();
   }
 
-  async getFotos(token?:string) {
+  async getFotos(token?: string) {
     this.fotosService.getFotos().subscribe((respuesta) => {
-        console.log('fotos filtradas, pág. ' + this.pag + ':', respuesta);
+      console.log('fotos filtradas', respuesta);
     });
   }
 }
