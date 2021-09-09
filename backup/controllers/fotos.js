@@ -49,37 +49,49 @@ function insertFotos(respuesta){
 const drive = google.drive('v3');
 var pageToken = null;
 
-async function obtengoDatos(){
-  drive.files.list({
-    q: "mimeType='image/jpeg'",
-    fields: 'nextPageToken, files(id, name)',
-    pageToken: pageToken,
-    pageSize: 1000
-  }, function (err, res) {
-    if (err) {
-      // Handle error
-      console.error('No se ha obtenido ningún registro', err);
-      callback(err)
-    } else {
-      res.data.files.forEach(function (file) {
-        console.log('Found file: ', file.name, file.id);
-        var fotoFiltrada = {
-          id: file.id,
-          name: file.name
-        };
-        arrayFilteredFiles.push(fotoFiltrada);
-      });
-      pageToken = res.data.nextPageToken;
-      console.log('pageToken es', pageToken);
-      if(pageToken !== undefined){
-        getFotos();
-      }
-    }
-  });
+function obtengoDatos(){
+    console.log('Entro a por los datos');
+    drive.files.list({
+        q: "mimeType='image/jpeg'",
+        fields: 'nextPageToken, files(id, name)',
+        pageToken: pageToken,
+        pageSize: 1000
+    }, function (err, res) {
+        if (err) {
+            // Handle error
+            console.error('No se ha obtenido ningún registro', err);
+            callback(err)
+        } else {
+            console.log('Itero por los datos');
+            res.data.files.forEach(function (file) {
+                //console.log('Found file: ', file.name, file.id);
+                var fotoFiltrada = {
+                    id: file.id,
+                    name: file.name
+                };
+                arrayFilteredFiles.push(fotoFiltrada);
+            });
+            pageToken = res.data.nextPageToken;
+            console.log('pageToken es', pageToken);
+            if(pageToken === undefined){
+                console.log('Devuelvo datos');
+                return arrayFilteredFiles;
+            }else{
+                obtengoDatos();
+            }
+        }
+    });
 }
 
 const getFotos = async(req,res) => {
-    let resultados = await obtengoDatos();
+    let resultados;
+    try{
+      resultados = await obtengoDatos();
+    }
+    catch(err){
+      console.log('Ha ocurrido un error: ',err);
+    }
+    
     console.log('Resultados guardados en await:', resultados);
     
     res.json({
