@@ -1,15 +1,37 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
+const FotoSchema = Schema({
+    id: {
+        type: String,
+        required: true
+    },
+    createdTime: {
+        type: String,
+        required: true
+    },
+    fileExtension: {
+        type: String,
+        required: false
+    },
+    idFoto: {
+        type: String,
+        required: false
+    },
+    width: {
+        type: Number,
+        required: false
+    },
+    height: {
+        type: Number,
+        required: false
+    }
+    
+});
 
-const dbConnection = async() => {
-
-    try {
-        await mongoose.connect( process.env.MONGODB_URL );
-
-        console.log('DB Online');
-
-        const duplicado = ({
-            "_id":{"$oid":"6133619121631892a8b87fff"},
+/*
+"_id":{
+    "$oid":"6133619121631892a8b87fff"
+},
             "createdTime":"2021-08-22T13:32:12.268Z",
             "fileExtension":"jpg",
             "idFoto":"1G0_S1QrrW17V_C7JbWLrDb3xaNwa_tfN",
@@ -25,19 +47,14 @@ const dbConnection = async() => {
                 "6133633c21631892a8b88003":"amigos",
                 "6133639d21631892a8b88008":"2020"},
                 "idCategoria":"6133633c21631892a8b88003"
-            });
-        
-        const duplicadoDB = await duplicado.save().then(() => console.log('meow'));
-        
-    } catch (error) {
-        console.log(error);
-        throw new Error('Error a la hora de iniciar la BD ver logs');
-    }
+            }
+*/
+
+FotoSchema.method('toJSON', function() {
+    const { __v, ...object } = this.toObject();
+    return object;
+})
 
 
-}
 
-
-module.exports = {
-    dbConnection
-}
+module.exports = model( 'Foto', FotoSchema );
