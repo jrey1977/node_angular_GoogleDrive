@@ -12,9 +12,7 @@ export class FotosService {
 
   getFotos(){
     console.log('Entro al service');
-    let respuesta = this.http.get<any[]>('http://localhost:3100/fotos');
-    console.log('respuesta', respuesta);
-    return respuesta;
+    return this.http.get<any[]>('http://localhost:3100/fotos');
   }
 
 }

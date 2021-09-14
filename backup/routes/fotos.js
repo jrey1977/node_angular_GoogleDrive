@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-const { getFotos } = require('../controllers/fotos');
+const { getTest, getFotos } = require('../controllers/fotos');
 
 /* GET home page. */
-router.get('/', getFotos);
+router.get('/', getTest);
 
 module.exports = router;

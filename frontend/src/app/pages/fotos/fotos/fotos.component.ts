@@ -14,9 +14,16 @@ export class FotosComponent implements OnInit {
     this.getFotos();
   }
 
-  async getFotos(token?: string) {
-    this.fotosService.getFotos().subscribe((respuesta) => {
-      console.log('fotos filtradas', respuesta);
-    });
+  getFotos() {
+     this.fotosService.getFotos().subscribe( res => {
+        console.log('Fotos', res);
+     });
+
   }
 }
+
+
+
+
+
+

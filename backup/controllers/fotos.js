@@ -51,6 +51,47 @@ var pageToken = null;
 
 function obtengoDatos(){
     console.log('Entro a por los datos');
+
+    return new Promise((resolve, reject) => {
+      drive.files.list({
+          q: "mimeType='image/jpeg'",
+          fields: 'nextPageToken, files(id, name)',
+          pageToken: pageToken,
+          pageSize: 1000
+      }, function (err, res) {
+          if (err) {
+              // Handle error
+              console.error('No se ha obtenido ningún registro', err);
+              reject
+          } else {
+              console.log('Itero por los datos');
+              res.data.files.forEach(function (file) {
+                  //console.log('Found file: ', file.name, file.id);
+                  var fotoFiltrada = {
+                      id: file.id,
+                      name: file.name
+                  };
+                  arrayFilteredFiles.push(fotoFiltrada);
+              });
+              pageToken = res.data.nextPageToken;
+              console.log('pageToken es', pageToken);
+              if(pageToken === undefined){
+                  console.log('Devuelvo datos', arrayFilteredFiles.length);
+                  resolve('Éxito');
+              }else{
+                  obtengoDatos();
+              }
+          }
+      });
+    }).then( (resultados)=>{
+        console.log('Estoy en el then');
+        return resultados;
+    });
+    
+}
+
+const getFotos = async(req,res) => {
+  return new Promise((resolve, reject) => {
     drive.files.list({
         q: "mimeType='image/jpeg'",
         fields: 'nextPageToken, files(id, name)',
@@ -60,7 +101,7 @@ function obtengoDatos(){
         if (err) {
             // Handle error
             console.error('No se ha obtenido ningún registro', err);
-            callback(err)
+            reject
         } else {
             console.log('Itero por los datos');
             res.data.files.forEach(function (file) {
@@ -74,33 +115,56 @@ function obtengoDatos(){
             pageToken = res.data.nextPageToken;
             console.log('pageToken es', pageToken);
             if(pageToken === undefined){
-                console.log('Devuelvo datos');
-                return arrayFilteredFiles;
+                console.log('Devuelvo datos', arrayFilteredFiles.length);
+                resolve(arrayFilteredFiles);
             }else{
-                obtengoDatos();
+                getFotos();
             }
         }
     });
+  }).then( (resultados)=>{
+      console.log('Estoy en el then');
+      //return resultados;
+  });
 }
 
-const getFotos = async(req,res) => {
-    let resultados;
-    try{
-      resultados = await obtengoDatos();
+var fotos;
+
+const getTest = async(req, res ) => {
+
+    if( res !== undefined ){
+        fotos = res;
     }
-    catch(err){
-      console.log('Ha ocurrido un error: ',err);
-    }
-    
-    console.log('Resultados guardados en await:', resultados);
-    
-    res.json({
-        ok: true,
-        files: resultados
+
+    const response = await drive.files.list({
+        q: "mimeType='image/jpeg'",
+        fields: 'nextPageToken, files(id, name)',
+        pageToken: pageToken,
+        pageSize: 1000
     });
-}
 
+    response.data.files.forEach(function (file) {
+        //console.log('Found file: ', file.name, file.id);
+        var fotoFiltrada = {
+            id: file.id,
+            name: file.name
+        };
+        arrayFilteredFiles.push(fotoFiltrada);
+    });
+
+    pageToken = response.data.nextPageToken;
+    console.log('pageToken es', pageToken);
+    if(pageToken !== undefined){
+        getTest();
+    }else{
+        fotos.json({
+            ok: true,
+            files: arrayFilteredFiles
+        });
+    }
+}
 
 module.exports = {
-    getFotos
+    getFotos,
+    getTest
 }
