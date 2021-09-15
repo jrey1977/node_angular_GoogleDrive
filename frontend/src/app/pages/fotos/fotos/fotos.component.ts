@@ -1,4 +1,3 @@
-import { Foto } from './../interfaces/fotos.interface';
 import { FotosService } from './../../../services/fotos.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -18,7 +17,12 @@ export class FotosComponent implements OnInit {
      this.fotosService.getFotos().subscribe( res => {
         console.log('Fotos', res);
      });
+  }
 
+  insertarFotos(){
+      this.fotosService.insertarFotos().subscribe( (res:any) => {
+        console.log('Resultado de la insercción:', res.resultado);
+     });
   }
 }
 
