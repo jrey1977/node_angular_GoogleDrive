@@ -1,26 +1,21 @@
 const {google} = require('googleapis');
 const Foto = require('../models/foto');
 const Etiqueta = require('../models/etiqueta');
+const fs = require('fs');
 
 
 const drive = google.drive('v3');
 var pageToken = null;
-let arrayParentsIds = [];
+var arrayParentsIds = [];
+var arraySinDuplicados = [];
+
 
 
 async function insertCategoria(idParent) {
-    var idParentSaved = idParent[0];
+    var idParentSaved = idParent;
 
-    console.log('idParentSaved', idParentSaved);
+    console.log('Entro a la función que inserta categoría');
 
-    /*const response2 = await drive.files.list({
-        q: "fileId contains '1qfLV68mzQZtmlVf37sFFd_Z_BDgeWBhn'",
-        fields: 'files',
-        pageSize: 1
-    });*/
-
-
-    // COSAS DE INTERNET
     const response2 = await drive.files.get({
         fileId: idParentSaved,
         mymeType: 'application/vnd.google-apps.folder',
@@ -28,32 +23,55 @@ async function insertCategoria(idParent) {
     })
 
     var nombreCategoria = response2.data.name;
+    console.log('nombre de la categoría que voy a insertar:', nombreCategoria);
 
     var categoria = new Etiqueta ({
         "id": idParentSaved,
         "name": nombreCategoria,
         "categoria": "si"
     });
-
-    categoria.save();
     
+    categoria.save();
 }
+
 
 const insertMasivoCategorias = async(req, res) => {
 
-    try {
+    try{
 
-        // ITERO POR EL ARRAY FORMADO POR IDS DE PARENTS
-        await arrayParentsIds.forEach( function(parentIterado) {
-            console.log('parentId iterado:', parentIterado);
-            insertCategoria(parentIterado);
+        const response2 = await drive.files.list({
+            q: "mimeType contains 'folder'",
+            fields: 'nextPageToken, files',
+            pageToken: pageToken,
+            pageSize: 999,
+            orderBy: 'createdTime desc'
         });
 
-        console.log('Categorías insertadas');
+
+        response2.data.files.forEach(function (file) {
 
 
+                const categoria = new Etiqueta ({
+                    "id":file.id,
+                    "name":file.name,
+                    "categoria": "si"
+                });
+                
+                categoria.save();
+
+        });
+
+        pageToken = response2.data.nextPageToken;
+        
+
+        if( (pageToken !== undefined) ){
+            console.log('Sigo insertando categorias...');
+            insertMasivoCategorias();
+        }else{
+            console.log('Categorías insertadas');
+        }
     } catch {
-        console.log('Error al insertar las categorías');
+        console.log('Ha habido un errror');
     }
 
     
@@ -100,24 +118,31 @@ const getFotos = async(req, res ) => {
     //     });
     //     arrayFilteredFiles.length = 0;
     // }
+    
 }
 
 const insertMasivoFotos = async(req, res ) => {  
 
     try{
 
+
         const response = await drive.files.list({
             q: "mimeType contains 'image'",
             fields: 'nextPageToken, files',
             pageToken: pageToken,
-            pageSize: 1
+            pageSize: 999,
+            orderBy: 'createdTime desc'
         });
+
+        console.log('type of es', typeof response.data.files)
     
         response.data.files.forEach(function (file) {
 
                 if(!file.fileExtension){
                     file.fileExtension = "jpg";
                 }
+
+                console.log('parent',file.parents[0] );
 
                 const foto = new Foto ({
                     "createdTime":file.createdTime,
@@ -133,27 +158,24 @@ const insertMasivoFotos = async(req, res ) => {
                     "webViewLink":file.webViewLink
                 });
 
-                arrayParentsIds.push(foto.parents);
+                //arrayParentsIds.push(foto.parents[0]);
                 
-                foto.save();
+                //foto.save();
 
         });
     
         pageToken = response.data.nextPageToken;
-        console.log('pageToken',pageToken)
-        console.log('arrayParentsIds', arrayParentsIds.length)
+        console.log('arrayParentsIds es', arrayParentsIds.length)
+        
     
-        if( (pageToken !== undefined) && arrayParentsIds.length < 6){
-            console.log('Inserto fotos iteradas');
+        if( (pageToken !== undefined) ){
+            console.log('Sigo insertando fotos...');
             insertMasivoFotos();
         }else{
-            console.log('Fotos insertadas');
             insertMasivoCategorias();
         }
     } catch {
-        res.json({
-            resultado: 'Error al insertar las fotos'
-        });
+        console.log('Ha habido un errror');
     }
 };
 
