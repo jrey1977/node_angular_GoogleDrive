@@ -30,9 +30,12 @@
 0B5pqU4vxIuqceERxVFVCVlBKdEU -> comida mejicana 15-07-2017
 11FHLMs8Y19oRxvU0AASF2KiAlo67WMRdcTbwXn5ua6M -> Google Fotos
 0B5pqU4vxIuqcc1NnM2lPNkhWWmc -> BARCELONA
+<<<<<<< HEAD
 0B5pqU4vxIuqcd3ZHMGhRWUVpZGs  -> NAVIDADES 2013 VIGO
 0B5pqU4vxIuqcZVl3NWt1MUNIalU -> VIGO
 0B5pqU4vxIuqcWVVqYVNESXl0S3c -> Fotos Móvil
 0B5pqU4vxIuqcMnhocUU5ejhfOHc -> VINTAGE
 0B5pqU4vxIuqcNEJvY0dIN0M1NHc -> familia Rey
 0B5pqU4vxIuqcNHBmeWE1QjBubmM -> BODA IRIA
+=======
+>>>>>>> main
