@@ -39,15 +39,17 @@ const insertMasivoCategorias = async(req, res) => {
 
     try{
 
+        
         const response2 = await drive.files.list({
-            q: "mimeType contains 'folder'",
+            q: "mimeType contains 'folder' and ('0B5pqU4vxIuqcU1BDaVdIcHRFQVk' in parents or '0B5pqU4vxIuqcdmw5dTJLdGkwY00' in parents)",
             fields: 'nextPageToken, files',
             pageToken: pageToken,
             pageSize: 999,
             orderBy: 'createdTime desc'
         });
+        
 
-
+        
         response2.data.files.forEach(function (file) {
 
 
