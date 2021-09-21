@@ -39,7 +39,6 @@ const insertMasivoCategorias = async(req, res) => {
 
     try{
 
-<<<<<<< HEAD
         textoQuery = "";
 
         arrayIds = ["0B5pqU4vxIuqcdmw5dTJLdGkwY00",
@@ -95,11 +94,6 @@ const insertMasivoCategorias = async(req, res) => {
         
         const response2 = await drive.files.list({
             q: `mimeType contains 'folder' and (${textoQuery})`,
-=======
-        
-        const response2 = await drive.files.list({
-            q: "mimeType contains 'folder' and ('0B5pqU4vxIuqcU1BDaVdIcHRFQVk' in parents or '0B5pqU4vxIuqcdmw5dTJLdGkwY00' in parents)",
->>>>>>> main
             fields: 'nextPageToken, files',
             pageToken: pageToken,
             pageSize: 999,
