@@ -53,9 +53,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const fotosRouter = require('./routes/fotos');
+const archivosRouter = require('./routes/archivos');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/fotos', fotosRouter);
+app.use('/archivos', archivosRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

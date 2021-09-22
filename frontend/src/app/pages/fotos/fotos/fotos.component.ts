@@ -7,15 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./fotos.component.scss'],
 })
 export class FotosComponent implements OnInit {
+  files:any[] = [];
+
   constructor(private fotosService: FotosService) {}
 
   ngOnInit(): void {
-    this.getFotos();
+    this.getFiles();
   }
 
-  getFotos() {
-     this.fotosService.getFotos().subscribe( res => {
-        console.log('Fotos', res);
+  getFiles() {
+     this.fotosService.getFiles().subscribe( res => {
+        console.log('Archivos', res);
      });
   }
 

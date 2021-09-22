@@ -1,4 +1,29 @@
 <div class="container p-5">
   <h2 class="mb-4">Listado de fotos de google drive</h2>
-  <button class="btn btn-warning" (click)="insertarFotos()">Insert masivo de fotos y categorías</button>
+  <!-- <button class="btn btn-warning" (click)="insertarFotos()">Insert masivo de fotos y categorías</button> -->
+
+  <ul *ngFor="let file of files;">
+
+      <!-- NUEVAS -->
+      <ng-container *ngIf="!file.etiquetas">
+        <ng-container *ngIf="!file.durationMillis else templateVideo">
+          <li>
+            <img [src]="file.webViewLink" [alt]="file.name">
+          </li>
+        </ng-container>
+      </ng-container>
+
+      <!-- VIEJAS -->
+      <ng-container *ngIf="file.etiquetas">
+        <ng-container *ngIf="!file.durationMillis else templateVideo">
+          <img [src]="file.webViewLink" [alt]="file.name">
+        </ng-container>
+      </ng-container>
+
+      <!-- VIDEO -->
+      <ng-template #templateVideo>
+        Video: {{file.name}}
+      </ng-template>
+
+  </ul>
 </div>

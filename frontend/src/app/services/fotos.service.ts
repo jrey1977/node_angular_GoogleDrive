@@ -7,9 +7,9 @@ import { Injectable } from '@angular/core';
 export class FotosService {
   constructor(private http: HttpClient) {}
 
-  getFotos() {
-    console.log('Obtengo fotos');
-    return this.http.get<any[]>('http://localhost:3100/fotos');
+  getFiles() {
+    console.log('Obtengo archivos');
+    return this.http.get<any[]>('http://localhost:3100/archivos');
   }
 
   insertarFotos() {
