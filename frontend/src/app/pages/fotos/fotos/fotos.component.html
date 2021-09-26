@@ -1,29 +1,57 @@
 <div class="container p-5">
   <h2 class="mb-4">Listado de fotos de google drive</h2>
-  <!-- <button class="btn btn-warning" (click)="insertarFotos()">Insert masivo de fotos y categorías</button> -->
+  <!-- <button class="btn btn-warning" (click)="getFiles()">Obtener total fotos y videos</button> -->
 
-  <ul *ngFor="let file of files;">
-
-      <!-- NUEVAS -->
-      <ng-container *ngIf="!file.etiquetas">
-        <ng-container *ngIf="!file.durationMillis else templateVideo">
-          <li>
-            <img [src]="file.webViewLink" [alt]="file.name">
-          </li>
+  <div infiniteScroll [infiniteScrollDistance]="2" (scrolled)="onScrollNew()">
+    <h3 class="border-bottom">Fotos y videos sin etiquetar [{{filesNew.length}}]</h3>
+    <ul *ngIf="filesNewsTemp[0]">
+      <li *ngFor="let file of Object.keys(filesNewsTemp)">
+        <ng-container *ngIf="isHtmlPrintable(filesNewsTemp[0][file]);else objectBlock">
+          <span class="key">{{file}}</span><span class="value">{{filesNewsTemp[0][file]}}</span>
         </ng-container>
-      </ng-container>
+        <ng-template #objectBlock >
+          <img src="https://drive.google.com/uc?export=view&id={{filesNewsTemp[0][file].idFoto}}" [alt]="filesNewsTemp[0][file].name">
+        </ng-template>
+      </li>
+    </ul>
 
-      <!-- VIEJAS -->
-      <ng-container *ngIf="file.etiquetas">
-        <ng-container *ngIf="!file.durationMillis else templateVideo">
-          <img [src]="file.webViewLink" [alt]="file.name">
+  </div>
+
+<!--
+  <h3 class="border-bottom">Fotos y videos [{{filesOld.length}}]</h3>
+  <ul *ngFor="let file of filesOld">
+    <li>
+        <ng-container *ngIf="!file.durationMillis">
+            {{file.name}} - Es una imagen vieja
         </ng-container>
-      </ng-container>
-
-      <!-- VIDEO -->
-      <ng-template #templateVideo>
-        Video: {{file.name}}
-      </ng-template>
-
+        <ng-container *ngIf="file.durationMillis">
+            {{file.name}} - Es un video viejo
+        </ng-container>
+    </li>
   </ul>
+-->
+
+  <!-- <div class="container" infiniteScroll [infiniteScrollDistance]="2" (scrolled)="onScrollNew()">
+      <h1 style="text-align: center">INFINITE SCROLL EXAMPLE</h1>
+      <table class="table">
+        <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col"><strong>TEXT</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let line of linesToWrite; index as i">
+              <th scope="row">{{i}}</th>
+              <th scope="row">{{line}}</th>
+            </tr>
+        </tbody>
+      </table>
+  </div> -->
+
+
+  <button [ngClass]="'no-hidden'"
+  *ngIf="showGoUpButton" class="btn btn-dark"
+  (click)="scrollTop()">GO UP</button>
+
 </div>

@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FotosComponent } from './fotos/fotos/fotos.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { HomeComponent } from './home/home.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { NgMasonryGridModule } from 'ng-masonry-grid';
 
 
 
@@ -14,7 +16,9 @@ import { HomeComponent } from './home/home.component';
     HomeComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    InfiniteScrollModule,
+    NgMasonryGridModule
   ]
 })
 export class PagesModule { }

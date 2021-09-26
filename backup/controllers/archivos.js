@@ -8,6 +8,33 @@ const getFiles = async(req, res=response) => {
     const fotos = await Foto.find({});
     const videos = await Video.find({});
 
-    // TODO COMBINAR RESULTADO DE FOTOS Y VIDEOS Y DEVOLVERLO
+    const totalFiles = [];
 
+    fotos.forEach( (file) => {
+        totalFiles.push(file);
+    });
+
+    videos.forEach( (file) => {
+        totalFiles.push(file);
+    });
+
+    // Ordeno los resultados por fecha de creación descendiente
+    totalFiles.sort(function(a, b) {
+        var keyB = new Date(a.createdTime),
+            keyA = new Date(b.createdTime);
+        // Compare the 2 dates
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+    });
+      
+    res.json({
+        ok: true,
+        totalFiles
+    })
+
+}
+
+module.exports = {
+    getFiles
 }
