@@ -5,7 +5,6 @@ import { FotosComponent } from './fotos/fotos/fotos.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { HomeComponent } from './home/home.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { NgMasonryGridModule } from 'ng-masonry-grid';
 
 
 
@@ -17,8 +16,7 @@ import { NgMasonryGridModule } from 'ng-masonry-grid';
   ],
   imports: [
     CommonModule,
-    InfiniteScrollModule,
-    NgMasonryGridModule
+    InfiniteScrollModule
   ]
 })
 export class PagesModule { }

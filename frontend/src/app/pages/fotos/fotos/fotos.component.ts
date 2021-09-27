@@ -1,12 +1,12 @@
 import { FotosService } from './../../../services/fotos.service';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-fotos',
   templateUrl: './fotos.component.html',
   styleUrls: ['./fotos.component.scss'],
 })
-export class FotosComponent implements OnInit {
+export class FotosComponent implements OnInit, AfterViewInit {
   // Array indeoendiente donde meto uno a uno los registros
   public arrayIndepe:any[] = [];
 
@@ -46,6 +46,11 @@ export class FotosComponent implements OnInit {
 
   ngOnInit(): void {
     this.getFiles();
+
+  }
+
+  ngAfterViewInit(){
+    //this.resizeAllGridItems();
   }
 
   @HostListener('window:scroll', [])
@@ -140,10 +145,38 @@ export class FotosComponent implements OnInit {
   isHtmlPrintable(value:any){
     return value === "" || typeof value === "string" || typeof value === "number";
   }
+
+
+  resizeGridItem(item:any){
+    var grid = document.getElementsByClassName("grid")[0];
+    var rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
+    var rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
+    var rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap)/(rowHeight+rowGap));
+      item.style.gridRowEnd = "span "+rowSpan;
+  }
+
+  resizeAllGridItems(){
+    var allItems = document.getElementsByClassName("item");
+    for(let x=0;x<allItems.length;x++){
+      this.resizeGridItem(allItems[x]);
+    }
+  }
+
+  resizeInstance(instance:any){
+    var item = instance.elements[0];
+    this.resizeGridItem(item);
+  }
+
+
+  //window.addEventListener("resize", resizeAllGridItems);
+
+  @HostListener('window:resize', [])
+  onWindowResize() {
+    console.log('Hago resize');
+    this.resizeAllGridItems();
+  }
+
 }
-
-
-
 
 
 
