@@ -6,24 +6,6 @@
     <h3 class="border-bottom">
       Fotos y videos sin etiquetar [{{ filesNewsTemp.length }}]
     </h3>
-    <!-- <ul *ngIf="filesNewsTemp">
-      <li *ngFor="let file of Object.keys(filesNewsTemp[0])">
-        <ng-container
-          *ngIf="isHtmlPrintable(filesNewsTemp[0][file]); else objectBlock"
-        >
-          <span class="key">{{ file }}</span
-          ><span class="value">{{ filesNewsTemp[0][file] }}</span>
-        </ng-container>
-        <ng-template #objectBlock>
-          <img
-            src="https://drive.google.com/uc?export=view&id={{
-              filesNewsTemp[0][file].idFoto
-            }}"
-            [alt]="filesNewsTemp[0][file].name"
-          />
-        </ng-template>
-      </li>
-    </ul> -->
     <ngx-masonry *ngIf="filesNewsTemp[0]">
       <div
         ngxMasonryItem
