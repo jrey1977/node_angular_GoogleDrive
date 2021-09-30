@@ -6,20 +6,23 @@
     <h3 class="border-bottom">
       Fotos y videos sin etiquetar [{{ filesNewsTemp.length }}]
     </h3>
-    <ngx-masonry *ngIf="filesNewsTemp[0]">
+    <div *ngIf="filesNewsTemp[0]" class="masonry">
       <div
-        ngxMasonryItem
-        class="masonry-item"
+        class="item"
         *ngFor="let file of Object.keys(filesNewsTemp[0])"
       >
-        <img
-          src="https://drive.google.com/uc?export=view&id={{
-            filesNewsTemp[0][file].idFoto
+        <img *ngIf="filesNewsTemp[0][file].idFoto"
+          [src]=urlImg+filesNewsTemp[0][file].idFoto
+          [alt]="filesNewsTemp[0][file].name"
+        />
+        <img *ngIf="filesNewsTemp[0][file].idVideo"
+          src="https://drive.google.com/thumbnail?id={{
+            filesNewsTemp[0][file].idVideo
           }}"
           [alt]="filesNewsTemp[0][file].name"
         />
       </div>
-    </ngx-masonry>
+    </div>
   </div>
 
   <!--

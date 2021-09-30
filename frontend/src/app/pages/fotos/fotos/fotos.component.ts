@@ -1,5 +1,6 @@
 import { FotosService } from './../../../services/fotos.service';
 import { Component, HostListener, OnInit } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-fotos',
@@ -38,11 +39,7 @@ export class FotosComponent implements OnInit {
 
   public Object = Object;
 
-  masonryItems = [
-    { title: 'item 1' },
-    { title: 'item 2' },
-    { title: 'item 3' },
-  ];
+  public urlImg = environment.urlImgGoogle;
 
   constructor(private fotosService: FotosService) {}
 
@@ -117,33 +114,27 @@ export class FotosComponent implements OnInit {
   }
 
   getFiles() {
-    this.fotosService.getFiles().subscribe((res: any) => {
-      this.filesTemp = Array.from(res.totalFiles);
-      this.filesNew = this.filesTemp.filter(
-        (file) => file.etiquetas.length < 1
-      );
-      this.filesOld = this.filesTemp.filter(
-        (file) => file.etiquetas.length > 0
-      );
+     this.fotosService.getFiles().subscribe( (res:any) => {
+        this.filesTemp = Array.from(res.totalFiles);
+        this.filesNew = this.filesTemp.filter(file => file.etiquetas.length < 1);
+        this.filesOld = this.filesTemp.filter(file => file.etiquetas.length > 0);
 
-      this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
-      var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
-      filesNewsTemp.forEach((elem) => {
-        this.arrayIndepe.push(elem);
-      });
-      this.add40NewFiles();
-    });
+        this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
+        var filesNewsTemp = Array.from(this.filesNew.slice(0,this.filesPerPage));
+        filesNewsTemp.forEach(
+          (elem)=>{
+            this.arrayIndepe.push(elem)
+          }
+        );
+        this.add40NewFiles();
+     });
   }
 
-  insertarFotos() {
-    this.fotosService.insertarFotos().subscribe((res: any) => {
-      console.log('Resultado de la insercción:', res.resultado);
-    });
+  insertarFotos(){
+      this.fotosService.insertarFotos().subscribe( (res:any) => {
+        console.log('Resultado de la insercción:', res.resultado);
+     });
   }
 
-  isHtmlPrintable(value: any) {
-    return (
-      value === '' || typeof value === 'string' || typeof value === 'number'
-    );
-  }
+
 }

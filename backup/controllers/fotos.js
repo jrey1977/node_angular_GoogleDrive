@@ -228,6 +228,10 @@ const insertMasivoVideos = async(req, res ) => {
     }
 }
 
+const testVideos = async(req, res) => {
+
+}
+
 module.exports = {
     getFotos,
     insertMasivoFotos,
