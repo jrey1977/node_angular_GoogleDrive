@@ -1,6 +1,8 @@
 import { FotosService } from './../../../services/fotos.service';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { NgxMasonryOptions } from 'ngx-masonry';
+import { animate, style } from '@angular/animations';
 
 @Component({
   selector: 'app-fotos',
@@ -10,6 +12,20 @@ import { environment } from 'src/environments/environment';
 export class FotosComponent implements OnInit {
   // Array indeoendiente donde meto uno a uno los registros
   public arrayIndepe: any[] = [];
+
+  public myOptions: NgxMasonryOptions = {
+    gutter: 20,
+    animations : {
+      show: [
+        style({opacity: 0}),
+        animate('400ms ease-in', style({opacity: 1})),
+      ],
+      hide: [
+        style({opacity: '*'}),
+        animate('400ms ease-in', style({opacity: 0})),
+      ]
+    }
+  };
 
   // Todos los archivos (fotos y videos) nuevos y viejos
   public filesTemp: any[] = [];
@@ -40,6 +56,7 @@ export class FotosComponent implements OnInit {
   public Object = Object;
 
   public urlImg = environment.urlImgGoogle;
+  public defaultImage = "videoDefault.jpg";
 
   constructor(private fotosService: FotosService) {}
 
@@ -74,7 +91,13 @@ export class FotosComponent implements OnInit {
     //   lineCounter ++;
     // }
     console.log('Añado esto', this.arrayIndepe);
-    this.filesNewsTemp.push(this.arrayIndepe);
+    //this.filesNewsTemp.push(this.arrayIndepe);
+    if( this.filesNewsTemp.length ){
+      this.filesNewsTemp = this.filesNewsTemp.concat(this.filesNewsTemp)
+    }else{
+      this.filesNewsTemp.push(this.arrayIndepe);
+    }
+
     console.log('Así queda this.arrayIndepe', this.arrayIndepe.length);
   }
 
@@ -134,6 +157,10 @@ export class FotosComponent implements OnInit {
       this.fotosService.insertarFotos().subscribe( (res:any) => {
         console.log('Resultado de la insercción:', res.resultado);
      });
+  }
+
+  borrarArchivo(idArchivo:string, tipoArchivo:string){
+      console.log('Borro archivo del tipo '+tipoArchivo+' con id', idArchivo);
   }
 
 

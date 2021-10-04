@@ -1,27 +1,36 @@
-<div class="container p-5">
+<div class="container-fluid p-5">
   <h2 class="mb-4">Listado de fotos de google drive</h2>
   <!-- <button class="btn btn-warning" (click)="getFiles()">Obtener total fotos y videos</button> -->
 
-  <div infiniteScroll [infiniteScrollDistance]="2" (scrolled)="onScrollNew()">
+  <div infiniteScroll [infiniteScrollDistance]="2" (scrolled)="onScrollNew()" [scrollWindow]="true">
     <h3 class="border-bottom">
       Fotos y videos sin etiquetar [{{ filesNewsTemp.length }}]
     </h3>
-    <div *ngIf="filesNewsTemp[0]" class="masonry">
-      <div
-        class="item"
-        *ngFor="let file of Object.keys(filesNewsTemp[0])"
-      >
-        <img *ngIf="filesNewsTemp[0][file].idFoto"
-          [src]=urlImg+filesNewsTemp[0][file].idFoto
-          [alt]="filesNewsTemp[0][file].name"
-        />
-        <img *ngIf="filesNewsTemp[0][file].idVideo"
-          src="https://drive.google.com/thumbnail?id={{
-            filesNewsTemp[0][file].idVideo
-          }}"
-          [alt]="filesNewsTemp[0][file].name"
-        />
-      </div>
+    <div *ngIf="filesNewsTemp[0]">
+      <ngx-masonry [ordered]="true" [options]="myOptions">
+        <div ngxMasonryItem class="masonry-item" *ngFor="let file of Object.keys(filesNewsTemp[0])">
+            <!--NO MUESTRA NADA DEL ALBUM PRIVADO  -->
+            <ng-container *ngIf="filesNewsTemp[0][file].parents[0] !== '10PFuh9Aq1SGapFRaxG0fQZS_63gZNf4S'">
+              <!-- ES UNA FOTO -->
+              <ng-container *ngIf="filesNewsTemp[0][file].idFoto">
+                <img
+                    [src]=urlImg+filesNewsTemp[0][file].idFoto
+                    [alt]="filesNewsTemp[0][file].name"
+                  />
+                  <button class="btn btn-danger" (click)="borrarArchivo(filesNewsTemp[0][file].idFoto, 'foto')">Borrar</button>
+              </ng-container>
+
+              <!-- ES UN VIDEO -->
+              <ng-container *ngIf="filesNewsTemp[0][file].idVideo">
+                <object [data]="'https://drive.google.com/thumbnail?id={{filesNewsTemp[0][file].idVideo}}' | safe">
+                  <img src="https://cdn.sstatic.net/Img/unified/sprites.svg?v=e5e58ae7df45" alt="Stack Overflow logo and icons and such">
+                </object>
+                <button class="btn btn-danger" (click)="borrarArchivo(filesNewsTemp[0][file].idVideo, 'video')">Borrar</button>
+              </ng-container>
+
+            </ng-container>
+        </div>
+      </ngx-masonry>
     </div>
   </div>
 
