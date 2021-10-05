@@ -235,12 +235,17 @@ const testVideos = async(_req, _res) => {
 const borrarImagen = async( req, _res) => {
     let fileId =  req.params.imgId;
     try {
-        const request = await drive.files.delete({
-            'fileId': fileId
-        });
-        request.execute(function(resp) {
-            console.log('Resultado:', resp);
-         });
+        return drive.files.delete({
+            "fileId": fileId
+        }).then(
+            function(response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("Response", response);
+            },
+            function(err) { 
+                console.error("Execute error", err); 
+            }
+        );
     } catch (error) {
         console.log('Ha habido un error:', error);
     }

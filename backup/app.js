@@ -80,7 +80,7 @@ async function signInGoogle() {
     // Obtain user credentials to use for the request
     const auth = await authenticate({
       keyfilePath: path.join(__dirname, './oauth2.keys.json'),
-      scopes: 'https://www.googleapis.com/auth/drive.metadata.readonly',
+      scopes: 'https://www.googleapis.com/auth/drive',
     });
     google.options({auth});
 }
