@@ -34,7 +34,7 @@ var arrayParentsIds = [];
 // }
 
 
-const insertMasivoCategorias = async(req, res) => {
+const insertMasivoCategorias = async(_req, _res) => {
 
     try{
 
@@ -78,7 +78,7 @@ const insertMasivoCategorias = async(req, res) => {
     
 }
 
-const getFotos = async(req, res ) => {
+const getFotos = async(_req, _res ) => {
 
     // TODO: CUANDO ESTÉN GRABADAS LAS FOTOS Y LAS ETIQUETAS/CATEGORÍAS,
     // HACER QUERY EN BD Y MOSTRAR PRIMERO FOTOS SIN ETIQUETAS CON CATEGORÍA "SI"
@@ -122,7 +122,7 @@ const getFotos = async(req, res ) => {
     
 }
 
-const insertMasivoFotos = async(req, res ) => {  
+const insertMasivoFotos = async(_req, _res ) => {  
 
     try{
 
@@ -180,7 +180,7 @@ const insertMasivoFotos = async(req, res ) => {
     }
 };
 
-const insertMasivoVideos = async(req, res ) => {
+const insertMasivoVideos = async(_req, _res ) => {
     try{
 
         const responseVideos = await drive.files.list({
@@ -228,13 +228,28 @@ const insertMasivoVideos = async(req, res ) => {
     }
 }
 
-const testVideos = async(req, res) => {
+const testVideos = async(_req, _res) => {
 
+}
+
+const borrarImagen = async( req, _res) => {
+    let fileId =  req.params.imgId;
+    try {
+        const request = await drive.files.delete({
+            'fileId': fileId
+        });
+        request.execute(function(resp) {
+            console.log('Resultado:', resp);
+         });
+    } catch (error) {
+        console.log('Ha habido un error:', error);
+    }
 }
 
 module.exports = {
     getFotos,
     insertMasivoFotos,
     insertMasivoCategorias,
-    insertMasivoVideos
+    insertMasivoVideos,
+    borrarImagen
 }

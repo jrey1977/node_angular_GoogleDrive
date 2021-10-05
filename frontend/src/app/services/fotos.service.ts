@@ -16,4 +16,8 @@ export class FotosService {
     console.log('Inserto foto');
     return this.http.get<any[]>('http://localhost:3100/fotos/insertar');
   }
+
+  borraFoto(idFoto: string) {
+    return this.http.get<any[]>(`http://localhost:3100/fotos/borrar/${idFoto}`);
+  }
 }

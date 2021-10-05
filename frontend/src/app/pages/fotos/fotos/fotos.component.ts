@@ -15,16 +15,16 @@ export class FotosComponent implements OnInit {
 
   public myOptions: NgxMasonryOptions = {
     gutter: 20,
-    animations : {
+    animations: {
       show: [
-        style({opacity: 0}),
-        animate('400ms ease-in', style({opacity: 1})),
+        style({ opacity: 0 }),
+        animate('400ms ease-in', style({ opacity: 1 })),
       ],
       hide: [
-        style({opacity: '*'}),
-        animate('400ms ease-in', style({opacity: 0})),
-      ]
-    }
+        style({ opacity: '*' }),
+        animate('400ms ease-in', style({ opacity: 0 })),
+      ],
+    },
   };
 
   // Todos los archivos (fotos y videos) nuevos y viejos
@@ -56,7 +56,7 @@ export class FotosComponent implements OnInit {
   public Object = Object;
 
   public urlImg = environment.urlImgGoogle;
-  public defaultImage = "videoDefault.jpg";
+  public defaultImage = 'videoDefault.jpg';
 
   constructor(private fotosService: FotosService) {}
 
@@ -84,26 +84,16 @@ export class FotosComponent implements OnInit {
   }
 
   add40NewFiles() {
-    // const line = 'Another new line -- ';
-    // let lineCounter = this.linesToWrite.length;
-    // for (let i = 0; i < 40; i ++) {
-    //   this.linesToWrite.push(line + lineCounter);
-    //   lineCounter ++;
-    // }
     console.log('Añado esto', this.arrayIndepe);
     //this.filesNewsTemp.push(this.arrayIndepe);
-    if( this.filesNewsTemp.length ){
-      this.filesNewsTemp = this.filesNewsTemp.concat(this.filesNewsTemp)
-    }else{
+    if (this.filesNewsTemp.length) {
+      this.filesNewsTemp = this.filesNewsTemp.concat(this.arrayIndepe);
+    } else {
       this.filesNewsTemp.push(this.arrayIndepe);
     }
 
     console.log('Así queda this.arrayIndepe', this.arrayIndepe.length);
   }
-
-  // add40Oldlines() {
-
-  // }
 
   onScrollNew() {
     console.log('Entro a onScrollNew');
@@ -137,31 +127,34 @@ export class FotosComponent implements OnInit {
   }
 
   getFiles() {
-     this.fotosService.getFiles().subscribe( (res:any) => {
-        this.filesTemp = Array.from(res.totalFiles);
-        this.filesNew = this.filesTemp.filter(file => file.etiquetas.length < 1);
-        this.filesOld = this.filesTemp.filter(file => file.etiquetas.length > 0);
+    this.fotosService.getFiles().subscribe((res: any) => {
+      this.filesTemp = Array.from(res.totalFiles);
+      this.filesNew = this.filesTemp.filter(
+        (file) => file.etiquetas.length < 1
+      );
+      this.filesOld = this.filesTemp.filter(
+        (file) => file.etiquetas.length > 0
+      );
 
-        this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
-        var filesNewsTemp = Array.from(this.filesNew.slice(0,this.filesPerPage));
-        filesNewsTemp.forEach(
-          (elem)=>{
-            this.arrayIndepe.push(elem)
-          }
-        );
-        this.add40NewFiles();
-     });
+      this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
+      var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
+      filesNewsTemp.forEach((elem) => {
+        this.arrayIndepe.push(elem);
+      });
+      this.add40NewFiles();
+    });
   }
 
-  insertarFotos(){
-      this.fotosService.insertarFotos().subscribe( (res:any) => {
-        console.log('Resultado de la insercción:', res.resultado);
-     });
+  insertarFotos() {
+    this.fotosService.insertarFotos().subscribe((res: any) => {
+      console.log('Resultado de la insercción:', res.resultado);
+    });
   }
 
-  borrarArchivo(idArchivo:string, tipoArchivo:string){
-      console.log('Borro archivo del tipo '+tipoArchivo+' con id', idArchivo);
+  borrarArchivo(idArchivo: string, tipoArchivo: string) {
+    console.log('Borro archivo del tipo ' + tipoArchivo + ' con id', idArchivo);
+    this.fotosService.borraFoto(idArchivo).subscribe((res: any) => {
+      console.log('Resultado del delete:', res.resultado);
+    });
   }
-
-
 }
