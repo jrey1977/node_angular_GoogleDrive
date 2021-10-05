@@ -46,7 +46,7 @@ iframe {
   display: inline-block;
   background: #fff;
   padding: 1.5em;
-  margin: 0 0 1.5em;
+  margin: 0 0 2em;
   width: 100%;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -55,6 +55,7 @@ iframe {
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
+  border: 1px solid black;
 }
 
 .masonry-item {
@@ -64,7 +65,8 @@ iframe {
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
-  margin-bottom: 20px;
+  margin-bottom: 2em;
+  border: 1px solid black;
 }
 
 .title,

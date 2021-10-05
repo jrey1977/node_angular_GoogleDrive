@@ -20,8 +20,8 @@ const getFiles = async(req, res=response) => {
 
     // Ordeno los resultados por fecha de creación descendiente
     totalFiles.sort(function(a, b) {
-        var keyB = new Date(a.createdTime),
-            keyA = new Date(b.createdTime);
+        var keyB = new Date(a.modifiedTime),
+            keyA = new Date(b.modifiedTime);
         // Compare the 2 dates
         if (keyA < keyB) return -1;
         if (keyA > keyB) return 1;

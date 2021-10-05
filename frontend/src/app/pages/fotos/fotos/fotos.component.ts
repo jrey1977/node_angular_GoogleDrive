@@ -14,7 +14,7 @@ export class FotosComponent implements OnInit {
   public arrayIndepe: any[] = [];
 
   public myOptions: NgxMasonryOptions = {
-    gutter: 20,
+    gutter: 40,
     animations: {
       show: [
         style({ opacity: 0 }),
@@ -84,15 +84,14 @@ export class FotosComponent implements OnInit {
   }
 
   add40NewFiles() {
-    console.log('Añado esto', this.arrayIndepe);
-    //this.filesNewsTemp.push(this.arrayIndepe);
-    if (this.filesNewsTemp.length) {
-      this.filesNewsTemp = this.filesNewsTemp.concat(this.arrayIndepe);
-    } else {
+    if(this.filesNewsTemp.length){
+      this.filesNewsTemp.concat(this.arrayIndepe);
+    }else{
       this.filesNewsTemp.push(this.arrayIndepe);
     }
 
-    console.log('Así queda this.arrayIndepe', this.arrayIndepe.length);
+    console.log('Así queda this.arrayIndepe', this.arrayIndepe);
+    console.log('Así queda this.filesNewsTemp', this.filesNewsTemp);
   }
 
   onScrollNew() {

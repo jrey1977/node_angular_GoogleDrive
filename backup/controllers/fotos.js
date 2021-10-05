@@ -240,7 +240,7 @@ const borrarImagen = async( req, _res) => {
         }).then(
             function(response) {
                 // Handle the results here (response.result has the parsed body).
-                console.log("Response", response);
+                console.log("La respuesta de Google es:", response);
             },
             function(err) { 
                 console.error("Execute error", err); 

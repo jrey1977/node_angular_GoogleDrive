@@ -7,10 +7,9 @@ import { HomeComponent } from './home/home.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgxMasonryModule } from 'ngx-masonry';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { SafePipe } from '../safe.pipe';
 
 @NgModule({
-  declarations: [FotosComponent, NotFoundComponent, HomeComponent, SafePipe],
+  declarations: [FotosComponent, NotFoundComponent, HomeComponent],
   imports: [
     CommonModule,
     InfiniteScrollModule,

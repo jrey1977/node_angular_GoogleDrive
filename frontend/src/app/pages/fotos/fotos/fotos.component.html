@@ -11,6 +11,7 @@
     <h3 class="border-bottom">
       Fotos y videos sin etiquetar [{{ filesNewsTemp.length }}]
     </h3>
+
     <div *ngIf="filesNewsTemp[0]">
       <ngx-masonry [ordered]="true" [options]="myOptions">
         <div
@@ -33,12 +34,15 @@
                 [src]="urlImg + filesNewsTemp[0][file].idFoto"
                 [alt]="filesNewsTemp[0][file].name"
               />
-              <button
-                class="btn btn-danger"
-                (click)="borrarArchivo(filesNewsTemp[0][file].idFoto, 'foto')"
-              >
-                Borrar
-              </button>
+              <div class="bg-dark text-white p-3">
+                  <p class="mr-3">{{filesNewsTemp[0][file].name}}</p>
+                  <p class="text-break"><small>{{filesNewsTemp[0][file].idFoto}}</small></p>
+                  <button
+                    class="btn btn-danger"
+                    (click)="borrarArchivo(filesNewsTemp[0][file].idFoto, 'foto')">
+                    Borrar
+                  </button>
+              </div>
             </ng-container>
 
             <!-- ES UN VIDEO -->
@@ -48,17 +52,20 @@
                   filesNewsTemp[0][file].idVideo
                 }}"
                 class="imgVideo"
-                alt="Stack Overflow logo and icons and such"
                 style="
                   background-image: url('https://cdn.dribbble.com/users/45617/screenshots/5021228/frame_3_4x.png?compress=1&resize=300x225');
                 "
               />
-              <button
-                class="btn btn-danger"
-                (click)="borrarArchivo(filesNewsTemp[0][file].idVideo, 'video')"
-              >
-                Borrar
-              </button>
+              <div class="bg-dark text-white p-3">
+                  <p class="mr-3">Name: {{filesNewsTemp[0][file].name}}</p>
+                  <p class="text-break">idVideo: <small>{{filesNewsTemp[0][file].idVideo}}</small></p>
+                  <p class="text-break">idVideo: <small>{{filesNewsTemp[0][file].idVideo}}</small></p>
+                  <button
+                    class="btn btn-danger"
+                    (click)="borrarArchivo(filesNewsTemp[0][file].idVideo, 'foto')">
+                    Borrar
+                  </button>
+              </div>
             </ng-container>
           </ng-container>
         </div>
