@@ -1,20 +1,20 @@
-const { response } = require('express');
+const {response} = require('express');
+const {google} = require('googleapis');
 
-const Foto = require('../models/foto');
-const Video = require('../models/video');
+const Archivo = require('../models/archivo');
+
+const drive = google.drive('v3');
+
+var pageToken = null;
+var arrayParentsIds = [];
 
 const getFiles = async(req, res=response) => {
 
-    const fotos = await Foto.find({});
-    const videos = await Video.find({});
+    const archivos = await Archivo.find({});
 
     const totalFiles = [];
 
-    fotos.forEach( (file) => {
-        totalFiles.push(file);
-    });
-
-    videos.forEach( (file) => {
+    archivos.forEach( (file) => {
         totalFiles.push(file);
     });
 
@@ -35,17 +35,16 @@ const getFiles = async(req, res=response) => {
 
 }
 
-const insertMasivoFotos = async(_req, _res ) => {  
+const insertMasivoArchivos = async (primeraVez = false) => {  
 
-    // Si hay algún registro, borro todo antes
-    const numFotos = await Foto.find({}).length;
-    if (numFotos){
-        const deleteFotos = await Foto.drop();
-        insertMasivoFotos();
+    // Si es la primera llamada a la función, borro todo antes
+    if (primeraVez){
+        const deleteFotos = await Archivo.deleteMany({});
+        insertMasivoArchivos();
     }else{
         try{
             const response = await drive.files.list({
-                q: "mimeType contains 'image'",
+                q: "mimeType contains 'image' or mimeType contains 'video'",
                 fields: 'nextPageToken, files',
                 pageToken: pageToken,
                 pageSize: 999,
@@ -56,29 +55,27 @@ const insertMasivoFotos = async(_req, _res ) => {
         
             response.data.files.forEach(function (file) {
     
-                    if(!file.fileExtension){
-                        file.fileExtension = "jpg";
-                    }
-    
-                    console.log('parent',file.parents[0] );
-    
-                    const foto = new Foto ({
+                    const archivo = new Archivo ({
                         "id":file.id,
                         "name":file.name,
-                        "fileExtension":file.fileExtension,
-                        "width":file.imageMediaMetadata.width,
-                        "height":file.imageMediaMetadata.height,
                         "parents": file.parents,
                         "size":file.size,
                         "webContentLink":file.webContentLink,
                         "webViewLink":file.webViewLink,
-                        "createdTime":file.createdTime,
-                        "modifiedTime":file.modifiedTime
+                        "iconLink":file.iconLink,
+                        "hasThumbnail": file.hasThumbnail,
+                        "createdTime": file.createdTime,
+                        "modifiedTime":file.modifiedTime,
+                        "fileExtension": file.fileExtension || '',
+                        "thumbnailLink": file.thumbnailLink || '',
+                        "width": file.imageMediaMetadata?.width || file.videoMediaMetadata?.width || 0,
+                        "height": file.imageMediaMetadata?.height || file.videoMediaMetadata?.height || 0,
+                        "durationMillis": file.videoMediaMetadata?.durationMillis | 0
                     });
     
                     //arrayParentsIds.push(foto.parents[0]);
                     
-                    //foto.save();
+                    archivo.save();
     
             });
         
@@ -87,71 +84,21 @@ const insertMasivoFotos = async(_req, _res ) => {
             
         
             if( (pageToken !== undefined) ){
-                console.log('Sigo insertando fotos...');
-                insertMasivoFotos();
-            }else{
-                insertMasivoCategorias();
+                console.log('Sigo insertando archivos...');
+                insertMasivoArchivos();
             }
-        } catch {
-            console.log('Ha habido un errror');
+        } catch (error) {
+            console.log('Ha habido un error:', error);
         }
     }
 
     
 };
 
-const insertMasivoVideos = async(_req, _res ) => {
-    try{
-
-        const responseVideos = await drive.files.list({
-            q: "mimeType contains 'video'",
-            fields: 'nextPageToken, files',
-            pageToken: pageToken,
-            pageSize: 999,
-            orderBy: 'createdTime desc'
-        });
-
-        responseVideos.data.files.forEach(function (file) {
-
-                const video = new Video ({
-                    "createdTime":file.createdTime,
-                    "fileExtension":file.fileExtension,
-                    "id":file.id,
-                    "width":file.videoMediaMetadata.width,
-                    "height":file.videoMediaMetadata.height,
-                    "durationMillis": file.videoMediaMetadata.durationMillis,
-                    "modifiedTime":file.modifiedTime,
-                    "name":file.name,
-                    "parents": file.parents,
-                    "size":file.size,
-                    "webContentLink":file.webContentLink,
-                    "webViewLink":file.webViewLink,
-                    "iconLink": file.iconLink,
-                    "hasThumbnail": file.hasThumbnail,
-                    "thumbnailLink": file.thumbnailLink
-                });
-
-                //arrayParentsIds.push(foto.parents[0]);
-                
-                video.save();
-
-        });
-
-        pageToken = response.data.nextPageToken;
-
-        if( (pageToken !== undefined) ){
-            console.log('Sigo insertando videos...');
-            insertMasivoVideos();
-        }
-
-    } catch(error){
-        console.log('Error', error);
-    }
-}
-
 const creoBaseDatos = async( _req, _res) => {
     console.log('Voy a generar base de datos desde controller de backend');
-    const metoFotos = await insertMasivoFotos();
+    const metoFotos = await insertMasivoArchivos(true);
+    console.log('Base de datos generada');
 }
 
 module.exports = {

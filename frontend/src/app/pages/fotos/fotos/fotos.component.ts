@@ -156,8 +156,8 @@ export class FotosComponent implements OnInit {
     });
   }
  */
-  borrarArchivo(idArchivo: string, tipoArchivo: string) {
-    console.log('Borro archivo del tipo ' + tipoArchivo + ' con id', idArchivo);
+  borrarArchivo(idArchivo: string) {
+    console.log('Borro archivo del con id', idArchivo);
     this.fotosService.borraFoto(idArchivo).subscribe((res: any) => {
       console.log('Resultado del delete:', res.resultado);
     });
