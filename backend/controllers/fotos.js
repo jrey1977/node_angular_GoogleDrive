@@ -146,17 +146,17 @@ const insertMasivoFotos = async(_req, _res ) => {
                 console.log('parent',file.parents[0] );
 
                 const foto = new Foto ({
-                    "createdTime":file.createdTime,
+                    "id":file.id,
+                    "name":file.name,
                     "fileExtension":file.fileExtension,
-                    "idFoto":file.id,
                     "width":file.imageMediaMetadata.width,
                     "height":file.imageMediaMetadata.height,
-                    "modifiedTime":file.modifiedTime,
-                    "name":file.name,
                     "parents": file.parents,
                     "size":file.size,
                     "webContentLink":file.webContentLink,
-                    "webViewLink":file.webViewLink
+                    "webViewLink":file.webViewLink,
+                    "createdTime":file.createdTime,
+                    "modifiedTime":file.modifiedTime
                 });
 
                 //arrayParentsIds.push(foto.parents[0]);
@@ -196,7 +196,7 @@ const insertMasivoVideos = async(_req, _res ) => {
                 const video = new Video ({
                     "createdTime":file.createdTime,
                     "fileExtension":file.fileExtension,
-                    "idVideo":file.id,
+                    "id":file.id,
                     "width":file.videoMediaMetadata.width,
                     "height":file.videoMediaMetadata.height,
                     "durationMillis": file.videoMediaMetadata.durationMillis,
@@ -207,7 +207,8 @@ const insertMasivoVideos = async(_req, _res ) => {
                     "webContentLink":file.webContentLink,
                     "webViewLink":file.webViewLink,
                     "iconLink": file.iconLink,
-                    "hasThumbnail": file.hasThumbnail
+                    "hasThumbnail": file.hasThumbnail,
+                    "thumbnailLink": file.thumbnailLink
                 });
 
                 //arrayParentsIds.push(foto.parents[0]);
@@ -228,10 +229,6 @@ const insertMasivoVideos = async(_req, _res ) => {
     }
 }
 
-const testVideos = async(_req, _res) => {
-
-}
-
 const borrarImagen = async( req, _res) => {
     let fileId =  req.params.imgId;
     try {
@@ -250,6 +247,11 @@ const borrarImagen = async( req, _res) => {
         console.log('Ha habido un error:', error);
     }
 }
+
+
+
+
+
 
 module.exports = {
     getFotos,

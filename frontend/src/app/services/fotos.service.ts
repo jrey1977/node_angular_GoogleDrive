@@ -20,4 +20,9 @@ export class FotosService {
   borraFoto(idFoto: string) {
     return this.http.get<any[]>(`http://localhost:3100/fotos/borrar/${idFoto}`);
   }
+
+  creoBaseDatos() {
+    console.log('Creo Base de datos');
+    return this.http.get<any[]>('http://localhost:3100/archivos/generaBDatos');
+  }
 }

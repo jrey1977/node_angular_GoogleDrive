@@ -1,6 +1,8 @@
 <div class="container-fluid p-5">
   <h2 class="mb-4">Listado de fotos de google drive</h2>
-  <!-- <button class="btn btn-warning" (click)="getFiles()">Obtener total fotos y videos</button> -->
+  <button class="btn btn-warning" (click)="creoBaseDatos()">
+    Genera base de datos
+  </button>
 
   <div
     infiniteScroll
@@ -35,13 +37,16 @@
                 [alt]="filesNewsTemp[0][file].name"
               />
               <div class="bg-dark text-white p-3">
-                  <p class="mr-3">{{filesNewsTemp[0][file].name}}</p>
-                  <p class="text-break"><small>{{filesNewsTemp[0][file].idFoto}}</small></p>
-                  <button
-                    class="btn btn-danger"
-                    (click)="borrarArchivo(filesNewsTemp[0][file].idFoto, 'foto')">
-                    Borrar
-                  </button>
+                <p class="mr-3">{{ filesNewsTemp[0][file].name }}</p>
+                <p class="text-break">
+                  <small>{{ filesNewsTemp[0][file].idFoto }}</small>
+                </p>
+                <button
+                  class="btn btn-danger"
+                  (click)="borrarArchivo(filesNewsTemp[0][file].idFoto, 'foto')"
+                >
+                  Borrar
+                </button>
               </div>
             </ng-container>
 
@@ -57,14 +62,21 @@
                 "
               />
               <div class="bg-dark text-white p-3">
-                  <p class="mr-3">Name: {{filesNewsTemp[0][file].name}}</p>
-                  <p class="text-break">idVideo: <small>{{filesNewsTemp[0][file].idVideo}}</small></p>
-                  <p class="text-break">idVideo: <small>{{filesNewsTemp[0][file].idVideo}}</small></p>
-                  <button
-                    class="btn btn-danger"
-                    (click)="borrarArchivo(filesNewsTemp[0][file].idVideo, 'foto')">
-                    Borrar
-                  </button>
+                <p class="mr-3">Name: {{ filesNewsTemp[0][file].name }}</p>
+                <p class="text-break">
+                  idVideo: <small>{{ filesNewsTemp[0][file].idVideo }}</small>
+                </p>
+                <p class="text-break">
+                  idVideo: <small>{{ filesNewsTemp[0][file].idVideo }}</small>
+                </p>
+                <button
+                  class="btn btn-danger"
+                  (click)="
+                    borrarArchivo(filesNewsTemp[0][file].idVideo, 'foto')
+                  "
+                >
+                  Borrar
+                </button>
               </div>
             </ng-container>
           </ng-container>

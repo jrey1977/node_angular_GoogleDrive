@@ -84,9 +84,9 @@ export class FotosComponent implements OnInit {
   }
 
   add40NewFiles() {
-    if(this.filesNewsTemp.length){
+    if (this.filesNewsTemp.length) {
       this.filesNewsTemp.concat(this.arrayIndepe);
-    }else{
+    } else {
       this.filesNewsTemp.push(this.arrayIndepe);
     }
 
@@ -144,12 +144,18 @@ export class FotosComponent implements OnInit {
     });
   }
 
-  insertarFotos() {
+  creoBaseDatos() {
+    this.fotosService.creoBaseDatos().subscribe((res: any) => {
+      console.log('res de creoBaseDatos es', res);
+    });
+  }
+
+  /* insertarFotos() {
     this.fotosService.insertarFotos().subscribe((res: any) => {
       console.log('Resultado de la insercción:', res.resultado);
     });
   }
-
+ */
   borrarArchivo(idArchivo: string, tipoArchivo: string) {
     console.log('Borro archivo del tipo ' + tipoArchivo + ' con id', idArchivo);
     this.fotosService.borraFoto(idArchivo).subscribe((res: any) => {
