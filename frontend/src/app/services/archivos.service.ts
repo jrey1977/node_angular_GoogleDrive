@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class FotosService {
+export class ArchivosService {
   constructor(private http: HttpClient) {}
 
   getFiles() {
@@ -12,13 +12,10 @@ export class FotosService {
     return this.http.get<any[]>('http://localhost:3100/archivos');
   }
 
-  insertarFotos() {
-    console.log('Inserto foto');
-    return this.http.get<any[]>('http://localhost:3100/fotos/insertar');
-  }
-
-  borraFoto(idFoto: string) {
-    return this.http.get<any[]>(`http://localhost:3100/fotos/borrar/${idFoto}`);
+  borraArchivo(idArchivo: string) {
+    return this.http.get<any[]>(
+      `http://localhost:3100/archivos/borrar/${idArchivo}`
+    );
   }
 
   creoBaseDatos() {

@@ -101,7 +101,29 @@ const creoBaseDatos = async( _req, _res) => {
     console.log('Base de datos generada');
 }
 
+const borrarAchivo = async( req, _res) => {
+    let idArchivo =  req.params.idArchivo;
+    try {
+        return drive.files.delete({
+            "fileId": idArchivo
+        }).then(
+            function(response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("La respuesta de Google es:", response);
+                return response;
+            },
+            function(err) { 
+                console.error("Execute error", err); 
+                return err;
+            }
+        );
+    } catch (error) {
+        console.log('Ha habido un error:', error);
+    }
+}
+
 module.exports = {
     getFiles,
-    creoBaseDatos
+    creoBaseDatos,
+    borrarAchivo
 }

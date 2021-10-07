@@ -10,11 +10,10 @@
     (scrolled)="onScrollNew()"
     [scrollWindow]="true"
   >
-    <h3 class="border-bottom">
-      Fotos y videos sin etiquetar [{{ filesNewsTemp[0].length }}]
-    </h3>
-
     <div *ngIf="filesNewsTemp[0]">
+      <h3 class="border-bottom">
+        Fotos y videos sin etiquetar [{{ filesNewsTemp[0].length }}]
+      </h3>
       <ngx-masonry [ordered]="true" [options]="myOptions">
         <div
           ngxMasonryItem

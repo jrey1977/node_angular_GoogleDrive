@@ -1,4 +1,4 @@
-import { FotosService } from './../../../services/fotos.service';
+import { ArchivosService } from '../../../services/archivos.service';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { NgxMasonryOptions } from 'ngx-masonry';
@@ -58,7 +58,7 @@ export class FotosComponent implements OnInit {
   public urlImg = environment.urlImgGoogle;
   public defaultImage = 'videoDefault.jpg';
 
-  constructor(private fotosService: FotosService) {}
+  constructor(private archivoService: ArchivosService) {}
 
   ngOnInit(): void {
     this.getFiles();
@@ -126,7 +126,7 @@ export class FotosComponent implements OnInit {
   }
 
   getFiles() {
-    this.fotosService.getFiles().subscribe((res: any) => {
+    this.archivoService.getFiles().subscribe((res: any) => {
       this.filesTemp = Array.from(res.totalFiles);
       this.filesNew = this.filesTemp.filter(
         (file) => file.etiquetas.length < 1
@@ -145,21 +145,26 @@ export class FotosComponent implements OnInit {
   }
 
   creoBaseDatos() {
-    this.fotosService.creoBaseDatos().subscribe((res: any) => {
+    this.archivoService.creoBaseDatos().subscribe((res: any) => {
       console.log('res de creoBaseDatos es', res);
     });
   }
 
   /* insertarFotos() {
-    this.fotosService.insertarFotos().subscribe((res: any) => {
+    this.archivoService.insertarFotos().subscribe((res: any) => {
       console.log('Resultado de la insercción:', res.resultado);
     });
   }
  */
   borrarArchivo(idArchivo: string) {
     console.log('Borro archivo del con id', idArchivo);
-    this.fotosService.borraFoto(idArchivo).subscribe((res: any) => {
-      console.log('Resultado del delete:', res.resultado);
+    this.archivoService.borraArchivo(idArchivo).subscribe((res: any) => {
+      console.log('Resultado del delete:', res);
+      if (res.status === 204) {
+        console.log('Se ha borrado el archivo');
+      } else {
+        console.log('No se ha podido borrar el archivo:', res);
+      }
     });
   }
 }
