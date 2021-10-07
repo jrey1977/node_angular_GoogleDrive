@@ -110,3 +110,33 @@ iframe {
 .imgVideo {
   min-height: 225px;
 }
+
+.bgVideo{
+  background-image: url(https://cdn.dribbble.com/users/45617/screenshots/5021228/frame_3_4x.png?compress=1&resize=400x300);
+  width: 100%;
+  height: 232px;
+  display: block;
+  background-size: contain;
+}
+
+img {
+  position: relative;
+}
+
+/* style this to fit your needs */
+/* and remove [alt] to apply to all images*/
+img[alt]:after {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  font-family: 'Helvetica';
+  font-weight: 300;
+  line-height: 2;
+  text-align: center;
+  content: attr(alt);
+  color: white;
+}

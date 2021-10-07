@@ -21,14 +21,8 @@
           *ngFor="let file of Object.keys(filesNewsTemp[0])"
         >
           <!--NO MUESTRA NADA DEL ALBUM PRIVADO  -->
-          <ng-container
-            *ngIf="
-              filesNewsTemp[0][file].parents[0] !==
-                '10PFuh9Aq1SGapFRaxG0fQZS_63gZNf4S' &&
-              filesNewsTemp[0][file].parents[0] !==
-                '1qfLV68mzQZtmlVf37sFFd_Z_BDgeWBhn'
-            "
-          >
+          <ng-container>
+            <span class="bgVideo" *ngIf="filesNewsTemp[0][file].fileExtension == 'webm' || filesNewsTemp[0][file].fileExtension == 'avi' || filesNewsTemp[0][file].fileExtension == 'mp4'"></span>
             <img
               [src]="urlImg + filesNewsTemp[0][file].id"
               [alt]="filesNewsTemp[0][file].name"
