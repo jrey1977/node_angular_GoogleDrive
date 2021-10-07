@@ -18,6 +18,12 @@ export class ArchivosService {
     );
   }
 
+  borraArchivoBaseDatos(idArchivo: string){
+    return this.http.get<any[]>(
+      `http://localhost:3100/archivos/borrar/ArchivoBBDD/${idArchivo}`
+    );
+  }
+
   creoBaseDatos() {
     console.log('Creo Base de datos');
     return this.http.get<any[]>('http://localhost:3100/archivos/generaBDatos');

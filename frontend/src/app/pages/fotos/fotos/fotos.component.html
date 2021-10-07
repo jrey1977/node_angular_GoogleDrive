@@ -1,8 +1,8 @@
 <div class="container-fluid p-5">
   <h2 class="mb-4">Listado de fotos de google drive</h2>
-  <button class="btn btn-warning" (click)="creoBaseDatos()">
+  <!-- <button class="btn btn-warning" (click)="creoBaseDatos()">
     Genera base de datos
-  </button>
+  </button> -->
 
   <div
     infiniteScroll
@@ -11,14 +11,14 @@
     [scrollWindow]="true"
   >
     <div *ngIf="filesNewsTemp[0]">
-      <h3 class="border-bottom">
+      <h3 class="border-bottom mb-5 pb-3">
         Fotos y videos sin etiquetar [{{ filesNewsTemp[0].length }}]
       </h3>
       <ngx-masonry [ordered]="true" [options]="myOptions">
         <div
           ngxMasonryItem
           class="masonry-item"
-          *ngFor="let file of Object.keys(filesNewsTemp[0])"
+          *ngFor="let file of Object.keys(filesNewsTemp[0]), let i = index"
         >
           <!--NO MUESTRA NADA DEL ALBUM PRIVADO  -->
           <ng-container>
@@ -26,6 +26,7 @@
             <img
               [src]="urlImg + filesNewsTemp[0][file].id"
               [alt]="filesNewsTemp[0][file].name"
+              [id]="i"
             />
             <div class="bg-dark text-white p-3">
               <p class="mr-3">Name: {{ filesNewsTemp[0][file].name }}</p>
@@ -34,7 +35,7 @@
               </p>
               <button
                 class="btn btn-danger"
-                (click)="borrarArchivo(filesNewsTemp[0][file].id)"
+                (click)="borrarArchivo(filesNewsTemp[0][file].id, i)"
               >
                 Borrar
               </button>

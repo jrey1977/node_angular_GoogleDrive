@@ -101,7 +101,8 @@ const creoBaseDatos = async( _req, _res) => {
     console.log('Base de datos generada');
 }
 
-const borrarAchivo = async( req, _res) => {
+const borrarAchivo = async( req, res) => {
+    //var resDelete = res;
     let idArchivo =  req.params.idArchivo;
     try {
         return drive.files.delete({
@@ -110,7 +111,10 @@ const borrarAchivo = async( req, _res) => {
             function(response) {
                 // Handle the results here (response.result has the parsed body).
                 console.log("La respuesta de Google es:", response);
-                return response;
+                //return response;
+                res.json({
+                    'respuesta': response
+                })
             },
             function(err) { 
                 console.error("Execute error", err); 
@@ -122,8 +126,21 @@ const borrarAchivo = async( req, _res) => {
     }
 }
 
+const borrarArchivoBBDD = async( req, res) => {
+    let idArchivo =  req.params.idArchivo;
+    try{
+        await Archivo.deleteMany({ id: idArchivo });
+        res.json({
+            'respuesta': 'ok'
+        })
+    } catch(error){
+        console.log('Ha habido un error eliminando el archivo de la base de datos:', error);
+    }
+}
+
 module.exports = {
     getFiles,
     creoBaseDatos,
-    borrarAchivo
+    borrarAchivo,
+    borrarArchivoBBDD
 }
