@@ -11,7 +11,7 @@ import { animate, style } from '@angular/animations';
 })
 export class FotosComponent implements OnInit {
   // Array indeoendiente donde meto uno a uno los registros
-  public arrayIndepe: any[] = [];
+  public new40Files: any[] = [];
 
   public myOptions: NgxMasonryOptions = {
     gutter: 40,
@@ -30,15 +30,14 @@ export class FotosComponent implements OnInit {
   // Todos los archivos (fotos y videos) nuevos y viejos
   public filesTemp: any[] = [];
 
-  // Todos los nuevos archivos
+  // Todos los archivos con etiqueta
   public filesNew: any[] = [];
 
   // Los archivos nuevos que se están mostrando
   public filesNewsTemp: any[] = [];
 
+  // Todos los viejos
   public filesOld: any[] = [];
-
-  //public linesToWrite: string[] = [];
 
   // Infinite Scroll New Files
   private actualPageNew: number = 1;
@@ -56,7 +55,8 @@ export class FotosComponent implements OnInit {
   public Object = Object;
 
   public urlImg = environment.urlImgGoogle;
-  public defaultImage = 'videoDefault.jpg';
+  public notification: Boolean = false;
+  public notificationMessage: String = '';
 
   constructor(private archivoService: ArchivosService) {}
 
@@ -85,13 +85,10 @@ export class FotosComponent implements OnInit {
 
   add40NewFiles() {
     if (this.filesNewsTemp.length) {
-      this.filesNewsTemp.concat(this.arrayIndepe);
+      this.filesNewsTemp.concat(this.new40Files);
     } else {
-      this.filesNewsTemp.push(this.arrayIndepe);
+      this.filesNewsTemp.push(this.new40Files);
     }
-
-    console.log('Así queda this.arrayIndepe', this.arrayIndepe);
-    console.log('Así queda this.filesNewsTemp', this.filesNewsTemp);
   }
 
   onScrollNew() {
@@ -101,7 +98,7 @@ export class FotosComponent implements OnInit {
       var endSlice = startSlice + this.filesPerPage;
       var nuevas = this.filesNew.slice(startSlice, endSlice);
       nuevas.forEach((elem) => {
-        this.arrayIndepe.push(elem);
+        this.new40Files.push(elem);
       });
       this.add40NewFiles();
       this.actualPageNew++;
@@ -138,7 +135,7 @@ export class FotosComponent implements OnInit {
       this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
       var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
       filesNewsTemp.forEach((elem) => {
-        this.arrayIndepe.push(elem);
+        this.new40Files.push(elem);
       });
       this.add40NewFiles();
     });
@@ -150,41 +147,41 @@ export class FotosComponent implements OnInit {
     });
   }
 
-  /* insertarFotos() {
-    this.archivoService.insertarFotos().subscribe((res: any) => {
-      console.log('Resultado de la insercción:', res.resultado);
-    });
-  }
- */
-
-
   borrarArchivo(idArchivo: string, indexArchivo: number) {
-      var idArchivoEliminado = idArchivo;
-      var indexArchivoEliminado = indexArchivo;
-      this.archivoService.borraArchivo(idArchivoEliminado).subscribe((res: any) => {
-          console.log('Resultado de la llamada al service:',res);
-          // Se ha borrado el archivo de Google Drive
-          if (res.respuesta.status === 204) {
-            console.log('Se ha borrado el archivo de la unidad de Google Drive');
-            // Ahora lo borro de la base datos
-            try{
-              this.archivoService.borraArchivoBaseDatos(idArchivoEliminado).subscribe((res: any) => {
-                  console.log('Resultado de la llamada al service:',res);
-                  // Ahora borro el archivo de la página
-                  if (res.respuesta === "ok") {
-                      console.log('Ahora quito el fichero de la página');
-                      this.filesNewsTemp[0].splice(indexArchivoEliminado,1);
-                  }
+    var idArchivoEliminado = idArchivo;
+    var indexArchivoEliminado = indexArchivo;
+    this.archivoService
+      .borraArchivo(idArchivoEliminado)
+      .subscribe((res: any) => {
+        // Se ha borrado el archivo de Google Drive
+        if (res.respuesta.status === 204) {
+          this.notification = true;
+          this.notificationMessage =
+            'Se ha borrado el archivo de la unidad de Google Drive';
+          // Ahora lo borro de la base datos
+          try {
+            this.archivoService
+              .borraArchivoBaseDatos(idArchivoEliminado)
+              .subscribe((res: any) => {
+                // Ahora borro el archivo de la página
+                if (res.respuesta === 'ok') {
+                  this.notificationMessage +=
+                    'Se ha borrado el archivo de la Base de datos';
+                  console.log('Ahora quito el fichero de la página');
+                  this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
+                  this.notification = false;
+                }
               });
-            }catch(error){
-              console.log('No se ha podido eliminar el archivo de la base de datos por:', error);
-            }
-
-          } else {
-            console.log('No se ha podido borrar el archivo de la unidad de Google Drive:', res);
+          } catch (error) {
+            this.notification = true;
+            this.notificationMessage =
+              'No se ha podido eliminar el archivo de la base de datos por:' +
+              error;
           }
+        } else {
+          this.notificationMessage =
+            'No se ha podido borrar el archivo de la unidad de Google Drive';
+        }
       });
   }
-
-
 }

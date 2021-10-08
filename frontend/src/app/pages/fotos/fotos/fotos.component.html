@@ -3,7 +3,9 @@
   <!-- <button class="btn btn-warning" (click)="creoBaseDatos()">
     Genera base de datos
   </button> -->
-
+  <span *ngIf="notification">
+    {{ notificationMessage }}
+  </span>
   <div
     infiniteScroll
     [infiniteScrollDistance]="2"
@@ -18,11 +20,18 @@
         <div
           ngxMasonryItem
           class="masonry-item"
-          *ngFor="let file of Object.keys(filesNewsTemp[0]), let i = index"
+          *ngFor="let file of Object.keys(filesNewsTemp[0]); let i = index"
         >
           <!--NO MUESTRA NADA DEL ALBUM PRIVADO  -->
           <ng-container>
-            <span class="bgVideo" *ngIf="filesNewsTemp[0][file].fileExtension == 'webm' || filesNewsTemp[0][file].fileExtension == 'avi' || filesNewsTemp[0][file].fileExtension == 'mp4'"></span>
+            <span
+              class="bgVideo"
+              *ngIf="
+                filesNewsTemp[0][file].fileExtension == 'webm' ||
+                filesNewsTemp[0][file].fileExtension == 'avi' ||
+                filesNewsTemp[0][file].fileExtension == 'mp4'
+              "
+            ></span>
             <img
               [src]="urlImg + filesNewsTemp[0][file].id"
               [alt]="filesNewsTemp[0][file].name"
