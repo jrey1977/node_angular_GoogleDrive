@@ -7,8 +7,60 @@ const drive = google.drive('v3');
 
 var pageToken = null;
 var arrayParentsIds = [];
+var respuesta;
+
+const getNewFiles = async(req, res=response) => {
+    respuesta = res;
+    // Primero obtengo la fecha de modificación más reciente en la base de datos
+    var ultimoArchivo = await Archivo.find().sort({'createdTime':-1}).limit(1);
+    var fechaUltimoArchivo = ultimoArchivo[0].createdTime;
+
+    // Ahora busco en la unidad de Google Drive todos los ficheros 
+    // con fecha de modificación posterior 
+    const newFiles = await drive.files.list({
+        q: `(mimeType contains 'image' or mimeType contains 'video') and createdTime > '${fechaUltimoArchivo}'`,
+        fields: 'files',
+        pageSize:100,
+        orderBy: 'createdTime desc'
+    });
+
+    console.log('Número de archivos encontrados:', newFiles.data.files.length);
+
+    if(newFiles.data.files.length){
+        newFiles.data.files.forEach(function (file) {
+            console.log('Id del archivo iterado:', file.id);
+            var nuevoArchivo = new Archivo ({
+                "id":file.id,
+                "name":file.name,
+                "parents": file.parents,
+                "size":file.size,
+                "webContentLink":file.webContentLink,
+                "webViewLink":file.webViewLink,
+                "iconLink":file.iconLink,
+                "hasThumbnail": file.hasThumbnail,
+                "createdTime": file.createdTime,
+                "modifiedTime":file.modifiedTime,
+                "fileExtension": file.fileExtension || '',
+                "thumbnailLink": file.thumbnailLink || '',
+                "width": file.imageMediaMetadata?.width || file.videoMediaMetadata?.width || 0,
+                "height": file.imageMediaMetadata?.height || file.videoMediaMetadata?.height || 0,
+                "durationMillis": file.videoMediaMetadata?.durationMillis | 0
+            });
+            nuevoArchivo.save();
+        })
+    
+        getFiles();
+    } else {
+        console.log('No hay nada nuevo, listo los archivos');
+        getFiles();
+    }
+
+    
+
+}
 
 const getFiles = async(req, res=response) => {
+    console.log('Ahora listo los archivos');
 
     const archivos = await Archivo.find({});
 
@@ -28,7 +80,7 @@ const getFiles = async(req, res=response) => {
         return 0;
     });
       
-    res.json({
+    respuesta.json({
         ok: true,
         totalFiles
     })
@@ -55,27 +107,25 @@ const insertMasivoArchivos = async (primeraVez = false) => {
         
             response.data.files.forEach(function (file) {
     
-                    const archivo = new Archivo ({
-                        "id":file.id,
-                        "name":file.name,
-                        "parents": file.parents,
-                        "size":file.size,
-                        "webContentLink":file.webContentLink,
-                        "webViewLink":file.webViewLink,
-                        "iconLink":file.iconLink,
-                        "hasThumbnail": file.hasThumbnail,
-                        "createdTime": file.createdTime,
-                        "modifiedTime":file.modifiedTime,
-                        "fileExtension": file.fileExtension || '',
-                        "thumbnailLink": file.thumbnailLink || '',
-                        "width": file.imageMediaMetadata?.width || file.videoMediaMetadata?.width || 0,
-                        "height": file.imageMediaMetadata?.height || file.videoMediaMetadata?.height || 0,
-                        "durationMillis": file.videoMediaMetadata?.durationMillis | 0
-                    });
-    
-                    //arrayParentsIds.push(foto.parents[0]);
-                    
-                    archivo.save();
+                var archivo = new Archivo ({
+                    "id":file.id,
+                    "name":file.name,
+                    "parents": file.parents,
+                    "size":file.size,
+                    "webContentLink":file.webContentLink,
+                    "webViewLink":file.webViewLink,
+                    "iconLink":file.iconLink,
+                    "hasThumbnail": file.hasThumbnail,
+                    "createdTime": file.createdTime,
+                    "modifiedTime":file.modifiedTime,
+                    "fileExtension": file.fileExtension || '',
+                    "thumbnailLink": file.thumbnailLink || '',
+                    "width": file.imageMediaMetadata?.width || file.videoMediaMetadata?.width || 0,
+                    "height": file.imageMediaMetadata?.height || file.videoMediaMetadata?.height || 0,
+                    "durationMillis": file.videoMediaMetadata?.durationMillis | 0
+                });
+                
+                archivo.save(); 
     
             });
         
@@ -139,6 +189,7 @@ const borrarArchivoBBDD = async( req, res) => {
 }
 
 module.exports = {
+    getNewFiles,
     getFiles,
     creoBaseDatos,
     borrarAchivo,

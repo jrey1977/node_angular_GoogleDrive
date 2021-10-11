@@ -59,14 +59,21 @@ iframe {
 }
 
 .masonry-item {
-  width: 300px;
+  width: 48.5%;
   transition: top 0.4s ease-in-out, left 0.4s ease-in-out;
   box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.18);
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
-  margin-bottom: 2em;
+  margin-bottom: 0.5em;
   border: 1px solid black;
+}
+
+@media screen and (min-width: 450px) {
+  .masonry-item {
+    width: 300px;
+    margin-bottom: 1em;
+  }
 }
 
 .title,
@@ -111,7 +118,7 @@ iframe {
   min-height: 225px;
 }
 
-.bgVideo{
+.bgVideo {
   background-image: url(https://cdn.dribbble.com/users/45617/screenshots/5021228/frame_3_4x.png?compress=1&resize=400x300);
   width: 100%;
   height: 232px;
@@ -133,7 +140,7 @@ img[alt]:after {
   width: 100%;
   height: 100%;
   background-color: #fff;
-  font-family: 'Helvetica';
+  font-family: "Helvetica";
   font-weight: 300;
   line-height: 2;
   text-align: center;

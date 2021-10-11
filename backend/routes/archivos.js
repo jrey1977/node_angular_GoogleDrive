@@ -1,10 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-const { getFiles, creoBaseDatos, borrarAchivo, borrarArchivoBBDD } = require('../controllers/archivos');
+const { getNewFiles, getFiles, creoBaseDatos, borrarAchivo, borrarArchivoBBDD } = require('../controllers/archivos');
 
 /* GET Archivos */
 router.get('/', getFiles);
+
+/* GET Nuevos archivos */
+router.get('/nuevos', getNewFiles);
 
 /* Genera Base de datos  */
 router.get('/generaBDatos', creoBaseDatos);

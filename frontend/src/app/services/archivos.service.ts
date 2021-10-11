@@ -7,9 +7,13 @@ import { Injectable } from '@angular/core';
 export class ArchivosService {
   constructor(private http: HttpClient) {}
 
-  getFiles() {
+  /* getFiles() {
     console.log('Obtengo archivos');
     return this.http.get<any[]>('http://localhost:3100/archivos');
+  } */
+
+  getNewFiles() {
+    return this.http.get<any[]>('http://localhost:3100/archivos/nuevos');
   }
 
   borraArchivo(idArchivo: string) {
@@ -18,7 +22,7 @@ export class ArchivosService {
     );
   }
 
-  borraArchivoBaseDatos(idArchivo: string){
+  borraArchivoBaseDatos(idArchivo: string) {
     return this.http.get<any[]>(
       `http://localhost:3100/archivos/borrar/ArchivoBBDD/${idArchivo}`
     );

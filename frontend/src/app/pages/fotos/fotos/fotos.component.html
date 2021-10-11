@@ -1,4 +1,4 @@
-<div class="container-fluid p-5">
+<div class="container-fluid p-2 p-md-5">
   <h2 class="mb-4">Listado de fotos de google drive</h2>
   <!-- <button class="btn btn-warning" (click)="creoBaseDatos()">
     Genera base de datos
@@ -14,7 +14,7 @@
   >
     <div *ngIf="filesNewsTemp[0]">
       <h3 class="border-bottom mb-5 pb-3">
-        Fotos y videos sin etiquetar [{{ filesNewsTemp[0].length }}]
+        Fotos y videos sin etiquetar [{{ filesNew.length }}]
       </h3>
       <ngx-masonry [ordered]="true" [options]="myOptions">
         <div
@@ -22,7 +22,6 @@
           class="masonry-item"
           *ngFor="let file of Object.keys(filesNewsTemp[0]); let i = index"
         >
-          <!--NO MUESTRA NADA DEL ALBUM PRIVADO  -->
           <ng-container>
             <span
               class="bgVideo"

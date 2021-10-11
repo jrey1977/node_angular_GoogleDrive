@@ -3,6 +3,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import { animate, style } from '@angular/animations';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-fotos',
@@ -12,20 +13,6 @@ import { animate, style } from '@angular/animations';
 export class FotosComponent implements OnInit {
   // Array indeoendiente donde meto uno a uno los registros
   public new40Files: any[] = [];
-
-  public myOptions: NgxMasonryOptions = {
-    gutter: 40,
-    animations: {
-      show: [
-        style({ opacity: 0 }),
-        animate('400ms ease-in', style({ opacity: 1 })),
-      ],
-      hide: [
-        style({ opacity: '*' }),
-        animate('400ms ease-in', style({ opacity: 0 })),
-      ],
-    },
-  };
 
   // Todos los archivos (fotos y videos) nuevos y viejos
   public filesTemp: any[] = [];
@@ -57,11 +44,35 @@ export class FotosComponent implements OnInit {
   public urlImg = environment.urlImgGoogle;
   public notification: Boolean = false;
   public notificationMessage: String = '';
+  private margenLateral: number = 0;
+  public myOptions: NgxMasonryOptions = {};
 
-  constructor(private archivoService: ArchivosService) {}
+  constructor(
+    private archivoService: ArchivosService,
+    private deviceService: DeviceDetectorService
+  ) {}
 
   ngOnInit(): void {
-    this.getFiles();
+    const isMobile = this.deviceService.isMobile();
+    if (isMobile) {
+      this.margenLateral = 10;
+    } else {
+      this.margenLateral = 20;
+    }
+    this.myOptions = {
+      gutter: this.margenLateral,
+      animations: {
+        show: [
+          style({ opacity: 0 }),
+          animate('400ms ease-in', style({ opacity: 1 })),
+        ],
+        hide: [
+          style({ opacity: '*' }),
+          animate('400ms ease-in', style({ opacity: 0 })),
+        ],
+      },
+    };
+    this.getNewFiles();
   }
 
   @HostListener('window:scroll', [])
@@ -122,8 +133,11 @@ export class FotosComponent implements OnInit {
     document.documentElement.scrollTop = 0; // Other
   }
 
-  getFiles() {
-    this.archivoService.getFiles().subscribe((res: any) => {
+  // Compruebo si hay archivos nuevos en la unidad de Google Drive
+  // y si es así los grabo en la base de datos
+  getNewFiles() {
+    this.archivoService.getNewFiles().subscribe((res: any) => {
+      console.log('Recibo esto:', res);
       this.filesTemp = Array.from(res.totalFiles);
       this.filesNew = this.filesTemp.filter(
         (file) => file.etiquetas.length < 1
@@ -140,6 +154,26 @@ export class FotosComponent implements OnInit {
       this.add40NewFiles();
     });
   }
+
+  // Obtengo los datos de la base de datos
+  /*  getFiles() {
+    this.archivoService.getFiles().subscribe((res: any) => {
+      this.filesTemp = Array.from(res.totalFiles);
+      this.filesNew = this.filesTemp.filter(
+        (file) => file.etiquetas.length < 1
+      );
+      this.filesOld = this.filesTemp.filter(
+        (file) => file.etiquetas.length > 0
+      );
+
+      this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
+      var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
+      filesNewsTemp.forEach((elem) => {
+        this.new40Files.push(elem);
+      });
+      this.add40NewFiles();
+    });
+  } */
 
   creoBaseDatos() {
     this.archivoService.creoBaseDatos().subscribe((res: any) => {
