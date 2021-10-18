@@ -2,11 +2,13 @@ const {response} = require('express');
 const {google} = require('googleapis');
 
 const Archivo = require('../models/archivo');
+const Etiqueta = require('../models/etiqueta');
 
 const drive = google.drive('v3');
 
 var pageToken = null;
 var arrayParentsIds = [];
+var arrayNuevosParents = [];
 var respuesta;
 
 const getNewFiles = async(req, res=response) => {
@@ -47,7 +49,15 @@ const getNewFiles = async(req, res=response) => {
                 "durationMillis": file.videoMediaMetadata?.durationMillis | 0
             });
             nuevoArchivo.save();
-        })
+            // Compruebo si es una nueva carpeta y si es así la meto en la base de datos
+            console.log('Id de la carpeta padre: ', file.parents[0]);
+            /*if( !Etiqueta.exists({ id: file.parents[0] }) ){
+                console.log('Id de la nueva carpeta es :');
+                arrayNuevosParents.push(file.parents[0]);
+            }*/
+        });
+
+        console.log('arrayNuevosParents:', arrayNuevosParents);
     
         getFiles();
     } else {

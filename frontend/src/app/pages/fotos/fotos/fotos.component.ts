@@ -46,6 +46,10 @@ export class FotosComponent implements OnInit {
   public notificationMessage: String = '';
   private margenLateral: number = 0;
   public myOptions: NgxMasonryOptions = {};
+  public showLoading: boolean = true;
+  public contadorFotos:number = 40;
+  public porcentaje:string = "0%";
+  public porcentajeArchivo:number = 0;
 
   constructor(
     private archivoService: ArchivosService,
@@ -55,12 +59,13 @@ export class FotosComponent implements OnInit {
   ngOnInit(): void {
     const isMobile = this.deviceService.isMobile();
     if (isMobile) {
-      this.margenLateral = 10;
+      this.margenLateral = 5;
     } else {
       this.margenLateral = 20;
     }
     this.myOptions = {
       gutter: this.margenLateral,
+      resize: true,
       animations: {
         show: [
           style({ opacity: 0 }),
@@ -97,20 +102,30 @@ export class FotosComponent implements OnInit {
   add40NewFiles() {
     if (this.filesNewsTemp.length) {
       this.filesNewsTemp.concat(this.new40Files);
+      this.contadorFotos = this.filesNewsTemp[0].length;
+      this.showLoading = false;
     } else {
       this.filesNewsTemp.push(this.new40Files);
+      this.contadorFotos = this.filesNewsTemp[0].length;
+      this.showLoading = false;
     }
   }
 
   onScrollNew() {
     console.log('Entro a onScrollNew');
     if (this.actualPageNew < this.finishPageNew) {
+      this.showLoading = true;
+      console.log('Muestro cargador');
       var startSlice = this.actualPageNew * this.filesPerPage;
       var endSlice = startSlice + this.filesPerPage;
       var nuevas = this.filesNew.slice(startSlice, endSlice);
       nuevas.forEach((elem) => {
+        console.log('porcentaje es', parseFloat(this.porcentaje));
+        this.porcentaje = (parseFloat(this.porcentaje) + this.porcentajeArchivo)+ "%";
+        console.log('this.porcentaje', this.porcentaje);
         this.new40Files.push(elem);
       });
+      this.showLoading = true;
       this.add40NewFiles();
       this.actualPageNew++;
     } else {
@@ -148,7 +163,10 @@ export class FotosComponent implements OnInit {
 
       this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
       var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
+      this.porcentajeArchivo = 100 / this.filesTemp.length;
+      console.log('porcentajeArchivo es ', this.porcentajeArchivo);
       filesNewsTemp.forEach((elem) => {
+        this.porcentaje = (parseFloat(this.porcentaje) + this.porcentajeArchivo)+ "%";
         this.new40Files.push(elem);
       });
       this.add40NewFiles();
@@ -218,4 +236,5 @@ export class FotosComponent implements OnInit {
         }
       });
   }
+
 }
