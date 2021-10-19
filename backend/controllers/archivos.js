@@ -11,8 +11,6 @@ var arrayParentsIds = [];
 var arrayNuevosParents = [];
 var respuesta;
 
-mymeType: 'application/vnd.google-apps.folder',
-
 graboNuevasCategorias = async(req, res=response) => {
     /* arrayNuevosParents.forEach(function (idCategoria) {
         var nombreCategoria = await drive.files.list({
@@ -28,12 +26,17 @@ graboNuevasCategorias = async(req, res=response) => {
         
         categoria.save(); 
     }) */
-    for( idCategoria of arrayNuevosParents ){
-        var nombreCategoria = await drive.files.list({
-            q: `(mimeType contains 'application/vnd.google-apps.folder') and id = '${idCategoria}'`,
-            fields: 'name',
-            pageSize:1
-        });
+
+    const foldersRes = await drive.files.list({
+        q: "mimeType = 'application/vnd.google-apps.folder'"
+    });
+    const foldersIdToName = new Object(
+        foldersRes.data.files.reduce((obj, o) => ((obj[o.id] = o.name), obj), {})
+    );
+
+    arrayNuevosParents.forEach(function (idCategoria) {
+        var nombreCategoria = foldersIdToName[idCategoria];
+        console.log('nombreCategoria es ', nombreCategoria);
         var categoria = new Etiqueta ({
             "id":idCategoria,
             "name":nombreCategoria,
@@ -41,7 +44,7 @@ graboNuevasCategorias = async(req, res=response) => {
         });
         
         categoria.save(); 
-    }
+    })
 }
 
 const getNewFiles = async(req, res=response) => {
@@ -59,11 +62,10 @@ const getNewFiles = async(req, res=response) => {
         orderBy: 'createdTime desc'
     });
 
-    console.log('Número de archivos encontrados:', newFiles.data.files.length);
+    console.log('Archivos nuevos encontrados:', newFiles.data.files.length);
 
     if(newFiles.data.files.length){
         newFiles.data.files.forEach(function (file) {
-            console.log('Id del archivo iterado:', file.id);
             var nuevoArchivo = new Archivo ({
                 "id":file.id,
                 "name":file.name,
@@ -82,15 +84,17 @@ const getNewFiles = async(req, res=response) => {
                 "durationMillis": file.videoMediaMetadata?.durationMillis | 0
             });
             nuevoArchivo.save();
-            // Compruebo si es una nueva carpeta y si es así la meto en la base de datos
-            console.log('Id de la carpeta padre: ', file.parents[0]);
+            // Compruebo si es una nueva carpeta
             resultados = Etiqueta.find({ id: file.parents[0] });
+            // Si es una carpeta nueva meto su ID en un array
             if( ! resultados.length ){
                 arrayNuevosParents.push(file.parents[0]);
             }
         });
 
+        // Si hay alguna id de carpeta nueva en el array...
         if(arrayNuevosParents.length){
+            // Grabo las nuevas caropetas/etiquetas en la base de datos
             graboNuevasCategorias();
         }
     
@@ -223,7 +227,20 @@ const borrarAchivo = async( req, res) => {
 const borrarArchivoBBDD = async( req, res) => {
     let idArchivo =  req.params.idArchivo;
     try{
+        
+        // Obtengo el id del padre del archivo antes de borrarlo
+        var file = await Archivo.find({ id: idArchivo });
+        var idParentFile = file[0].parents[0];
+
+        // Borro el archivo
         await Archivo.deleteMany({ id: idArchivo });
+
+        // Si no he encontrado otros archivos con ese padre, borro el padre
+        var ficherosCarpeta = await Archivo.find({ parents: idParentFile });
+        if(!ficherosCarpeta.length){
+            await Etiqueta.deleteMany({ id: idParentFile });
+        }
+        
         res.json({
             'respuesta': 'ok'
         })
