@@ -11,6 +11,39 @@ var arrayParentsIds = [];
 var arrayNuevosParents = [];
 var respuesta;
 
+mymeType: 'application/vnd.google-apps.folder',
+
+graboNuevasCategorias = async(req, res=response) => {
+    /* arrayNuevosParents.forEach(function (idCategoria) {
+        var nombreCategoria = await drive.files.list({
+            q: `(mimeType contains 'application/vnd.google-apps.folder') and id = '${idCategoria}'`,
+            fields: 'name',
+            pageSize:1
+        });
+        var categoria = new Etiqueta ({
+            "id":idCategoria,
+            "name":nombreCategoria,
+            "categoria": "no"
+        });
+        
+        categoria.save(); 
+    }) */
+    for( idCategoria of arrayNuevosParents ){
+        var nombreCategoria = await drive.files.list({
+            q: `(mimeType contains 'application/vnd.google-apps.folder') and id = '${idCategoria}'`,
+            fields: 'name',
+            pageSize:1
+        });
+        var categoria = new Etiqueta ({
+            "id":idCategoria,
+            "name":nombreCategoria,
+            "categoria": "no"
+        });
+        
+        categoria.save(); 
+    }
+}
+
 const getNewFiles = async(req, res=response) => {
     respuesta = res;
     // Primero obtengo la fecha de modificación más reciente en la base de datos
@@ -51,13 +84,15 @@ const getNewFiles = async(req, res=response) => {
             nuevoArchivo.save();
             // Compruebo si es una nueva carpeta y si es así la meto en la base de datos
             console.log('Id de la carpeta padre: ', file.parents[0]);
-            /*if( !Etiqueta.exists({ id: file.parents[0] }) ){
-                console.log('Id de la nueva carpeta es :');
+            resultados = Etiqueta.find({ id: file.parents[0] });
+            if( ! resultados.length ){
                 arrayNuevosParents.push(file.parents[0]);
-            }*/
+            }
         });
 
-        console.log('arrayNuevosParents:', arrayNuevosParents);
+        if(arrayNuevosParents.length){
+            graboNuevasCategorias();
+        }
     
         getFiles();
     } else {
@@ -170,7 +205,6 @@ const borrarAchivo = async( req, res) => {
         }).then(
             function(response) {
                 // Handle the results here (response.result has the parsed body).
-                console.log("La respuesta de Google es:", response);
                 //return response;
                 res.json({
                     'respuesta': response
