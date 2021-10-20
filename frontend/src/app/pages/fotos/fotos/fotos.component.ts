@@ -47,9 +47,9 @@ export class FotosComponent implements OnInit {
   private margenLateral: number = 0;
   public myOptions: NgxMasonryOptions = {};
   public showLoading: boolean = true;
-  public contadorFotos:number = 40;
-  public porcentaje:string = "0%";
-  public porcentajeArchivo:number = 0;
+  public contadorFotos: number = 40;
+  public porcentaje: string = '0%';
+  public porcentajeArchivo: number = 0;
 
   constructor(
     private archivoService: ArchivosService,
@@ -121,7 +121,8 @@ export class FotosComponent implements OnInit {
       var nuevas = this.filesNew.slice(startSlice, endSlice);
       nuevas.forEach((elem) => {
         console.log('porcentaje es', parseFloat(this.porcentaje));
-        this.porcentaje = (parseFloat(this.porcentaje) + this.porcentajeArchivo)+ "%";
+        this.porcentaje =
+          parseFloat(this.porcentaje) + this.porcentajeArchivo + '%';
         console.log('this.porcentaje', this.porcentaje);
         this.new40Files.push(elem);
       });
@@ -166,7 +167,8 @@ export class FotosComponent implements OnInit {
       this.porcentajeArchivo = 100 / this.filesTemp.length;
       console.log('porcentajeArchivo es ', this.porcentajeArchivo);
       filesNewsTemp.forEach((elem) => {
-        this.porcentaje = (parseFloat(this.porcentaje) + this.porcentajeArchivo)+ "%";
+        this.porcentaje =
+          parseFloat(this.porcentaje) + this.porcentajeArchivo + '%';
         this.new40Files.push(elem);
       });
       this.add40NewFiles();
@@ -222,6 +224,11 @@ export class FotosComponent implements OnInit {
                   console.log('Ahora quito el fichero de la página');
                   this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
                   this.notification = false;
+                } else {
+                  console.log(
+                    'Algo ha pasado que no llegó ok: ',
+                    res.respuesta
+                  );
                 }
               });
           } catch (error) {
@@ -236,5 +243,4 @@ export class FotosComponent implements OnInit {
         }
       });
   }
-
 }

@@ -261,6 +261,9 @@ const borrarArchivoBBDD = async( req, res) => {
                 );
             } catch (error) {
                 console.log('Ha habido un error al borrar la carpeta de la unidad de Google drive:', error);
+                res.json({
+                    'respuesta': 'Error'
+                })
             }
         }
         
