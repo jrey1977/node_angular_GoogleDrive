@@ -30,31 +30,34 @@
             class="masonry-item"
             *ngFor="let file of Object.keys(filesNewsTemp[0]); let i = index"
           >
-              <span
-                class="bgVideo"
-                *ngIf="
-                  filesNewsTemp[0][file].fileExtension == 'webm' ||
-                  filesNewsTemp[0][file].fileExtension == 'avi' ||
-                  filesNewsTemp[0][file].fileExtension == 'mp4'
-                "
-              ></span>
-              <img
-                [src]="urlImg + filesNewsTemp[0][file].id"
-                [alt]="filesNewsTemp[0][file].name"
-                [id]="i"
-              />
-              <div class="bg-dark text-white p-3">
-                <p class="mr-3">Name: {{ filesNewsTemp[0][file].name }}</p>
-                <p class="text-break">
-                  id: <small>{{ filesNewsTemp[0][file].id }}</small>
-                </p>
-                <button
-                  class="btn btn-danger"
-                  (click)="borrarArchivo(filesNewsTemp[0][file].id, i)"
-                >
-                  Borrar
-                </button>
-              </div>
+               <span
+                    class="bgVideo"
+                    *ngIf="
+                      filesNewsTemp[0][file].fileExtension == 'webm' ||
+                      filesNewsTemp[0][file].fileExtension == 'avi' ||
+                      filesNewsTemp[0][file].fileExtension == 'mp4'"
+                ></span>
+                <img
+                  [src]="urlImg + filesNewsTemp[0][file].id"
+                  [alt]="filesNewsTemp[0][file].name"
+                  [id]="i"
+                />
+                <div class="bg-dark text-white p-3">
+                  <p class="mr-3">Name: {{ filesNewsTemp[0][file].name }}</p>
+                  <p class="text-break">
+                    id: <small>{{ filesNewsTemp[0][file].id }}</small>
+                  </p>
+                  <button
+                    class="btn btn-danger"
+                    (click)="borrarArchivo(filesNewsTemp[0][file].id, i)"
+                  >
+                    Borrar
+                  </button>
+                  <button class="btn btn-warning"
+                          (click)="abrirPopup(filesNewsTemp[0][file].fileExtension, filesNewsTemp[0][file].id)">
+                          Abrir
+                  </button>
+                </div>
           </div>
         </ngx-masonry>
       </div>

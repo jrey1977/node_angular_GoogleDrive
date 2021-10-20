@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import { animate, style } from '@angular/animations';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { Popup, PopupService } from 'src/app/services/popup.service';
 
 @Component({
   selector: 'app-fotos',
@@ -50,10 +51,12 @@ export class FotosComponent implements OnInit {
   public contadorFotos: number = 40;
   public porcentaje: string = '0%';
   public porcentajeArchivo: number = 0;
+  private popup!: Popup;
 
   constructor(
     private archivoService: ArchivosService,
-    private deviceService: DeviceDetectorService
+    private deviceService: DeviceDetectorService,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -243,4 +246,17 @@ export class FotosComponent implements OnInit {
         }
       });
   }
+
+  abrirPopup( pType:string, pSrc:string){
+      console.log('Pincho en foto con datos tipo: ',pType);
+      console.log('Pincho en foto con datos src: ',pSrc);
+      // this.popup.type = pType;
+      // this.popup.src = pSrc;
+      this.popup = {
+        type: pType,
+        src: pSrc
+      }
+      this.popupService.abrirPopup(this.popup);
+  }
+
 }
