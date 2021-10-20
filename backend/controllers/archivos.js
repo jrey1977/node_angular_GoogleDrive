@@ -196,7 +196,7 @@ const insertMasivoArchivos = async (primeraVez = false) => {
 
 const creoBaseDatos = async( _req, _res) => {
     console.log('Voy a generar base de datos desde controller de backend');
-    const metoFotos = await insertMasivoArchivos(true);
+    await insertMasivoArchivos(true);
     console.log('Base de datos generada');
 }
 
@@ -237,8 +237,31 @@ const borrarArchivoBBDD = async( req, res) => {
 
         // Si no he encontrado otros archivos con ese padre, borro el padre
         var ficherosCarpeta = await Archivo.find({ parents: idParentFile });
-        if(!ficherosCarpeta.length){
+        console.log('ficherosCarpeta', ficherosCarpeta);
+        console.log('ficherosCarpeta.length', ficherosCarpeta.length);
+        
+        if(ficherosCarpeta.length == 0){
+            console.log('No hay otros archivos en esa carpeta, así que la borro');
             await Etiqueta.deleteMany({ id: idParentFile });
+            try {
+                return drive.files.delete({
+                    "fileId": idParentFile
+                }).then(
+                    function(response) {
+                        // Handle the results here (response.result has the parsed body).
+                        //return response;
+                        res.json({
+                            'respuesta': 'ok'
+                        })
+                    },
+                    function(err) { 
+                        console.error("Execute error", err); 
+                        return err;
+                    }
+                );
+            } catch (error) {
+                console.log('Ha habido un error al borrar la carpeta de la unidad de Google drive:', error);
+            }
         }
         
         res.json({
