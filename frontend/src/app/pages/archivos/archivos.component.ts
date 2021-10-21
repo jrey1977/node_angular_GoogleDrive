@@ -1,17 +1,18 @@
-import { ArchivosService } from '../../../services/archivos.service';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import { animate, style } from '@angular/animations';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { Popup, PopupService } from 'src/app/services/popup.service';
+import { PopupService } from 'src/app/utils/popup/services/popup.service';
+import { ArchivosService } from './services/archivos.service';
+import { Archivo } from './models/archivos.interface';
 
 @Component({
-  selector: 'app-fotos',
-  templateUrl: './fotos.component.html',
-  styleUrls: ['./fotos.component.scss'],
+  selector: 'app-archivos',
+  templateUrl: './archivos.component.html',
+  styleUrls: ['./archivos.component.scss'],
 })
-export class FotosComponent implements OnInit {
+export class ArchivosComponent implements OnInit {
   // Array indeoendiente donde meto uno a uno los registros
   public new40Files: any[] = [];
 
@@ -51,7 +52,7 @@ export class FotosComponent implements OnInit {
   public contadorFotos: number = 40;
   public porcentaje: string = '0%';
   public porcentajeArchivo: number = 0;
-  private popup!: Popup;
+  private popup!: Archivo;
 
   constructor(
     private archivoService: ArchivosService,
@@ -137,16 +138,6 @@ export class FotosComponent implements OnInit {
     }
   }
 
-  // onScrollOld() {
-  //   console.log('Entro a onScroll')
-  //   if (this.actualPageOld < this.finishPageOld) {
-  //     this.add40Oldlines();
-  //     this.actualPageOld ++;
-  //   } else {
-  //     console.log('No more lines. Finish page!');
-  //   }
-  // }
-
   scrollTop() {
     document.body.scrollTop = 0; // Safari
     document.documentElement.scrollTop = 0; // Other
@@ -177,26 +168,6 @@ export class FotosComponent implements OnInit {
       this.add40NewFiles();
     });
   }
-
-  // Obtengo los datos de la base de datos
-  /*  getFiles() {
-    this.archivoService.getFiles().subscribe((res: any) => {
-      this.filesTemp = Array.from(res.totalFiles);
-      this.filesNew = this.filesTemp.filter(
-        (file) => file.etiquetas.length < 1
-      );
-      this.filesOld = this.filesTemp.filter(
-        (file) => file.etiquetas.length > 0
-      );
-
-      this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
-      var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
-      filesNewsTemp.forEach((elem) => {
-        this.new40Files.push(elem);
-      });
-      this.add40NewFiles();
-    });
-  } */
 
   creoBaseDatos() {
     this.archivoService.creoBaseDatos().subscribe((res: any) => {
@@ -247,16 +218,7 @@ export class FotosComponent implements OnInit {
       });
   }
 
-  abrirPopup( pType:string, pSrc:string){
-      console.log('Pincho en foto con datos tipo: ',pType);
-      console.log('Pincho en foto con datos src: ',pSrc);
-      // this.popup.type = pType;
-      // this.popup.src = pSrc;
-      this.popup = {
-        type: pType,
-        src: pSrc
-      }
-      this.popupService.abrirPopup(this.popup);
+  abrirPopup(pArchivo: Archivo) {
+    this.popupService.abrirPopup(pArchivo);
   }
-
 }
