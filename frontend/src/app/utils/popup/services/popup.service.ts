@@ -6,7 +6,7 @@ import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
   providedIn: 'root',
 })
 export class PopupService {
-  private popup!: Archivo;
+  private popup: boolean = false;
   private popup$: Subject<Archivo>;
 
   constructor() {
@@ -15,12 +15,21 @@ export class PopupService {
 
   abrirPopup(pArchivo: Archivo) {
     console.log('Se manda dato');
-    this.popup = pArchivo;
-    this.popup$.next(this.popup);
+    this.popup = true;
+    this.popup$.next(pArchivo);
+  }
+
+  cerrarPopup() {
+    console.log('Se elimina el dato');
+    this.popup = false;
   }
 
   getPopup$(): Observable<Archivo> {
     console.log('Se recibe dato');
     return this.popup$.asObservable();
+  }
+
+  getPopupState() {
+    return this.popup;
   }
 }
