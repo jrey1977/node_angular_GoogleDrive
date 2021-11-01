@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class PopupComponent implements OnInit {
   popup!: Archivo;
+  statePopup:boolean = false;
   public urlImg = environment.urlImgGoogle;
 
   constructor(public popupService: PopupService) {}
@@ -18,9 +19,13 @@ export class PopupComponent implements OnInit {
     this.popupService.getPopup$().subscribe((popupRecibido) => {
       this.popup = popupRecibido;
     });
+    this.popupService.getPopupState$().subscribe((estado) => {
+      this.statePopup = estado;
+    });
   }
 
   cerrarPopup() {
+    console.log('Entro en cerrarPopup');
     this.popupService.cerrarPopup();
   }
 }

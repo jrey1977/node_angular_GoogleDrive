@@ -6,22 +6,22 @@ import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
   providedIn: 'root',
 })
 export class PopupService {
-  private popup: boolean = false;
+  private popupState$: Subject<boolean>;
   private popup$: Subject<Archivo>;
 
   constructor() {
     this.popup$ = new Subject();
+    this.popupState$ = new Subject();
+    this.popupState$.next(false);
   }
 
   abrirPopup(pArchivo: Archivo) {
-    console.log('Se manda dato');
-    this.popup = true;
+    this.popupState$.next(true);
     this.popup$.next(pArchivo);
   }
 
   cerrarPopup() {
-    console.log('Se elimina el dato');
-    this.popup = false;
+    this.popupState$.next(false);
   }
 
   getPopup$(): Observable<Archivo> {
@@ -29,7 +29,7 @@ export class PopupService {
     return this.popup$.asObservable();
   }
 
-  getPopupState() {
-    return this.popup;
+  getPopupState$(): Observable<boolean> {
+    return this.popupState$.asObservable();
   }
 }

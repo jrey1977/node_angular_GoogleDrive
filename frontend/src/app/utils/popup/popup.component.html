@@ -1,12 +1,12 @@
 <div
   class="position-fixed bg-white w-100 h-100 p-5 popup"
-  *ngIf="popup && popupService.getPopupState"
+  *ngIf="statePopup"
 >
-  <button class="btn btn-danger" (ngClick)="cerrarPopup()">X</button>
+  <button class="btn btn-danger" (click)="cerrarPopup()">X</button>
   <h2 class="text-center">{{ popup.name }}</h2>
   <div class="contenedorArchivo m-auto text-center">
     <!--VIDEO-->
-    <ng-container *ngIf="popup.fileExtension == ('webm' || 'avi' || 'mp4')">
+    <ng-container *ngIf="popup.mimeType?.includes('video')">
       <video
         controls
         preload="none"
@@ -20,13 +20,7 @@
     </ng-container>
     <!--FOTO-->
     <ng-container
-      *ngIf="
-        popup.fileExtension === 'jpg' ||
-        popup.fileExtension === 'jpeg' ||
-        popup.fileExtension === 'png' ||
-        popup.fileExtension === 'gif' ||
-        popup.fileExtension === 'webp'
-      "
+    *ngIf="popup.mimeType?.includes('image')"
     >
       <img
         [src]="urlImg + popup.id"

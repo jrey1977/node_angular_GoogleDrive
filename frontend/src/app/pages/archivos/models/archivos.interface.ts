@@ -12,7 +12,7 @@ export interface Archivo {
   createdTime: Date; // 2021-08-22T13:32:12.268Z
   modifiedTime: Date; // '2021-08-22T13:32:10.874Z'
   etiquetas?: string[]; // ['1qfLV68mzQZtmlVf37sFFd_Z_BDgeWBhn']
-  fileExtension?: string; // jpg, png...
+  mimeType?: string; // image/jpg, video/mp4...
   thumbnailLink?: string; // 'https://lh3.googleusercontent.com/KQJYTlUFD-cN6kXBTztf7vD9MEQ6AZVcpWCn8KhkKEXkfXZ7yB80MBgEBMRJkjtfB7YCIitaatEXLsc=s220'
   width?: number; // 1000
   height?: number; // 750

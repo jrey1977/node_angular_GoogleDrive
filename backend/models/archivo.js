@@ -45,9 +45,9 @@ const ArchivoSchema = Schema({
         type: Array,
         required: false
     },
-    fileExtension: {
+    mimeType: {
         type: String,
-        required: false
+        required: true
     },
     thumbnailLink: {
         type: String,

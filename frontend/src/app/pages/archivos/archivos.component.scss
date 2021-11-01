@@ -213,6 +213,7 @@ img[alt]:after {
 
 .header{
   max-width: 95%;
+  top: 0;
 }
 
 .rellenoBarra{
@@ -227,6 +228,8 @@ img[alt]:after {
   border: 1px solid black;
 }
 
-.contentArchivos{
-  padding-top: 10rem;
+.contentArchivosNuevos{
+  margin-top: 8.5rem;
+  max-height: 48vh;
+  overflow: auto;
 }
