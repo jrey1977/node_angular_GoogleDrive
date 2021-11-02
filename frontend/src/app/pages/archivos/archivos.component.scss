@@ -229,7 +229,34 @@ img[alt]:after {
 }
 
 .contentArchivosNuevos{
+    margin-top: 2.5vh;
+    height: 30vh;
+    max-width: 95%;
+    overflow-y: hidden;
+}
+
+.contentArchivosViejos{
   margin-top: 8.5rem;
-  max-height: 48vh;
   overflow: auto;
+  max-width: 95%;
+}
+
+.contentNew{
+    max-height: 30vh;
+    top:0;
+}
+
+.contentOld{
+    max-height: 30vh;
+    top:42vh;
+}
+
+.new-item{
+    display: inline-block;
+    width: 25%;
+    vertical-align: top;
+    padding: 0 1rem;
+  img{
+    height: 100%;
+  }
 }

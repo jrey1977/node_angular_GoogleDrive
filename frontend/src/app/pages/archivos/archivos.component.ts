@@ -13,8 +13,9 @@ import { Archivo } from './models/archivos.interface';
   styleUrls: ['./archivos.component.scss'],
 })
 export class ArchivosComponent implements OnInit {
-  // Array indeoendiente donde meto uno a uno los registros
+  // Arrays independientes donde meto uno a uno los registros
   public new40Files: any[] = [];
+  public old40Files: any[] = [];
 
   // Todos los archivos (fotos y videos) nuevos y viejos
   public filesTemp: any[] = [];
@@ -22,8 +23,9 @@ export class ArchivosComponent implements OnInit {
   // Todos los archivos con etiqueta
   public filesNew: any[] = [];
 
-  // Los archivos nuevos que se están mostrando
+  // Los archivos nuevos y viejos que se están mostrando
   public filesNewsTemp: any[] = [];
+  public filesOldTemp: any[] = [];
 
   // Todos los viejos
   public filesOld: any[] = [];
@@ -106,11 +108,19 @@ export class ArchivosComponent implements OnInit {
   add40NewFiles() {
     if (this.filesNewsTemp.length) {
       this.filesNewsTemp.concat(this.new40Files);
-      this.contadorFotos = this.filesNewsTemp[0].length;
-      this.showLoading = false;
     } else {
       this.filesNewsTemp.push(this.new40Files);
-      this.contadorFotos = this.filesNewsTemp[0].length;
+    }
+  }
+
+  add40OldFiles() {
+    if (this.filesOldTemp.length) {
+      this.filesOldTemp.concat(this.old40Files);
+      this.contadorFotos = this.filesOldTemp[0].length;
+      this.showLoading = false;
+    } else {
+      this.filesOldTemp.push(this.old40Files);
+      this.contadorFotos = this.filesOldTemp[0].length;
       this.showLoading = false;
     }
   }
@@ -118,21 +128,36 @@ export class ArchivosComponent implements OnInit {
   onScrollNew() {
     console.log('Entro a onScrollNew');
     if (this.actualPageNew < this.finishPageNew) {
-      this.showLoading = true;
-      console.log('Muestro cargador');
       var startSlice = this.actualPageNew * this.filesPerPage;
       var endSlice = startSlice + this.filesPerPage;
       var nuevas = this.filesNew.slice(startSlice, endSlice);
       nuevas.forEach((elem) => {
+        this.new40Files.push(elem);
+      });
+      this.add40NewFiles();
+      this.actualPageNew++;
+    } else {
+      console.log('No more lines. Finish page!');
+    }
+  }
+
+  onScrollOld() {
+    console.log('Entro a onScrollOld');
+    if (this.actualPageOld < this.finishPageOld) {
+      this.showLoading = true;
+      var startSlice = this.actualPageOld * this.filesPerPage;
+      var endSlice = startSlice + this.filesPerPage;
+      var viejas = this.filesOld.slice(startSlice, endSlice);
+      viejas.forEach((elem) => {
         console.log('porcentaje es', parseFloat(this.porcentaje));
         this.porcentaje =
           parseFloat(this.porcentaje) + this.porcentajeArchivo + '%';
         console.log('this.porcentaje', this.porcentaje);
-        this.new40Files.push(elem);
+        this.old40Files.push(elem);
       });
       this.showLoading = true;
-      this.add40NewFiles();
-      this.actualPageNew++;
+      this.add40OldFiles();
+      this.actualPageOld++;
     } else {
       console.log('No more lines. Finish page!');
     }
@@ -157,15 +182,21 @@ export class ArchivosComponent implements OnInit {
       );
 
       this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
+      this.finishPageOld = Math.ceil(this.filesOld.length / this.filesPerPage);
       var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
+      var filesOldTemp = Array.from(this.filesOld.slice(0, this.filesPerPage));
       this.porcentajeArchivo = 100 / this.filesTemp.length;
       console.log('porcentajeArchivo es ', this.porcentajeArchivo);
       filesNewsTemp.forEach((elem) => {
-        this.porcentaje =
-          parseFloat(this.porcentaje) + this.porcentajeArchivo + '%';
         this.new40Files.push(elem);
       });
       this.add40NewFiles();
+      filesOldTemp.forEach((elem) => {
+        this.porcentaje =
+          parseFloat(this.porcentaje) + this.porcentajeArchivo + '%';
+        this.old40Files.push(elem);
+      });
+      this.add40OldFiles();
     });
   }
 
