@@ -1,0 +1,5 @@
+// Obtener registros de una colección (Foto):
+const fotos = await Foto.find({});
+
+// Elininar registros de una colección (Foto):
+const deleteFotos = await Foto.drop();

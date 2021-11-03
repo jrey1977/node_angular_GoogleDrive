@@ -1,1 +1,1 @@
-# node_angular_GoogleDrive
+Aplicación para etiquetar y filtrar fotos almacenadas en Google Drive. Se usa nodeJS, Angular, Express y MongoDB.

@@ -4,6 +4,8 @@ require('dotenv').config()
 // Importo librerías
 const createError = require('http-errors');
 const express = require('express');
+const cors = require('cors');
+const { dbConnection } = require('./database/config');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -25,6 +27,15 @@ liveReloadServer.server.once("connection", () => {
 // Arranco el server
 var app = express();
 
+// Configurar CORS
+app.use( cors() );
+
+// Base de datos
+dbConnection();
+
+// Lectura y parseo del body
+app.use( express.json() );
+
 // Aplico middleware de LiveReload
 app.use(connectLiveReload());
 
@@ -42,9 +53,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const fotosRouter = require('./routes/fotos');
+const archivosRouter = require('./routes/archivos');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/fotos', fotosRouter);
+app.use('/archivos', archivosRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -67,7 +80,7 @@ async function signInGoogle() {
     // Obtain user credentials to use for the request
     const auth = await authenticate({
       keyfilePath: path.join(__dirname, './oauth2.keys.json'),
-      scopes: 'https://www.googleapis.com/auth/drive.metadata.readonly',
+      scopes: 'https://www.googleapis.com/auth/drive',
     });
     google.options({auth});
 }

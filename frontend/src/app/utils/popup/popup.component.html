@@ -1,0 +1,32 @@
+<div
+  class="position-fixed bg-white w-100 h-100 p-5 popup"
+  *ngIf="statePopup"
+>
+  <button class="btn btn-danger" (click)="cerrarPopup()">X</button>
+  <h2 class="text-center">{{ popup.name }}</h2>
+  <div class="contenedorArchivo m-auto text-center">
+    <!--VIDEO-->
+    <ng-container *ngIf="popup.mimeType?.includes('video')">
+      <video
+        controls
+        preload="none"
+        [poster]="popup.thumbnailLink"
+        width="100%"
+        playsinline
+      >
+        <source [src]="popup.webViewLink" type="video/mp4" />
+        Video not supported
+      </video>
+    </ng-container>
+    <!--FOTO-->
+    <ng-container
+    *ngIf="popup.mimeType?.includes('image')"
+    >
+      <img
+        [src]="urlImg + popup.id"
+        [alt]="popup.name"
+        class="mt-4 img-fluid"
+      />
+    </ng-container>
+  </div>
+</div>
