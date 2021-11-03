@@ -1,0 +1,18 @@
+.container{
+
+}
+
+.container ul{
+    list-style-type: none;
+    padding: 0;
+}
+
+.container ul li{
+    display: table-cell;
+    padding: 5px;
+}
+
+.container ul li img{
+    height: 100%;
+    width: auto;
+}

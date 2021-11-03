@@ -7,6 +7,7 @@ import { ArchivosComponent } from './archivos/archivos.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgxMasonryModule } from 'ngx-masonry';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DragScrollModule } from 'ngx-drag-scroll';
 
 @NgModule({
   declarations: [ArchivosComponent, NotFoundComponent, HomeComponent],
@@ -15,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     InfiniteScrollModule,
     NgxMasonryModule,
     BrowserAnimationsModule,
+    DragScrollModule
   ],
 })
 export class PagesModule {}
