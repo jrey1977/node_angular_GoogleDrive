@@ -112,6 +112,11 @@ export class ArchivosComponent implements OnInit {
     console.log('Hago scroll a la izda.');
     let style = getComputedStyle(this.ul.nativeElement);
     this.anchoUl = parseInt(style.width);
+    //this.ul.nativeElement.scrollLeft -= this.anchoUl;
+    this.ul.nativeElement.scrollBy({
+        left: -this.anchoUl,
+        behavior: 'smooth'
+    })
     console.log('ancho', this.anchoUl);
   }
 
@@ -119,6 +124,11 @@ export class ArchivosComponent implements OnInit {
     console.log('Hago scroll a la dcha.');
     let style = getComputedStyle(this.ul.nativeElement);
     this.anchoUl = parseInt(style.width);
+    //this.ul.nativeElement.scrollLeft += this.anchoUl
+    this.ul.nativeElement.scrollBy({
+        left: +this.anchoUl,
+        behavior: 'smooth'
+    })
     console.log('ancho', this.anchoUl);
   }
 
