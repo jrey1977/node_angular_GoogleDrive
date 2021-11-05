@@ -23,12 +23,14 @@
           <hr class="fondoBarra m-0" />
         </div>
       </div>
+      <button class="btn btn-warning botonNavegacion" (click)="scrollLeft()"><<</button>
       <ul class="contentArchivosNuevos"
         infiniteScroll
         [infiniteScrollDistance]="2"
         (scrolled)="onScrollNew()"
         [scrollWindow]="false"
-        [horizontal]="true">
+        [horizontal]="true"
+        #contentArchivosNuevos>
 
           <li
             class="new-item"
@@ -50,7 +52,8 @@
             />
           </li>
 
-        </ul>
+      </ul>
+      <button class="btn btn-warning botonNavegacion" (click)="scrollRight()">>></button>
     </div>
 
     <div *ngIf="filesNewsTemp[0]" class="position-absolute w-100 contentOld">

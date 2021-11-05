@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import { animate, style } from '@angular/animations';
@@ -55,6 +55,9 @@ export class ArchivosComponent implements OnInit {
   public porcentaje: string = '0%';
   public porcentajeArchivo: number = 0;
   private popup!: Archivo;
+  private anchoUl!: number;
+
+  @ViewChild('contentArchivosNuevos') ul!:ElementRef;
 
   constructor(
     private archivoService: ArchivosService,
@@ -103,6 +106,30 @@ export class ArchivosComponent implements OnInit {
     ) {
       this.showGoUpButton = false;
     }
+  }
+
+  scrollLeft(){
+    console.log('Hago scroll a la izda.');
+    let style = getComputedStyle(this.ul.nativeElement);
+    this.anchoUl = parseInt(style.width);
+    //this.ul.nativeElement.scrollLeft -= this.anchoUl;
+    this.ul.nativeElement.scrollBy({
+        left: -this.anchoUl,
+        behavior: 'smooth'
+    })
+    console.log('ancho', this.anchoUl);
+  }
+
+  scrollRight(){
+    console.log('Hago scroll a la dcha.');
+    let style = getComputedStyle(this.ul.nativeElement);
+    this.anchoUl = parseInt(style.width);
+    //this.ul.nativeElement.scrollLeft += this.anchoUl
+    this.ul.nativeElement.scrollBy({
+        left: +this.anchoUl,
+        behavior: 'smooth'
+    })
+    console.log('ancho', this.anchoUl);
   }
 
   add40NewFiles() {

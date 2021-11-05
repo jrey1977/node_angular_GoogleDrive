@@ -229,11 +229,12 @@ img[alt]:after {
 
 .contentArchivosNuevos{
   list-style-type: none;
-  padding: 0;
-  margin-top: 2.5vh;
-  height: 30vh;
-  max-width: 95%;
-  overflow-y: hidden;
+    padding: 0;
+    margin-top: 2.5vh;
+    height: 30vh;
+    max-width: 90%;
+    overflow-y: hidden;
+    display: inline-block;
   li{
       display: table-cell;
       width: 25%;
@@ -251,6 +252,13 @@ img[alt]:after {
   }
 }
 
+.botonNavegacion{
+  display: inline-block;
+  width: 3%;
+  vertical-align: top;
+  margin: 9vh 1% 0 1%;
+}
+
 .contentArchivosViejos{
   margin-top: 8.5rem;
   overflow: auto;
@@ -258,12 +266,18 @@ img[alt]:after {
 }
 
 .contentNew{
-    max-height: 30vh;
-    top:0;
+    height: 42vh;
+    top: 0;
+    padding: 0 2%;
 }
 
 .contentOld{
-    max-height: 30vh;
-    top:42vh;
+    height: 56vh;
+    top: 43vh;
+    padding: 0 2%;
+}
+
+.container-fluid{
+  height: 100vh;
 }
 
