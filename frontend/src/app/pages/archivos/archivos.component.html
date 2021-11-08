@@ -1,27 +1,35 @@
-<div class="container-fluid p-2 p-md-5 pt-md-0">
+<div class="container-fluid p-4 p-md-5 pt-md-0">
   <!-- <button class="btn btn-warning" (click)="creoBaseDatos()">
     Genera base de datos
   </button> -->
   <span *ngIf="notification">
     {{ notificationMessage }}
   </span>
+
+  <!-- CONTEXT MENU -->
+  <div class="p-3 border bg-light contextMenu" #contextMenu [ngClass]="{'visible': showContextMenu, 'invisible' : !showContextMenu }">
+    <ul class="p-0">
+      <li (click)="agregarEtiquetas(idFotoSeleccionada)" class="p-2">Agregar etiquetas</li>
+      <li (click)="borrarArchivo()" class="p-2">Eliminar foto</li>
+      <li *ngIf="showContextMenuExpanded">
+        <div>
+          Contenido de etiquetas
+        </div>
+      </li>
+    </ul>
+  </div>
+
   <span *ngIf="showLoading" class="loadingSpan"
     ><img src="/assets/img/loading.gif" alt="Cargando"
   /></span>
 
-    <div *ngIf="filesNewsTemp[0]" class="position-absolute w-100 contentNew">
+    <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">
       <div class="bg-white w-100 over header">
-        <h3 class="pt-5">
-          Fotos y videos sin etiquetar [{{ contadorFotos }} de
+        <h3 class="pt-0 pt-md-5">
+          Sin etiquetar [{{ contadorFotos }} de
           {{ filesNew.length }}]
         </h3>
-        <div class="position-relative mb-4 pb-2">
-          <hr
-            class="rellenoBarra position-absolute over m-0"
-            [attr.width]="porcentaje"
-          />
-          <hr class="fondoBarra m-0" />
-        </div>
+        <hr class="mb-3" />
       </div>
       <button class="btn btn-warning botonNavegacion" (click)="scrollLeft()"><<</button>
       <ul class="contentArchivosNuevos"
@@ -45,6 +53,7 @@
             <img
               *ngIf="filesNewsTemp[0][file].mimeType.includes('image')"
               (click)="abrirPopup(filesNewsTemp[0][file])"
+              (contextmenu)="onRightClick($event, filesNewsTemp[0][file].id, i)"
               class="img-fluid"
               [src]="urlImg + filesNewsTemp[0][file].id"
               [alt]="filesNewsTemp[0][file].name"
@@ -56,16 +65,16 @@
       <button class="btn btn-warning botonNavegacion" (click)="scrollRight()">>></button>
     </div>
 
-    <div *ngIf="filesNewsTemp[0]" class="position-absolute w-100 contentOld">
+    <div *ngIf="filesOldTemp[0]" class="w-100 contentOld">
       <div
         infiniteScroll
         [infiniteScrollDistance]="2"
         (scrolled)="onScrollOld()"
         [scrollWindow]="true"
       >
-      <div class="position-absolute bg-white w-100 over header">
-        <h3 class="pt-5">
-          Fotos y videos con etiqueta [{{ contadorFotos }} de
+      <div class="bg-white w-100 over header">
+        <h3>
+          Galería [{{ contadorFotos }} de
           {{ filesOld.length }}]
         </h3>
         <div class="position-relative mb-4 pb-2">
@@ -82,6 +91,7 @@
             ngxMasonryItem
             class="masonry-item"
             *ngFor="let file of Object.keys(filesOldTemp[0]); let i = index"
+            (click)="abrirPopup(filesOldTemp[0][file])"
           >
             <span
               class="bgVideo"
@@ -92,31 +102,13 @@
               [src]="urlImg + filesOldTemp[0][file].id"
               [alt]="filesOldTemp[0][file].name"
               [id]="i"
+              class="img-fluid"
             />
-            <div class="bg-dark text-white p-3">
-              <p class="mr-3">Name: {{ filesOldTemp[0][file].name }}</p>
-              <p>Extension: {{ filesOldTemp[0][file].mimeType  }}</p>
-              <p class="text-break">
-                id: <small>{{ filesOldTemp[0][file].id }}</small>
-              </p>
-              <button
-                class="btn btn-danger"
-                (click)="borrarArchivo(filesOldTemp[0][file].id, i)"
-              >
-                Borrar
-              </button>
-              <button
-                class="btn btn-warning"
-                (click)="abrirPopup(filesOldTemp[0][file])"
-              >
-                Abrir
-              </button>
-            </div>
           </div>
         </ngx-masonry>
       </div>
     </div>
-  </div>
+     </div>
 
   <!--
   <h3 class="border-bottom">Fotos y videos [{{filesOld.length}}]</h3>
