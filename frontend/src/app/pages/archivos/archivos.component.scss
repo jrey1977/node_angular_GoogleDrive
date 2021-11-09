@@ -66,6 +66,7 @@ iframe {
   -webkit-border-radius: 3px;
   margin-bottom: 0.5em;
   border: 1px solid black;
+  cursor: pointer;
 }
 
 @media screen and (min-width: 450px) {
@@ -211,7 +212,6 @@ img[alt]:after {
 }
 
 .header{
-  max-width: 95%;
   top: 0;
 }
 
@@ -230,20 +230,31 @@ img[alt]:after {
 .contentArchivosNuevos{
   list-style-type: none;
   padding: 0;
-  margin-top: 2.5vh;
-  height: 30vh;
-  max-width: 95%;
+  height: auto;
   overflow-y: hidden;
+  display: inline-flex;
+  margin: 0 1%;
+  max-width: 78%;
+  @media screen and (min-width: 991px) {
+    max-width: 92%;
+    display: inline-block;
+  }
   li{
-      display: table-cell;
-      width: 25%;
-      vertical-align: top;
+      vertical-align: middle;
       padding: 0 0.3rem;
       height: 100%;
       cursor: pointer;
+      @media screen and (min-width: 991px) {
+        display: table-cell;
+        width: 25%;
+      }
       img{
-        max-width: 215px;
-        max-height: 215px;
+        max-width: 100px;
+        max-height: 100px;
+        @media screen and (min-width: 991px) {
+          max-width: 215px;
+          max-height: 215px;
+        }
         &:hover{
           opacity: 0.7;
         }
@@ -251,19 +262,106 @@ img[alt]:after {
   }
 }
 
+.botonNavegacion{
+  display: inline-block;
+  width: 10%;
+  vertical-align: top;
+  margin: 4vh 0;
+  font-size: 0.6rem;
+  @media screen and (min-width: 991px) {
+    margin: 3vh 0;
+    width: 3%;
+    margin: 9vh 0;
+    font-size: 1rem;
+  }
+}
+
 .contentArchivosViejos{
-  margin-top: 8.5rem;
   overflow: auto;
   max-width: 95%;
 }
 
 .contentNew{
-    max-height: 30vh;
-    top:0;
+    height: 35vh;
+    top: 0;
+    min-height: 400px;
 }
 
 .contentOld{
-    max-height: 30vh;
-    top:42vh;
+    height: 66vh;
+    top: 32vh;
+}
+
+.container-fluid{
+  height: 100vh;
+}
+
+.contextMenu{
+    position: absolute;
+    border: none;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%), 0px 5px 5px -3px rgb(0 0 0 / 20%);
+    box-shadow: 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%), 0px 5px 5px -3px rgb(0 0 0 / 20%);
+    display: block;
+    margin-top: -10px;
+    max-width: 448px;
+    min-width: 320px;
+    outline: 1px solid transparent;
+    overflow-y: hidden;
+    padding: 0;
+    -webkit-transition: height 267ms cubic-bezier(0.4,0,0.2,1) 0ms,margin-top 267ms cubic-bezier(0.4,0,0.2,1) ,opacity 267ms cubic-bezier(0.4,0,0.2,1);
+    transition: height 267ms cubic-bezier(0.4,0,0.2,1) 0ms,margin-top 267ms cubic-bezier(0.4,0,0.2,1) ,opacity 267ms cubic-bezier(0.4,0,0.2,1);
+    will-change: height,margin-top,opacity;
+    ul{
+      list-style-type: none;
+      li{
+        margin-bottom: 5px;
+        cursor: pointer;
+        &:hover{
+          background: #e7e7e7;
+        }
+      }
+    }
+}
+
+.contextMenuExpanded{
+  position: absolute;
+  border: none;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%), 0px 5px 5px -3px rgb(0 0 0 / 20%);
+  box-shadow: 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%), 0px 5px 5px -3px rgb(0 0 0 / 20%);
+  display: block;
+  margin-top: -10px;
+  max-width: 448px;
+  min-width: 320px;
+  outline: 1px solid transparent;
+  overflow-y: hidden;
+  padding: 0;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  ul{
+    list-style-type: none;
+    li{
+      margin-bottom: 5px;
+      cursor: pointer;
+      &:hover{
+        background: #e7e7e7;
+      }
+    }
+  }
+}
+
+.invisible{
+  opacity: 0;
+  z-index: -1;
+}
+
+.visible{
+  opacity: 1;
+  z-index: 99;
 }
 
