@@ -8,6 +8,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgxMasonryModule } from 'ngx-masonry';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
+import { EtiquetasModule } from '../shared/etiquetas/etiquetas.module';
 
 @NgModule({
   declarations: [ArchivosComponent, NotFoundComponent, HomeComponent],
@@ -16,7 +17,8 @@ import { RouterModule } from '@angular/router';
     InfiniteScrollModule,
     NgxMasonryModule,
     BrowserAnimationsModule,
-    RouterModule
+    RouterModule,
+    EtiquetasModule
   ],
 })
 export class PagesModule {}
