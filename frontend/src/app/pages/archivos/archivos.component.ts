@@ -62,10 +62,11 @@ export class ArchivosComponent implements OnInit {
   public indexFotoSeleccionada!: number;
   private rightClickMenuPositionX!: string;
   private rightClickMenuPositionY!: string;
-  public showContextMenuExpanded:boolean = false;
+  public showEtiquetas:boolean = false;
 
   @ViewChild('contentArchivosNuevos') ul!:ElementRef;
   @ViewChild('contextMenu') contextMenu!:ElementRef;
+  @ViewChild('etiquetas') etiquetas!:ElementRef;
 
   constructor(
     private archivoService: ArchivosService,
@@ -131,7 +132,10 @@ export class ArchivosComponent implements OnInit {
   agregarEtiquetas(idArchivo:string){
     console.log('Agrego etiquetas al archivo con ID ',idArchivo);
     this.showContextMenu = true;
-    this.showContextMenuExpanded = true;
+    this.showEtiquetas = true;
+    Swal.fire({
+      html: this.etiquetas.nativeElement
+    });
   }
 
   onRightClick($event:any, idFoto:string, indexFoto:number){
@@ -281,7 +285,7 @@ export class ArchivosComponent implements OnInit {
       title: 'Cuidado!',
       text: '¿De verdad quieres eliminar este archivo?',
       icon: 'error',
-      confirmButtonText: 'Cool'
+      confirmButtonText: 'Si, elimínalo'
     }).then((result) => {
         if (result.isConfirmed) {
           var idArchivoEliminado = this.idFotoSeleccionada;
