@@ -8,7 +8,7 @@
 
   <!-- CONTEXT MENU -->
   <div class="p-3 border bg-light contextMenu" #contextMenu [ngClass]="{'visible': showContextMenu, 'invisible' : !showContextMenu }">
-    <ul class="p-0">
+    <ul class="p-0" #insideMenu>
       <li (click)="agregarEtiquetas(idFotoSeleccionada)" class="p-2">Agregar etiquetas</li>
       <li (click)="borrarArchivo()" class="p-2">Eliminar foto</li>
       <li *ngIf="showContextMenuExpanded">
