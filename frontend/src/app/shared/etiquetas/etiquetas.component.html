@@ -1,1 +1,17 @@
-<p>etiquetas works!</p>
+<button
+  type="button"
+  class="btn-close close pull-right"
+  (click)="bsModalRef.hide()"
+>
+  <span aria-hidden="true" class="visually-hidden">×</span>
+</button>
+<p>etiquetas works! {{ _idArchivo }}</p>
+{{ etiquetas }}
+<div class="container-fluid">
+  <h2 *ngIf="!etiquetas.length">Esta foto todavía no se ha etiquetado</h2>
+  <ul *ngIf="etiquetas.length">
+    <li *ngFor="let etiqueta of etiquetas">
+      {{ etiqueta }}
+    </li>
+  </ul>
+</div>

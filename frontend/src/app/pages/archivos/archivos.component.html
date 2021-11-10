@@ -94,6 +94,7 @@
             ></span>
             <img
               *ngIf="filesOldTemp[0][file].mimeType.includes('image')"
+              (contextmenu)="onRightClick($event, filesOldTemp[0][file].id, i)"
               [src]="urlImg + filesOldTemp[0][file].id"
               [alt]="filesOldTemp[0][file].name"
               [id]="i"
@@ -136,10 +137,6 @@
         </tbody>
       </table>
   </div> -->
-
-    <ng-container >
-      <app-etiquetas #etiquetas></app-etiquetas>
-    </ng-container>
 
 
   <button

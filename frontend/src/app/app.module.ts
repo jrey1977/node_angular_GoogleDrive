@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -10,7 +11,7 @@ import { UtilsModule } from './utils/utils.module';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [PagesModule, BrowserModule, AppRoutingModule, HttpClientModule, UtilsModule],
+  imports: [PagesModule, BrowserModule, AppRoutingModule, HttpClientModule, UtilsModule, CommonModule],
   providers: [],
   bootstrap: [AppComponent],
 })

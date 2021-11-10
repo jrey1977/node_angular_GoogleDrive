@@ -4,3 +4,13 @@
 .over{
   z-index: 2;
 }
+
+.modal-dialog {
+  max-width: 95%!important;
+  height: 95vh!important;
+}
+
+.modal-content {
+  height: 100%;
+  padding: 2rem;
+}
