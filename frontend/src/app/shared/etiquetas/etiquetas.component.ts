@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
+import { environment } from 'src/environments/environment';
 import { EtiquetasService } from './etiquetas.service';
 
 @Component({
@@ -8,10 +10,11 @@ import { EtiquetasService } from './etiquetas.service';
   styleUrls: ['./etiquetas.component.scss'],
 })
 export class EtiquetasComponent implements OnInit {
-  public _idArchivo: string = '';
-  @Input() set idArchivo(value: string) {
-    this._idArchivo = value;
-    this.obtenerEtiquetas(this._idArchivo);
+  public urlImg = environment.urlImgGoogle;
+  public _fotoSeleccionada?: Archivo;
+  @Input() set fotoSeleccionada(value: Archivo) {
+    this._fotoSeleccionada = value;
+    this.obtenerEtiquetas(this._fotoSeleccionada.id);
   }
 
   public etiquetas: string[] = [];
@@ -20,12 +23,15 @@ export class EtiquetasComponent implements OnInit {
     private etiquetaService: EtiquetasService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('Cargo componente de etiquetas');
+  }
 
   obtenerEtiquetas(idParam: string) {
+    console.log('this._fotoSeleccionada.id', idParam);
     this.etiquetaService.obtenerEtiquetas(idParam).subscribe((res: any) => {
-      console.log('Etiquetas del archivo:', res.etiquetas[0].etiquetas);
-      this.etiquetas = Array.from(res.etiquetas[0].etiquetas);
+      console.log('Etiquetas del archivo:', res.arrayLabelNames);
+      this.etiquetas = res.arrayLabelNames;
     });
   }
 }

@@ -20,7 +20,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     BrowserAnimationsModule,
     RouterModule,
     EtiquetasModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
   ],
+  exports: [CommonModule],
 })
 export class PagesModule {}

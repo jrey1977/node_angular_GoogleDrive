@@ -5,11 +5,16 @@
 >
   <span aria-hidden="true" class="visually-hidden">×</span>
 </button>
-<p>etiquetas works! {{ _idArchivo }}</p>
-{{ etiquetas }}
+<p>etiquetas works! {{ _fotoSeleccionada?.id }}</p>
 <div class="container-fluid">
+  <h1></h1>
   <h2 *ngIf="!etiquetas.length">Esta foto todavía no se ha etiquetado</h2>
-  <ul *ngIf="etiquetas.length">
+  <img
+    class="img-fluid"
+    [src]="urlImg + _fotoSeleccionada?.id"
+    [alt]="urlImg + _fotoSeleccionada?.name"
+  />
+  <ul *ngIf="etiquetas.length" class="ulEtiquetas">
     <li *ngFor="let etiqueta of etiquetas">
       {{ etiqueta }}
     </li>

@@ -1,15 +1,21 @@
 <div class="container-fluid p-4 p-md-5 pt-md-0">
-  <!-- <button class="btn btn-warning" (click)="creoBaseDatos()">
+  <button class="btn btn-warning" (click)="creoBaseDatos()">
     Genera base de datos
-  </button> -->
+  </button>
   <span *ngIf="notification">
     {{ notificationMessage }}
   </span>
 
   <!-- CONTEXT MENU -->
-  <div class="p-3 border bg-light contextMenu" #contextMenu [ngClass]="{'visible': showContextMenu, 'invisible' : !showContextMenu }">
+  <div
+    class="p-3 border bg-light contextMenu"
+    #contextMenu
+    [ngClass]="{ visible: showContextMenu, invisible: !showContextMenu }"
+  >
     <ul class="p-0" #insideMenu>
-      <li (click)="agregarEtiquetas(idFotoSeleccionada)" class="p-2">Agregar etiquetas</li>
+      <li (click)="agregarEtiquetas(fotoSeleccionada)" class="p-2">
+        Agregar etiquetas
+      </li>
       <li (click)="borrarArchivo()" class="p-2">Eliminar foto</li>
     </ul>
   </div>
@@ -18,60 +24,60 @@
     ><img src="/assets/img/loading.gif" alt="Cargando"
   /></span>
 
-    <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">
-      <div class="bg-white w-100 over header">
-        <h3 class="pt-0 pt-md-5">
-          Sin etiquetar [{{ contadorFotos }} de
-          {{ filesNew.length }}]
-        </h3>
-        <hr class="mb-3" />
-      </div>
-      <button class="btn btn-warning botonNavegacion" (click)="scrollLeft()"><<</button>
-      <ul class="contentArchivosNuevos"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        (scrolled)="onScrollNew()"
-        [scrollWindow]="false"
-        [horizontal]="true"
-        #contentArchivosNuevos>
-
-          <li
-            class="new-item"
-            *ngFor="let file of Object.keys(filesNewsTemp[0]); let i = index"
-            draggable="true"
-          >
-            <span
-              class="bgVideo"
-              *ngIf="filesNewsTemp[0][file].mimeType.includes('video')"
-              (click)="abrirPopup(filesNewsTemp[0][file])"
-            ></span>
-            <img
-              *ngIf="filesNewsTemp[0][file].mimeType.includes('image')"
-              (click)="abrirPopup(filesNewsTemp[0][file])"
-              (contextmenu)="onRightClick($event, filesNewsTemp[0][file].id, i)"
-              class="img-fluid"
-              [src]="urlImg + filesNewsTemp[0][file].id"
-              [alt]="filesNewsTemp[0][file].name"
-              [id]="i"
-            />
-          </li>
-
-      </ul>
-      <button class="btn btn-warning botonNavegacion" (click)="scrollRight()">>></button>
+  <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">
+    <div class="bg-white w-100 over header">
+      <h3 class="pt-0 pt-md-5">
+        Sin etiquetar [{{ contadorFotos }} de {{ filesNew.length }}]
+      </h3>
+      <hr class="mb-3" />
     </div>
-
-    <div *ngIf="filesOldTemp[0]" class="w-100 contentOld">
-      <div
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        (scrolled)="onScrollOld()"
-        [scrollWindow]="true"
+    <button class="btn btn-warning botonNavegacion" (click)="scrollLeft()">
+      <<
+    </button>
+    <ul
+      class="contentArchivosNuevos"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      (scrolled)="onScrollNew()"
+      [scrollWindow]="false"
+      [horizontal]="true"
+      #contentArchivosNuevos
+    >
+      <li
+        class="new-item"
+        *ngFor="let file of Object.keys(filesNewsTemp[0]); let i = index"
+        draggable="true"
       >
+        <span
+          class="bgVideo"
+          *ngIf="filesNewsTemp[0][file].mimeType.includes('video')"
+          (click)="abrirPopup(filesNewsTemp[0][file])"
+        ></span>
+        <img
+          *ngIf="filesNewsTemp[0][file].mimeType.includes('image')"
+          (click)="abrirPopup(filesNewsTemp[0][file])"
+          (contextmenu)="onRightClick($event, filesNewsTemp[0][file], i)"
+          class="img-fluid"
+          [src]="urlImg + filesNewsTemp[0][file].id"
+          [alt]="filesNewsTemp[0][file].name"
+          [id]="i"
+        />
+      </li>
+    </ul>
+    <button class="btn btn-warning botonNavegacion" (click)="scrollRight()">
+      >>
+    </button>
+  </div>
+
+  <div *ngIf="filesOldTemp[0]" class="w-100 contentOld">
+    <div
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      (scrolled)="onScrollOld()"
+      [scrollWindow]="true"
+    >
       <div class="bg-white w-100 over header">
-        <h3>
-          Galería [{{ contadorFotos }} de
-          {{ filesOld.length }}]
-        </h3>
+        <h3>Galería [{{ contadorFotos }} de {{ filesOld.length }}]</h3>
         <div class="position-relative mb-4 pb-2">
           <hr
             class="rellenoBarra position-absolute over m-0"
@@ -94,7 +100,7 @@
             ></span>
             <img
               *ngIf="filesOldTemp[0][file].mimeType.includes('image')"
-              (contextmenu)="onRightClick($event, filesOldTemp[0][file].id, i)"
+              (contextmenu)="onRightClick($event, filesOldTemp[0][file], i)"
               [src]="urlImg + filesOldTemp[0][file].id"
               [alt]="filesOldTemp[0][file].name"
               [id]="i"
@@ -104,7 +110,7 @@
         </ngx-masonry>
       </div>
     </div>
-     </div>
+  </div>
 
   <!--
   <h3 class="border-bottom">Fotos y videos [{{filesOld.length}}]</h3>
@@ -137,7 +143,6 @@
         </tbody>
       </table>
   </div> -->
-
 
   <button
     [ngClass]="'no-hidden'"

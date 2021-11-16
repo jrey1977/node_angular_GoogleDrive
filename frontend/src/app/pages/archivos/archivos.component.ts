@@ -1,4 +1,11 @@
-import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import { animate, style } from '@angular/animations';
@@ -58,17 +65,17 @@ export class ArchivosComponent implements OnInit {
   public porcentajeArchivo: number = 0;
   private popup!: Archivo;
   private anchoUl!: number;
-  public showContextMenu:boolean = false;
-  public idFotoSeleccionada!: string;
+  public showContextMenu: boolean = false;
+  public fotoSeleccionada!: Archivo;
   public indexFotoSeleccionada!: number;
   private rightClickMenuPositionX!: string;
   private rightClickMenuPositionY!: string;
-  public showEtiquetas:boolean = false;
+  public showEtiquetas: boolean = false;
   modalRef?: BsModalRef;
 
-  @ViewChild('contentArchivosNuevos') ul!:ElementRef;
-  @ViewChild('contextMenu') contextMenu!:ElementRef;
-  @ViewChild('etiquetas') etiquetas!:ElementRef;
+  @ViewChild('contentArchivosNuevos') ul!: ElementRef;
+  @ViewChild('contextMenu') contextMenu!: ElementRef;
+  @ViewChild('etiquetas') etiquetas!: ElementRef;
 
   constructor(
     private archivoService: ArchivosService,
@@ -79,13 +86,15 @@ export class ArchivosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-      this.renderer.listen('window', 'click',(e:Event)=>{
-        if(e.target !== this.contextMenu.nativeElement &&
-           e.target !== this.contextMenu.nativeElement.querySelector('div') &&
-           e.target !== this.contextMenu.nativeElement.querySelector('ul') &&
-           e.target !== this.contextMenu.nativeElement.querySelector('li')){
-            this.showContextMenu = false;
-        }
+    this.renderer.listen('window', 'click', (e: Event) => {
+      if (
+        e.target !== this.contextMenu.nativeElement &&
+        e.target !== this.contextMenu.nativeElement.querySelector('div') &&
+        e.target !== this.contextMenu.nativeElement.querySelector('ul') &&
+        e.target !== this.contextMenu.nativeElement.querySelector('li')
+      ) {
+        this.showContextMenu = false;
+      }
     });
 
     const isMobile = this.deviceService.isMobile();
@@ -132,52 +141,57 @@ export class ArchivosComponent implements OnInit {
     }
   }
 
-  agregarEtiquetas(idParam:string){
-    console.log('Agrego etiquetas al archivo con ID ',idParam);
+  agregarEtiquetas(foto: Archivo) {
+    console.log('Agrego etiquetas al archivo con ID ', foto.id);
     this.showContextMenu = true;
     this.showEtiquetas = true;
     this.modalRef = this.modalService.show(EtiquetasComponent);
-    this.modalRef.content.idArchivo = idParam;
+    this.modalRef.content.fotoSeleccionada = foto;
   }
 
-  onRightClick($event:any, idFoto:string, indexFoto:number){
+  onRightClick($event: any, archivo: Archivo, indexFoto: number) {
     $event.preventDefault();
     this.showContextMenu = false;
-    this.idFotoSeleccionada = idFoto;
+    this.fotoSeleccionada = archivo;
     this.indexFotoSeleccionada = indexFoto;
 
-    this.rightClickMenuPositionX = $event.clientX + "px";
-    this.rightClickMenuPositionY = $event.clientY + "px";
+    this.rightClickMenuPositionX = $event.clientX + 'px';
+    this.rightClickMenuPositionY = $event.clientY + 'px';
 
-
-    this.renderer.setStyle(this.contextMenu.nativeElement, "left", this.rightClickMenuPositionX);
-    this.renderer.setStyle(this.contextMenu.nativeElement, "top", this.rightClickMenuPositionY);
+    this.renderer.setStyle(
+      this.contextMenu.nativeElement,
+      'left',
+      this.rightClickMenuPositionX
+    );
+    this.renderer.setStyle(
+      this.contextMenu.nativeElement,
+      'top',
+      this.rightClickMenuPositionY
+    );
     this.showContextMenu = true;
-
-    console.log('Posiciones del cursor:', this.rightClickMenuPositionX+' '+this.rightClickMenuPositionY);
   }
 
-  scrollLeft(){
+  scrollLeft() {
     console.log('Hago scroll a la izda.');
     let style = getComputedStyle(this.ul.nativeElement);
     this.anchoUl = parseInt(style.width);
     //this.ul.nativeElement.scrollLeft -= this.anchoUl;
     this.ul.nativeElement.scrollBy({
-        left: -this.anchoUl,
-        behavior: 'smooth'
-    })
+      left: -this.anchoUl,
+      behavior: 'smooth',
+    });
     console.log('ancho', this.anchoUl);
   }
 
-  scrollRight(){
+  scrollRight() {
     console.log('Hago scroll a la dcha.');
     let style = getComputedStyle(this.ul.nativeElement);
     this.anchoUl = parseInt(style.width);
     //this.ul.nativeElement.scrollLeft += this.anchoUl
     this.ul.nativeElement.scrollBy({
-        left: +this.anchoUl,
-        behavior: 'smooth'
-    })
+      left: +this.anchoUl,
+      behavior: 'smooth',
+    });
     console.log('ancho', this.anchoUl);
   }
 
@@ -283,9 +297,9 @@ export class ArchivosComponent implements OnInit {
   }
 
   borrarArchivo() {
-      var idArchivoEliminado = this.idFotoSeleccionada;
-      var indexArchivoEliminado = this.indexFotoSeleccionada;
-      this.archivoService
+    var idArchivoEliminado = this.fotoSeleccionada.id;
+    var indexArchivoEliminado = this.indexFotoSeleccionada;
+    this.archivoService
       .borraArchivo(idArchivoEliminado)
       .subscribe((res: any) => {
         // Se ha borrado el archivo de Google Drive
