@@ -35,4 +35,3 @@ export class EtiquetasComponent implements OnInit {
     });
   }
 }
-3;
