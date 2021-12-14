@@ -34,4 +34,9 @@ export class EtiquetasComponent implements OnInit {
       this.etiquetas = res.arrayLabelNames;
     });
   }
+
+  borrarEtiqueta(etiqueta: string) {
+    console.log('Borro etiqueta con nombre:', etiqueta);
+    this.etiquetaService.borrarEtiqueta(etiqueta);
+  }
 }

@@ -8,13 +8,12 @@ const {
   borrarAchivo,
   borrarArchivoBBDD,
   getEtiquetasArchivoBBDD,
+  getYearLabels,
+  insertMasivoCategorias,
 } = require("../controllers/archivos");
 
 /* GET Archivos */
-router.get("/", getFiles);
-
-/* GET Nuevos archivos */
-router.get("/nuevos", getNewFiles);
+router.get("/", getNewFiles);
 
 /* Genera Base de datos  */
 router.get("/generaBDatos", creoBaseDatos);

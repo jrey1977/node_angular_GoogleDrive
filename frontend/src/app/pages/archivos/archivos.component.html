@@ -31,7 +31,10 @@
       </h3>
       <hr class="mb-3" />
     </div>
-    <button class="btn btn-warning botonNavegacion" (click)="scrollLeft()">
+    <button
+      class="btn btn-warning botonNavegacion d-none d-md-inline-block"
+      (click)="scrollLeft()"
+    >
       <<
     </button>
     <ul
@@ -64,7 +67,10 @@
         />
       </li>
     </ul>
-    <button class="btn btn-warning botonNavegacion" (click)="scrollRight()">
+    <button
+      class="btn btn-warning botonNavegacion d-none d-md-inline-block"
+      (click)="scrollRight()"
+    >
       >>
     </button>
   </div>
@@ -111,38 +117,6 @@
       </div>
     </div>
   </div>
-
-  <!--
-  <h3 class="border-bottom">Fotos y videos [{{filesOld.length}}]</h3>
-  <ul *ngFor="let file of filesOld">
-    <li>
-        <ng-container *ngIf="!file.durationMillis">
-            {{file.name}} - Es una imagen vieja
-        </ng-container>
-        <ng-container *ngIf="file.durationMillis">
-            {{file.name}} - Es un video viejo
-        </ng-container>
-    </li>
-  </ul>
--->
-
-  <!-- <div class="container" infiniteScroll [infiniteScrollDistance]="2" (scrolled)="onScrollNew()">
-      <h1 style="text-align: center">INFINITE SCROLL EXAMPLE</h1>
-      <table class="table">
-        <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col"><strong>TEXT</strong></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let line of linesToWrite; index as i">
-              <th scope="row">{{i}}</th>
-              <th scope="row">{{line}}</th>
-            </tr>
-        </tbody>
-      </table>
-  </div> -->
 
   <button
     [ngClass]="'no-hidden'"

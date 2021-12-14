@@ -13,4 +13,10 @@ export class EtiquetasService {
       `http://localhost:3100/archivos/etiquetas/${idArchivo}`
     );
   }
+
+  borrarEtiqueta(idEtiqueta: string) {
+    return this.http.delete<any[]>(
+      `http://localhost:3100/etiquetas/borrar/${idEtiqueta}`
+    );
+  }
 }

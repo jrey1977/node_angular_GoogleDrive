@@ -9,6 +9,7 @@ const drive = google.drive("v3");
 var pageToken = null;
 var arrayParentsIds = [];
 var arrayNuevosParents = [];
+var arrayNewFilesParents = [];
 var respuesta;
 var todasLasCarpetasArr = [];
 
@@ -46,11 +47,13 @@ graboNuevasCategorias = async (req, res = response) => {
 
     categoria.save();
   });
+
+  getNewFiles();
 };
 
 const getNewFiles = async (req, res = response) => {
   respuesta = res;
-  // Compruebo que haya algún arhivo en la ba se de datos
+  // Compruebo que haya algún arhivo en la base de datos
   var archivosBBDD = await Archivo.find();
   if (archivosBBDD.length) {
     // Primero obtengo la fecha de modificación más reciente en la base de datos
@@ -68,47 +71,66 @@ const getNewFiles = async (req, res = response) => {
 
     console.log("Archivos nuevos encontrados:", newFiles.data.files.length);
 
+    // Hay algún fichero nuevo, así que ahora toca mirar si hay alguna etiqueta/carpeta nueva
+    // para grabarla en la base de datos, ya que sinó petaría al intentar grabar los nuevos archivos
+    // y no encontrar su carpeta relacionada en el campo "categoría"
     if (newFiles.data.files.length) {
-      newFiles.data.files.forEach(function (file) {
-        var nuevoArchivo = new Archivo({
-          id: file.id,
-          name: file.name,
-          parents: file.parents,
-          size: file.size,
-          webContentLink: file.webContentLink,
-          webViewLink: file.webViewLink,
-          iconLink: file.iconLink,
-          hasThumbnail: file.hasThumbnail,
-          createdTime: file.createdTime,
-          modifiedTime: file.modifiedTime,
-          mimeType: file.mimeType || "",
-          thumbnailLink: file.thumbnailLink || "",
-          width:
-            file.imageMediaMetadata?.width ||
-            file.videoMediaMetadata?.width ||
-            0,
-          height:
-            file.imageMediaMetadata?.height ||
-            file.videoMediaMetadata?.height ||
-            0,
-          durationMillis: file.videoMediaMetadata?.durationMillis | 0,
-        });
-        nuevoArchivo.save();
-        // Compruebo si es una nueva carpeta
-        resultados = Etiqueta.find({ id: file.parents[0] });
-        // Si es una carpeta nueva meto su ID en un array
-        if (!resultados.length) {
-          arrayNuevosParents.push(file.parents[0]);
+      newFiles.data.files.forEach(async function (file) {
+        let idCategoria = file.parents[0];
+        console.log("idCategoria es ", idCategoria);
+        let etiquetaExiste = await Etiqueta.find({ id: idCategoria });
+        if (
+          etiquetaExiste.length === 0 &&
+          idCategoria !== "0B5pqU4vxIuqcWVVqYVNESXl0S3c"
+        ) {
+          console.log("hay una carpeta nueva");
+        } else {
+          console.log("no hay carpetas nuevas");
         }
+        //arrayNewFilesParents.push(file.parents[0]);
       });
+      // Recorro el array y compruebo si alguno de los ids no está en la base de datos
+
+      // newFiles.data.files.forEach(function (file) {
+      //   var nuevoArchivo = new Archivo({
+      //     id: file.id,
+      //     name: file.name,
+      //     parents: file.parents,
+      //     size: file.size,
+      //     webContentLink: file.webContentLink,
+      //     webViewLink: file.webViewLink,
+      //     iconLink: file.iconLink,
+      //     hasThumbnail: file.hasThumbnail,
+      //     createdTime: file.createdTime,
+      //     modifiedTime: file.modifiedTime,
+      //     mimeType: file.mimeType || "",
+      //     thumbnailLink: file.thumbnailLink || "",
+      //     width:
+      //       file.imageMediaMetadata?.width ||
+      //       file.videoMediaMetadata?.width ||
+      //       0,
+      //     height:
+      //       file.imageMediaMetadata?.height ||
+      //       file.videoMediaMetadata?.height ||
+      //       0,
+      //     durationMillis: file.videoMediaMetadata?.durationMillis | 0,
+      //   });
+      //   nuevoArchivo.save();
+      //   // Compruebo si es una nueva carpeta
+      //   resultados = Etiqueta.find({ id: file.parents[0] });
+      //   // Si es una carpeta nueva meto su ID en un array
+      //   if (!resultados.length) {
+      //     arrayNuevosParents.push(file.parents[0]);
+      //   }
+      // });
 
       // Si hay alguna id de carpeta nueva en el array...
-      if (arrayNuevosParents.length) {
-        // Grabo las nuevas caropetas/etiquetas en la base de datos
-        graboNuevasCategorias();
-      }
+      // if (arrayNuevosParents.length) {
+      //   // Grabo las nuevas caropetas/etiquetas en la base de datos
+      //   graboNuevasCategorias();
+      // }
 
-      getFiles();
+      // getFiles();
     } else {
       console.log("No hay nada nuevo, listo los archivos");
       getFiles();
@@ -117,6 +139,32 @@ const getNewFiles = async (req, res = response) => {
     console.log("No hay nada, listo la nada");
     getFiles();
   }
+};
+
+const getYearLabels = async (req, res = response) => {
+  // Obtengo todas las fotos e itero por ellas
+  const archivos = await Archivo.find({});
+
+  archivos.forEach(async (file) => {
+    var year = "'" + file.createdTime.split("-")[0] + "'";
+    var year2 = "2021";
+    console.log("year es", year);
+    console.log("year2 es", year2);
+    console.log("type of year es", typeof year);
+    var etiquetasYear = await Etiqueta.find({ name: year });
+    console.log("etiquetasYear.length es ", etiquetasYear.length);
+    console.log("etiquetasYear_:", etiquetasYear);
+    if (etiquetasYear.length > 0) {
+      console.log("Esta etiqueta ya estaba, me voy de aquí");
+    } else {
+      var etiqueta = new Etiqueta({
+        name: year,
+        categoria: "no",
+      });
+      console.log("Guardo etiqueta");
+      etiqueta.save();
+    }
+  });
 };
 
 const getFiles = async (req, res = response) => {
@@ -214,14 +262,12 @@ graboCategorias = async (req, res = response) => {
 
   todasLasCarpetas.data.files.forEach(function (carpeta) {
     // Si la carpeta pertenece al array de parents la grabo en la base de datos
-    if (arrayParentsIds.includes(carpeta.id)) {
-      var etiqueta = new Etiqueta({
-        id: carpeta.id,
-        name: carpeta.name,
-        categoria: "si",
-      });
-      etiqueta.save();
-    }
+    var etiqueta = new Etiqueta({
+      id: carpeta.id,
+      name: carpeta.name,
+      categoria: "si",
+    });
+    etiqueta.save();
   });
 
   pageToken = todasLasCarpetas.data.nextPageToken;
@@ -241,8 +287,10 @@ const insertMasivoCategorias = async (req, res) => {
     // ARRAY DE CARPETAS QUE CONTIENEN CARPETAS
     arrayIds = [
       "0B5pqU4vxIuqcdmw5dTJLdGkwY00", // AMIGOS
+      "0B5pqU4vxIuqcWVVqYVNESXl0S3c", // FOTOS MÓVIL
       "0B5pqU4vxIuqcNEJvY0dIN0M1NHc", // FAMILIA REY
       "0B5pqU4vxIuqcUG10V2FwbWtnY1U", // FAMILIA REY -> FOTOS FAMILIA
+      "0B5pqU4vxIuqcMzFKX2hObFJTUVk", // FAMILIA REY -> FOTOS JAVI
       "0B5pqU4vxIuqcRENaTHFiNEg1dHM", // FAMILIA REY -> FOTOS FAMILIA -> FOTOS PA
       "0B5pqU4vxIuqcNW11VktFanA4U3M", // FAMILIA REY -> FOTOS FAMILIA -> FOTOS PA -> WEB ANTIGUA
     ];
@@ -265,6 +313,16 @@ const insertMasivoCategorias = async (req, res) => {
       orderBy: "createdTime desc",
     });
 
+    await Etiqueta.deleteMany({});
+
+    // Si hay más de 998 carpetas, algo pasa. Para!
+    if (response2.data.files.length > 998) {
+      console.log("Algo va mal...");
+      return false;
+    }
+
+    console.log("Total categorías: ", response2.data.files.length);
+
     response2.data.files.forEach(function (file) {
       const categoria = new Etiqueta({
         id: file.id,
@@ -280,19 +338,17 @@ const insertMasivoCategorias = async (req, res) => {
     if (pageToken !== undefined) {
       console.log("Sigo insertando categorias...");
       insertMasivoCategorias();
-    } else {
-      console.log("Categorías insertadas");
-      //insertMasivoArchivos(true);
     }
   } catch (error) {
     console.log("Ha habido un errror:", error);
   }
 };
 
+let archivosGrabados = 1;
 const insertMasivoArchivos = async (primeraVez = false) => {
   // Si es la primera llamada a la función, borro todo antes
   if (primeraVez) {
-    const deleteFotos = await Archivo.deleteMany({});
+    const deleteFiles = await Archivo.deleteMany({});
     insertMasivoArchivos();
   } else {
     try {
@@ -304,17 +360,13 @@ const insertMasivoArchivos = async (primeraVez = false) => {
         orderBy: "createdTime desc",
       });
 
-      console.log("type of es", typeof response.data.files);
-
       response.data.files.forEach(async function (file) {
         if (file?.parents) {
           // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
           var archivoBueno = await Etiqueta.find({ id: file.parents[0] });
-          console.log("archivoBueno.length", archivoBueno.length);
           if (archivoBueno.length) {
-            console.log("archivoBueno es", archivoBueno);
+            console.log("Grabo archivo " + archivosGrabados);
             var _idEtiqueta = archivoBueno[0]._id;
-            console.log("_idEtiqueta es", _idEtiqueta);
 
             var archivo = new Archivo({
               id: file.id,
@@ -343,6 +395,7 @@ const insertMasivoArchivos = async (primeraVez = false) => {
             });
 
             archivo.save();
+            archivosGrabados++;
           }
         }
       });
@@ -354,9 +407,6 @@ const insertMasivoArchivos = async (primeraVez = false) => {
         insertMasivoArchivos();
       } else {
         console.log("Ya he grabado los archivos");
-        // Elimino duplicidades del array de parents
-        // arrayParentsIds = [...new Set(arrayParentsIds)];
-        // graboCategorias();
       }
     } catch (error) {
       console.log("Ha habido un error:", error);
@@ -366,8 +416,8 @@ const insertMasivoArchivos = async (primeraVez = false) => {
 
 const creoBaseDatos = async (_req, _res) => {
   console.log("Voy a generar base de datos desde controller de backend");
-  // await insertMasivoArchivos(true);
-  //insertMasivoCategorias();
+  await insertMasivoCategorias();
+  await insertMasivoArchivos(true);
   console.log("Base de datos generada");
 };
 
@@ -462,4 +512,6 @@ module.exports = {
   borrarAchivo,
   borrarArchivoBBDD,
   getEtiquetasArchivoBBDD,
+  getYearLabels,
+  insertMasivoCategorias,
 };

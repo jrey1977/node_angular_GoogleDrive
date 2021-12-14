@@ -1,35 +1,35 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ArchivosService {
   constructor(private http: HttpClient) {}
+  urlBack = environment.urlBack;
 
   /* getFiles() {
     console.log('Obtengo archivos');
     return this.http.get<any[]>('http://localhost:3100/archivos');
   } */
 
-  getNewFiles() {
-    return this.http.get<any[]>('http://localhost:3100/archivos/nuevos');
+  getFiles() {
+    return this.http.get<any[]>(this.urlBack + 'archivos');
   }
 
   borraArchivo(idArchivo: string) {
-    return this.http.get<any[]>(
-      `http://localhost:3100/archivos/borrar/${idArchivo}`
-    );
+    return this.http.get<any[]>(`${this.urlBack}archivos/borrar/${idArchivo}`);
   }
 
   borraArchivoBaseDatos(idArchivo: string) {
     return this.http.get<any[]>(
-      `http://localhost:3100/archivos/borrar/ArchivoBBDD/${idArchivo}`
+      `${this.urlBack}archivos/borrar/ArchivoBBDD/${idArchivo}`
     );
   }
 
   creoBaseDatos() {
     console.log('Creo Base de datos');
-    return this.http.get<any[]>('http://localhost:3100/archivos/generaBDatos');
+    return this.http.get<any[]>(this.urlBack + 'archivos/generaBDatos');
   }
 }

@@ -15,6 +15,7 @@ import { ArchivosService } from './services/archivos.service';
 import { Archivo } from './models/archivos.interface';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { EtiquetasComponent } from 'src/app/shared/etiquetas/etiquetas.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-archivos',
@@ -86,6 +87,7 @@ export class ArchivosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Menú contextual al pinchar con el botón derecho en cualquier lugar de la pantalla
     this.renderer.listen('window', 'click', (e: Event) => {
       if (
         e.target !== this.contextMenu.nativeElement &&
@@ -261,7 +263,7 @@ export class ArchivosComponent implements OnInit {
   // Compruebo si hay archivos nuevos en la unidad de Google Drive
   // y si es así los grabo en la base de datos
   getNewFiles() {
-    this.archivoService.getNewFiles().subscribe((res: any) => {
+    this.archivoService.getFiles().subscribe((res: any) => {
       console.log('Recibo esto:', res);
       this.filesTemp = Array.from(res.totalFiles);
       this.filesNew = this.filesTemp.filter(
@@ -297,46 +299,61 @@ export class ArchivosComponent implements OnInit {
   }
 
   borrarArchivo() {
-    var idArchivoEliminado = this.fotoSeleccionada.id;
-    var indexArchivoEliminado = this.indexFotoSeleccionada;
-    this.archivoService
-      .borraArchivo(idArchivoEliminado)
-      .subscribe((res: any) => {
-        // Se ha borrado el archivo de Google Drive
-        if (res.respuesta.status === 204) {
-          this.notification = true;
-          this.notificationMessage =
-            'Se ha borrado el archivo de la unidad de Google Drive';
-          // Ahora lo borro de la base datos
-          try {
-            this.archivoService
-              .borraArchivoBaseDatos(idArchivoEliminado)
-              .subscribe((res: any) => {
-                // Ahora borro el archivo de la página
-                if (res.respuesta === 'ok') {
-                  this.notificationMessage +=
-                    'Se ha borrado el archivo de la Base de datos';
-                  console.log('Ahora quito el fichero de la página');
-                  this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
-                  this.notification = false;
-                } else {
-                  console.log(
-                    'Algo ha pasado que no llegó ok: ',
-                    res.respuesta
-                  );
-                }
-              });
-          } catch (error) {
-            this.notification = true;
-            this.notificationMessage =
-              'No se ha podido eliminar el archivo de la base de datos por:' +
-              error;
-          }
-        } else {
-          this.notificationMessage =
-            'No se ha podido borrar el archivo de la unidad de Google Drive';
-        }
-      });
+    Swal.fire({
+      title: 'Estás seguro?',
+      text: 'Si lo borras no podrás recuperar el archivo!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, bórralo!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        var idArchivoEliminado = this.fotoSeleccionada.id;
+        var indexArchivoEliminado = this.indexFotoSeleccionada;
+
+        this.archivoService
+          .borraArchivo(idArchivoEliminado)
+          .subscribe((res: any) => {
+            // Se ha borrado el archivo de Google Drive
+            if (res.respuesta.status === 204) {
+              this.notification = true;
+              this.notificationMessage =
+                'Se ha borrado el archivo de la unidad de Google Drive';
+              // Ahora lo borro de la base datos
+              try {
+                Swal.fire({
+                  title: 'Eliminando archivo...',
+                  showConfirmButton: false,
+                });
+                this.archivoService
+                  .borraArchivoBaseDatos(idArchivoEliminado)
+                  .subscribe((res: any) => {
+                    // Ahora borro el archivo de la página
+                    if (res.respuesta === 'ok') {
+                      console.log('Archivo eliminado');
+                      this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
+                      Swal.close();
+                    } else {
+                      console.log(
+                        'Algo ha pasado que no llegó ok: ',
+                        res.respuesta
+                      );
+                    }
+                  });
+              } catch (error) {
+                this.notification = true;
+                this.notificationMessage =
+                  'No se ha podido eliminar el archivo de la base de datos por:' +
+                  error;
+              }
+            } else {
+              this.notificationMessage =
+                'No se ha podido borrar el archivo de la unidad de Google Drive';
+            }
+          });
+      }
+    });
   }
 
   abrirPopup(pArchivo: Archivo) {

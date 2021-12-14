@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  urlImgGoogle: 'https://drive.google.com/uc?export=view&id='
+  urlImgGoogle: 'https://drive.google.com/uc?export=view&id=',
+  urlBack: 'http://localhost:3100/',
 };
 
 /*

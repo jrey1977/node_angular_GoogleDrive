@@ -10,21 +10,14 @@
     <div class="col-8 card">
       <h2 *ngIf="!etiquetas.length">Esta foto todavía no se ha etiquetado</h2>
       <ng-container *ngIf="etiquetas.length">
-        <div class="form-group flex-column col-md-6 d-flex mb-4">
-          <label class="form-control-label pl-2">Nombre</label>
-          <input
-            type="text"
-            id="lname"
-            name="lname"
-            placeholder="Enter your last name"
-            value="{{ _fotoSeleccionada?.name }}"
-          />
-        </div>
         <div class="form-group flex-column d-flex">
           <label class="form-control-label pl-2">Etiquetas:</label>
           <ul *ngIf="etiquetas.length" class="ulEtiquetas">
             <li *ngFor="let etiqueta of etiquetas">
               {{ etiqueta }}
+              <button class="btn" (onClick)="borrarEtiqueta(etiqueta)">
+                X
+              </button>
             </li>
           </ul>
         </div>
