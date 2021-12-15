@@ -106,6 +106,7 @@ export class ArchivosComponent implements OnInit {
       this.margenLateral = 20;
     }
 
+    // OPCIONES DE GRID MASONRY
     this.myOptions = {
       gutter: this.margenLateral,
       resize: true,
@@ -307,7 +308,7 @@ export class ArchivosComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, bórralo!',
-    }).then((result) => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         var idArchivoEliminado = this.fotoSeleccionada.id;
         var indexArchivoEliminado = this.indexFotoSeleccionada;

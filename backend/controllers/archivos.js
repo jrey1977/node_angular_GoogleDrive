@@ -78,12 +78,29 @@ const getNewFiles = async (req, res = response) => {
       newFiles.data.files.forEach(async function (file) {
         let idCategoria = file.parents[0];
         console.log("idCategoria es ", idCategoria);
-        let etiquetaExiste = await Etiqueta.find({ id: idCategoria });
-        if (
-          etiquetaExiste.length === 0 &&
-          idCategoria !== "0B5pqU4vxIuqcWVVqYVNESXl0S3c"
-        ) {
-          console.log("hay una carpeta nueva");
+        let etiquetaExisteBBDD = await Etiqueta.find({ id: idCategoria });
+
+        try {
+          var nombreCategoria = await drive.files.list({
+              q: `(mimeType contains 'application/vnd.google-apps.folder') and id = '0B5pqU4vxIuqcWVVqYVNESXl0S3c'`,
+              fields: 'name',
+              pageSize:1
+          });
+          console.log("hay una carpeta nueva:", nombreCategoria);
+        } catch (error) {
+          console.log('Error del catch:', error.response);
+        }
+        
+       
+
+        // Si no existe esa categoría en la base de datos, la grabo
+        if ( etiquetaExisteBBDD.length === 0 ) {
+         /*  var nombreCategoria = await drive.files.list({
+              q: `(mimeType contains 'application/vnd.google-apps.folder') and id = '${idCategoria}'`,
+              fields: 'name',
+              pageSize:1
+          }); */
+          console.log("hay una carpeta nueva:", nombreCategoria);
         } else {
           console.log("no hay carpetas nuevas");
         }
