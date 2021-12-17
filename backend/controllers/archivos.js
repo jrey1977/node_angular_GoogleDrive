@@ -51,6 +51,73 @@ graboNuevasCategorias = async (req, res = response) => {
   getNewFiles();
 };
 
+const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
+
+  try {
+    // Grabo las categorías nuevas
+    arrayCategorias.forEach(async function (idCategoria) {
+       var categoria = await drive.files.get({
+          fileId: '0B5pqU4vxIuqcWVVqYVNESXl0S3c'
+       });
+       let etiquetaExisteBBDD = await Etiqueta.find({ id: idCategoria });
+       if( etiquetaExisteBBDD.length < 1 ){
+          var etiqueta = new Etiqueta({
+            id: idCategoria,
+            name: categoria.data.name,
+            categoria: "si",
+          });
+          etiqueta.save();
+          console.log('Etiqueta/categoria grabada');
+       }
+    });
+    // Grabo los archivos nuevos
+    newFiles.data.files.forEach(async function (file) {
+      if (file?.parents) {
+        // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
+        var nuevoArchivoBueno = await Etiqueta.find({ id: file.parents[0] });
+        if (nuevoArchivoBueno.length) {
+          var _idEtiqueta = nuevoArchivoBueno[0]._id;
+
+          var nuevoArchivo = new Archivo({
+              id: file.id,
+              name: file.name,
+              parents: file.parents,
+              size: file.size,
+              webContentLink: file.webContentLink,
+              webViewLink: file.webViewLink,
+              iconLink: file.iconLink,
+              hasThumbnail: file.hasThumbnail,
+              createdTime: file.createdTime,
+              modifiedTime: file.modifiedTime,
+              categoria: _idEtiqueta,
+              etiquetas: [],
+              mimeType: file.mimeType,
+              thumbnailLink: file.thumbnailLink || "",
+              width:
+                file.imageMediaMetadata?.width ||
+                file.videoMediaMetadata?.width ||
+                0,
+              height:
+                file.imageMediaMetadata?.height ||
+                file.videoMediaMetadata?.height ||
+                0,
+              durationMillis: file.videoMediaMetadata?.durationMillis | 0,
+          });
+
+          nuevoArchivo.save();
+        }
+      }
+    });
+
+    // Listo los archivos
+    getFiles();
+
+  } catch (error) {
+      console.log('Ha ocurrido un error:', error);
+  }
+  
+}
+
 const getNewFiles = async (req, res = response) => {
   respuesta = res;
   // Compruebo que haya algún arhivo en la base de datos
@@ -75,82 +142,20 @@ const getNewFiles = async (req, res = response) => {
     // para grabarla en la base de datos, ya que sinó petaría al intentar grabar los nuevos archivos
     // y no encontrar su carpeta relacionada en el campo "categoría"
     if (newFiles.data.files.length) {
-      newFiles.data.files.forEach(async function (file) {
-        let idCategoria = file.parents[0];
-        console.log("idCategoria es ", idCategoria);
-        let etiquetaExisteBBDD = await Etiqueta.find({ id: idCategoria });
+        newFiles.data.files.forEach( (file) => {
+            let idCategoria = file.parents[0];
+            console.log("idCategoria es ", idCategoria);
+            arrayNewFilesParents.push(idCategoria);
+        });
 
-        try {
-          var nombreCategoria = await drive.files.list({
-              q: `(mimeType contains 'application/vnd.google-apps.folder') and id = '0B5pqU4vxIuqcWVVqYVNESXl0S3c'`,
-              fields: 'name',
-              pageSize:1
-          });
-          console.log("hay una carpeta nueva:", nombreCategoria);
-        } catch (error) {
-          console.log('Error del catch:', error.response);
-        }
+        const dataArr = new Set(arrayNewFilesParents);
+
+        let arrayNewFilesParentsGood = [...dataArr];
+        graboNuevasCategoriasTest(arrayNewFilesParentsGood, newFiles);
         
-       
-
-        // Si no existe esa categoría en la base de datos, la grabo
-        if ( etiquetaExisteBBDD.length === 0 ) {
-         /*  var nombreCategoria = await drive.files.list({
-              q: `(mimeType contains 'application/vnd.google-apps.folder') and id = '${idCategoria}'`,
-              fields: 'name',
-              pageSize:1
-          }); */
-          console.log("hay una carpeta nueva:", nombreCategoria);
-        } else {
-          console.log("no hay carpetas nuevas");
-        }
-        //arrayNewFilesParents.push(file.parents[0]);
-      });
-      // Recorro el array y compruebo si alguno de los ids no está en la base de datos
-
-      // newFiles.data.files.forEach(function (file) {
-      //   var nuevoArchivo = new Archivo({
-      //     id: file.id,
-      //     name: file.name,
-      //     parents: file.parents,
-      //     size: file.size,
-      //     webContentLink: file.webContentLink,
-      //     webViewLink: file.webViewLink,
-      //     iconLink: file.iconLink,
-      //     hasThumbnail: file.hasThumbnail,
-      //     createdTime: file.createdTime,
-      //     modifiedTime: file.modifiedTime,
-      //     mimeType: file.mimeType || "",
-      //     thumbnailLink: file.thumbnailLink || "",
-      //     width:
-      //       file.imageMediaMetadata?.width ||
-      //       file.videoMediaMetadata?.width ||
-      //       0,
-      //     height:
-      //       file.imageMediaMetadata?.height ||
-      //       file.videoMediaMetadata?.height ||
-      //       0,
-      //     durationMillis: file.videoMediaMetadata?.durationMillis | 0,
-      //   });
-      //   nuevoArchivo.save();
-      //   // Compruebo si es una nueva carpeta
-      //   resultados = Etiqueta.find({ id: file.parents[0] });
-      //   // Si es una carpeta nueva meto su ID en un array
-      //   if (!resultados.length) {
-      //     arrayNuevosParents.push(file.parents[0]);
-      //   }
-      // });
-
-      // Si hay alguna id de carpeta nueva en el array...
-      // if (arrayNuevosParents.length) {
-      //   // Grabo las nuevas caropetas/etiquetas en la base de datos
-      //   graboNuevasCategorias();
-      // }
-
-      // getFiles();
     } else {
-      console.log("No hay nada nuevo, listo los archivos");
-      getFiles();
+        console.log("No hay nada nuevo, listo los archivos");
+        getFiles();
     }
   } else {
     console.log("No hay nada, listo la nada");
