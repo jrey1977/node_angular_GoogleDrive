@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 const EtiquetaSchema = Schema({
   id: {
     type: String,
-    required: true,
+    required: false,
   },
   name: {
     type: String,

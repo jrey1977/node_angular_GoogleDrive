@@ -55,9 +55,9 @@ const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
 
   try {
     // Grabo las categorías nuevas
-    arrayCategorias.forEach(async function (idCategoria) {
+    await arrayCategorias.forEach(async function (idCategoria) {
        var categoria = await drive.files.get({
-          fileId: '0B5pqU4vxIuqcWVVqYVNESXl0S3c'
+          fileId: idCategoria
        });
        let etiquetaExisteBBDD = await Etiqueta.find({ id: idCategoria });
        if( etiquetaExisteBBDD.length < 1 ){
@@ -67,46 +67,49 @@ const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
             categoria: "si",
           });
           etiqueta.save();
-          console.log('Etiqueta/categoria grabada');
+          console.log('Etiqueta/categoria grabadacon id', idCategoria);
        }
     });
     // Grabo los archivos nuevos
-    newFiles.data.files.forEach(async function (file) {
-      if (file?.parents) {
-        // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
-        var nuevoArchivoBueno = await Etiqueta.find({ id: file.parents[0] });
-        if (nuevoArchivoBueno.length) {
-          var _idEtiqueta = nuevoArchivoBueno[0]._id;
+    await newFiles.data.files.forEach(async function (file) {
+        if (file?.parents[0]) {
+          // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
+          var nuevoArchivoBueno = await Etiqueta.find({ id: file.parents[0] });
+          if (nuevoArchivoBueno.length) {
+            var _idEtiqueta = nuevoArchivoBueno[0]._id;
 
-          var nuevoArchivo = new Archivo({
-              id: file.id,
-              name: file.name,
-              parents: file.parents,
-              size: file.size,
-              webContentLink: file.webContentLink,
-              webViewLink: file.webViewLink,
-              iconLink: file.iconLink,
-              hasThumbnail: file.hasThumbnail,
-              createdTime: file.createdTime,
-              modifiedTime: file.modifiedTime,
-              categoria: _idEtiqueta,
-              etiquetas: [],
-              mimeType: file.mimeType,
-              thumbnailLink: file.thumbnailLink || "",
-              width:
-                file.imageMediaMetadata?.width ||
-                file.videoMediaMetadata?.width ||
-                0,
-              height:
-                file.imageMediaMetadata?.height ||
-                file.videoMediaMetadata?.height ||
-                0,
-              durationMillis: file.videoMediaMetadata?.durationMillis | 0,
-          });
+            var nuevoArchivo = new Archivo({
+                id: file.id,
+                name: file.name,
+                parents: file.parents[0],
+                size: file.size,
+                webContentLink: file.webContentLink,
+                webViewLink: file.webViewLink,
+                iconLink: file.iconLink,
+                hasThumbnail: file.hasThumbnail,
+                createdTime: file.createdTime,
+                modifiedTime: file.modifiedTime,
+                categoria: _idEtiqueta,
+                etiquetas: [],
+                mimeType: file.mimeType,
+                thumbnailLink: file.thumbnailLink || "",
+                width:
+                  file.imageMediaMetadata?.width ||
+                  file.videoMediaMetadata?.width ||
+                  0,
+                height:
+                  file.imageMediaMetadata?.height ||
+                  file.videoMediaMetadata?.height ||
+                  0,
+                durationMillis: file.videoMediaMetadata?.durationMillis | 0,
+            });
 
-          nuevoArchivo.save();
+            nuevoArchivo.save();
+            console.log('Archivo grabado, la id del parent es:', file.parents);
+          }
+        }else{
+          console.log('No graba el archivo porque parents es ',file?.parents );
         }
-      }
     });
 
     // Listo los archivos
@@ -164,29 +167,39 @@ const getNewFiles = async (req, res = response) => {
 };
 
 const getYearLabels = async (req, res = response) => {
-  // Obtengo todas las fotos e itero por ellas
-  const archivos = await Archivo.find({});
+    // Obtengo todos los archivos e itero por ellos
+    const archivos = await Archivo.find({});
+    let arrayYears = [];
 
-  archivos.forEach(async (file) => {
-    var year = "'" + file.createdTime.split("-")[0] + "'";
-    var year2 = "2021";
-    console.log("year es", year);
-    console.log("year2 es", year2);
-    console.log("type of year es", typeof year);
-    var etiquetasYear = await Etiqueta.find({ name: year });
-    console.log("etiquetasYear.length es ", etiquetasYear.length);
-    console.log("etiquetasYear_:", etiquetasYear);
-    if (etiquetasYear.length > 0) {
-      console.log("Esta etiqueta ya estaba, me voy de aquí");
-    } else {
-      var etiqueta = new Etiqueta({
-        name: year,
-        categoria: "no",
-      });
-      console.log("Guardo etiqueta");
-      etiqueta.save();
-    }
-  });
+    archivos.forEach(async (file) => {
+        var year = file.createdTime.split("-")[0];
+        arrayYears.push(year);
+    });
+
+    console.log('Tengo un array de ', arrayYears.length);
+
+    let dataArr = new Set(arrayYears);
+    let arrayYearsGood = [...dataArr];
+    console.log('Nuevo array: ',arrayYearsGood );
+    arrayYearsGood.forEach(async (year) => {
+        console.log('Busco etiqueta con name: ',year);
+        var etiquetasYear = await Etiqueta.find({ name: year });
+        console.log("etiquetasYear.length es ", etiquetasYear.length);
+        if (etiquetasYear.length > 0) {
+          console.log("Esta etiqueta ya estaba:", etiquetasYear);
+        } else {
+            try {
+                var etiqueta = new Etiqueta({
+                  name: year,
+                  categoria: "no",
+                });
+                etiqueta.save();
+                console.log("Guardo etiqueta");
+            } catch (error) {
+                console.log('No se ha podido grabar la etiqueta:', error);
+            }
+        }
+    })
 };
 
 const getFiles = async (req, res = response) => {
