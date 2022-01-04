@@ -1,7 +1,10 @@
 <div class="container-fluid p-4 p-md-5 pt-md-0">
+  <!--BOTÓN PARA RESETEAR BASE DE DATOS -->
   <!-- <button class="btn btn-warning" (click)="creoBaseDatos()">
     Genera base de datos
   </button> -->
+
+  <!-- NOTIFICACIONES -->
   <span *ngIf="notification">
     {{ notificationMessage }}
   </span>
@@ -20,10 +23,12 @@
     </ul>
   </div>
 
+  <!-- LOADING BAR -->
   <span *ngIf="showLoading" class="loadingSpan"
     ><img src="/assets/img/loading.gif" alt="Cargando"
   /></span>
 
+  <!-- ARCHIVOS SIN ETIQUETAR (INFINTITE SCROLL HORZONTAL) -->
   <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">
     <div class="bg-white w-100 over header">
       <h3 class="pt-0 pt-md-5">
@@ -75,6 +80,7 @@
     </button>
   </div>
 
+  <!-- ARCHIVOS YA ETIQUETADOS (INFINITE SCROLL VERTICAL) -->
   <div *ngIf="filesOldTemp[0]" class="w-100 contentOld">
     <div
       infiniteScroll
@@ -118,6 +124,7 @@
     </div>
   </div>
 
+  <!-- BOTÓN PARA IR HACIA ARRIBA -->
   <button
     [ngClass]="'no-hidden'"
     *ngIf="showGoUpButton"

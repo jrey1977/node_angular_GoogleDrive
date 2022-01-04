@@ -14,20 +14,6 @@ var respuesta;
 var todasLasCarpetasArr = [];
 
 graboNuevasCategorias = async (req, res = response) => {
-  /* arrayNuevosParents.forEach(function (idCategoria) {
-        var nombreCategoria = await drive.files.list({
-            q: `(mimeType contains 'application/vnd.google-apps.folder') and id = '${idCategoria}'`,
-            fields: 'name',
-            pageSize:1
-        });
-        var categoria = new Etiqueta ({
-            "id":idCategoria,
-            "name":nombreCategoria,
-            "categoria": "no"
-        });
-        
-        categoria.save(); 
-    }) */
 
   const foldersRes = await drive.files.list({
     q: "mimeType = 'application/vnd.google-apps.folder'",
@@ -55,65 +41,73 @@ const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
 
   try {
     // Grabo las categorías nuevas
-    await arrayCategorias.forEach(async function (idCategoria) {
-       var categoria = await drive.files.get({
-          fileId: idCategoria
-       });
-       let etiquetaExisteBBDD = await Etiqueta.find({ id: idCategoria });
-       if( etiquetaExisteBBDD.length < 1 ){
-          var etiqueta = new Etiqueta({
-            id: idCategoria,
-            name: categoria.data.name,
-            categoria: "si",
-          });
-          etiqueta.save();
-          console.log('Etiqueta/categoria grabadacon id', idCategoria);
-       }
-    });
-    // Grabo los archivos nuevos
-    await newFiles.data.files.forEach(async function (file) {
-        if (file?.parents[0]) {
-          // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
-          var nuevoArchivoBueno = await Etiqueta.find({ id: file.parents[0] });
-          if (nuevoArchivoBueno.length) {
-            var _idEtiqueta = nuevoArchivoBueno[0]._id;
-
-            var nuevoArchivo = new Archivo({
-                id: file.id,
-                name: file.name,
-                parents: file.parents[0],
-                size: file.size,
-                webContentLink: file.webContentLink,
-                webViewLink: file.webViewLink,
-                iconLink: file.iconLink,
-                hasThumbnail: file.hasThumbnail,
-                createdTime: file.createdTime,
-                modifiedTime: file.modifiedTime,
-                categoria: _idEtiqueta,
-                etiquetas: [],
-                mimeType: file.mimeType,
-                thumbnailLink: file.thumbnailLink || "",
-                width:
-                  file.imageMediaMetadata?.width ||
-                  file.videoMediaMetadata?.width ||
-                  0,
-                height:
-                  file.imageMediaMetadata?.height ||
-                  file.videoMediaMetadata?.height ||
-                  0,
-                durationMillis: file.videoMediaMetadata?.durationMillis | 0,
+    const myAsyncLoopFunction = async (arrayCategorias) => {
+        for (const idCategoria of arrayCategorias) {
+            var categoria = await drive.files.get({
+                fileId: idCategoria
             });
-
-            nuevoArchivo.save();
-            console.log('Archivo grabado, la id del parent es:', file.parents);
-          }
-        }else{
-          console.log('No graba el archivo porque parents es ',file?.parents );
+            let etiquetaExisteBBDD = await Etiqueta.find({ id: idCategoria });
+            if( etiquetaExisteBBDD.length < 1 ){
+              var etiqueta = new Etiqueta({
+                id: idCategoria,
+                name: categoria.data.name,
+                categoria: "si",
+              });
+              var etiquetaGuardada = await etiqueta.save();
+              console.log('Etiqueta/categoria grabada con id', idCategoria);
+            }
         }
-    });
 
-    // Listo los archivos
-    getFiles();
+        for (const file of newFiles.data.files) {
+            if (file?.parents[0]) {
+                // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
+                var nuevoArchivoBueno = await Etiqueta.find({ id: file.parents[0] });
+                if (nuevoArchivoBueno.length) {
+                    var _idEtiqueta = nuevoArchivoBueno[0]._id;
+
+                    var nuevoArchivo = new Archivo({
+                        id: file.id,
+                        name: file.name,
+                        parents: file.parents[0],
+                        size: file.size,
+                        webContentLink: file.webContentLink,
+                        webViewLink: file.webViewLink,
+                        iconLink: file.iconLink,
+                        hasThumbnail: file.hasThumbnail,
+                        createdTime: file.createdTime,
+                        modifiedTime: file.modifiedTime,
+                        categoria: _idEtiqueta,
+                        etiquetas: [],
+                        mimeType: file.mimeType,
+                        thumbnailLink: file.thumbnailLink || "",
+                        width:
+                          file.imageMediaMetadata?.width ||
+                          file.videoMediaMetadata?.width ||
+                          0,
+                        height:
+                          file.imageMediaMetadata?.height ||
+                          file.videoMediaMetadata?.height ||
+                          0,
+                        durationMillis: file.videoMediaMetadata?.durationMillis | 0,
+                    });
+
+                    nuevoArchivo.save();
+                    console.log(`Archivo ${file.name} grabado, la id del parent es: ${file.parents[0]}`);
+              }else{
+                    console.log(`Archivo ${file.name} no se ha grabado porque no hay categoría con id ${file.parents[0]}`);
+              }
+            }else{
+                    console.log('No graba el archivo porque parents es ',file?.parents );
+            }
+        }
+
+        // Listo los archivos
+        getFiles();
+
+    }
+
+    myAsyncLoopFunction(arrayCategorias);
+    
 
   } catch (error) {
       console.log('Ha ocurrido un error:', error);
@@ -147,7 +141,7 @@ const getNewFiles = async (req, res = response) => {
     if (newFiles.data.files.length) {
         newFiles.data.files.forEach( (file) => {
             let idCategoria = file.parents[0];
-            console.log("idCategoria es ", idCategoria);
+            console.log(`idCategoria de nuevo archivo ${file.name} es ${idCategoria}`);
             arrayNewFilesParents.push(idCategoria);
         });
 
@@ -155,7 +149,6 @@ const getNewFiles = async (req, res = response) => {
 
         let arrayNewFilesParentsGood = [...dataArr];
         graboNuevasCategoriasTest(arrayNewFilesParentsGood, newFiles);
-        
     } else {
         console.log("No hay nada nuevo, listo los archivos");
         getFiles();
@@ -232,38 +225,15 @@ const getFiles = async (req, res = response) => {
 const getEtiquetasArchivoBBDD = async (req, res = response) => {
   respuesta = res;
   let idArchivo = req.params.idArchivo;
-  console.log("idArchivo a buscar desde el back", idArchivo);
   try {
     arrayLabelNames = [];
-    // let labels = await Archivo.find({ id: idArchivo }).then((archivo) => {
-    //   console.log("archivo desde el then", archivo[0].etiquetas);
-    //   archivo[0].etiquetas.forEach(async (idEtiqueta) => {
-    //     etiquetaObtenida = await Etiqueta.find({ id: idEtiqueta }).select(
-    //       "name"
-    //     );
-    //     arrayLabelNames.push(etiquetaObtenida);
-    //   });
-    //   respuesta.json({
-    //     ok: true,
-    //     arrayLabelNames,
-    //   });
-    //   //await Etiqueta.find({ id: archivo })
-    // });
-
-    // Método 2
     let archivo = await Archivo.find({ id: idArchivo });
     let etiquetasArchivo = archivo[0].etiquetas;
     var topIndex = etiquetasArchivo.length;
-    console.log("topIndex es ", topIndex);
     etiquetasArchivo.forEach(async (etiqueta, index) => {
-      console.log("etiqueta es ", etiqueta);
       nombreEtiqueta = await Etiqueta.find({ _id: etiqueta }).select("name");
-
-      console.log("nombreEtiqueta es", nombreEtiqueta);
       await arrayLabelNames.push(nombreEtiqueta[0].name);
-      console.log("Array de etiquetas obtenidas:", arrayLabelNames);
       if (arrayLabelNames.length == topIndex) {
-        console.log("Devuelvo etiquetas:", arrayLabelNames);
         arrayLabelNames = Object.values(arrayLabelNames);
         respuesta.json({
           ok: true,
@@ -271,16 +241,6 @@ const getEtiquetasArchivoBBDD = async (req, res = response) => {
         });
       }
     });
-
-    // Ordeno los resultados por fecha de creación descendiente
-    // etiquetasArchivoArr.sort(function (a, b) {
-    //   var keyB = new Date(a.modifiedTime),
-    //     keyA = new Date(b.modifiedTime);
-    //   // Compare the 2 dates
-    //   if (keyA < keyB) return -1;
-    //   if (keyA > keyB) return 1;
-    //   return 0;
-    // });
   } catch (error) {
     console.log("Ha habido un error:", error);
   }
