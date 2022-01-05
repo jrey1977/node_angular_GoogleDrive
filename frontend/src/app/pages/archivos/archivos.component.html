@@ -70,6 +70,22 @@
           [alt]="filesNewsTemp[0][file].name"
           [id]="i"
         />
+        <div>
+          <img
+            *ngIf="filesNewsTemp[0][file].mimeType.includes('image')"
+            class="logoImg"
+            src="https://drive-thirdparty.googleusercontent.com/16/type/image/jpeg"
+            alt="Imagen"
+          />
+          <img
+            class="logoVideo"
+            *ngIf="filesNewsTemp[0][file].mimeType.includes('video')"
+            src="https://drive-thirdparty.googleusercontent.com/16/type/video/mp4"
+            alt="Vídeo"
+          />
+          <span class="name">{{ filesNewsTemp[0][file].name }}</span>
+          <span class="options d-md-none">X</span>
+        </div>
       </li>
     </ul>
     <button

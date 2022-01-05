@@ -37,6 +37,19 @@ graboNuevasCategorias = async (req, res = response) => {
   getNewFiles();
 };
 
+checkYear = async (createdTime) => {
+    let year = createdTime.split('-')[0];
+    yearExisteBBDD = await Etiqueta.find({name: year});
+    if( yearExisteBBDD.length < 1 ){
+      var etiqueta = new Etiqueta({
+          name: year,
+          categoria: "no",
+      });
+      var etiquetaGuardada = await etiqueta.save();
+      console.log('Nueva etiqueta de año grabada:', year);
+    }
+}
+
 const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
 
   try {
@@ -90,6 +103,8 @@ const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
                           0,
                         durationMillis: file.videoMediaMetadata?.durationMillis | 0,
                     });
+
+                    await checkYear(file.createdTime);
 
                     nuevoArchivo.save();
                     console.log(`Archivo ${file.name} grabado, la id del parent es: ${file.parents[0]}`);
