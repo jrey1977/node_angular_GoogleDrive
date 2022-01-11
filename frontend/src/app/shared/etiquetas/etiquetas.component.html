@@ -7,6 +7,9 @@
 </button>
 <div class="container-fluid px-1 py-5 mx-auto">
   <div class="row d-flex justify-content-center px-5">
+    <div class="col-12">
+      {{ _fotoSeleccionada?.name }}
+    </div>
     <div class="col-8 card">
       <h2 *ngIf="!etiquetas.length">Esta foto todavía no se ha etiquetado</h2>
       <ng-container *ngIf="etiquetas.length">

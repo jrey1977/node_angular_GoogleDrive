@@ -19,14 +19,23 @@
       </video>
     </ng-container>
     <!--FOTO-->
-    <ng-container
-    *ngIf="popup.mimeType?.includes('image')"
-    >
+    <ng-container *ngIf="popup.mimeType?.includes('image')">
       <img
         [src]="urlImg + popup.id"
         [alt]="popup.name"
         class="mt-4 img-fluid"
       />
+    </ng-container>
+    <!--ETIQUETAS-->
+    <ng-container *ngIf="etiquetas.length">
+      <div class="form-group flex-column d-flex">
+        <label class="form-control-label pl-2">Etiquetas:</label>
+        <ul *ngIf="etiquetas.length" class="ulEtiquetas">
+          <li *ngFor="let etiqueta of etiquetas">
+            {{ etiqueta }}
+          </li>
+        </ul>
+      </div>
     </ng-container>
   </div>
 </div>

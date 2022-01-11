@@ -266,7 +266,7 @@ img[alt]:after {
       }
     }
     div {
-      padding: 0.4rem;
+      padding: 0.7rem;
       border-right: 1px solid #dadce0;
       border-bottom: 1px solid #dadce0;
       border-left: 1px solid #dadce0;
@@ -279,6 +279,10 @@ img[alt]:after {
       .logoVideo {
         width: 16px;
         height: 16px;
+        border-radius: 0px;
+        margin-left: 0.4rem;
+        position: relative;
+        top: -0.05rem;
       }
       span.name {
         white-space: nowrap;
@@ -293,7 +297,7 @@ img[alt]:after {
         @media screen and (min-width: 991px) {
           width: 209px;
           box-sizing: border-box;
-          padding-left: 10px;
+          padding-left: 16px;
         }
       }
     }
