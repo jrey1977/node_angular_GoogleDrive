@@ -16,6 +16,7 @@ import { Archivo } from './models/archivos.interface';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { EtiquetasComponent } from 'src/app/shared/etiquetas/etiquetas.component';
 import Swal from 'sweetalert2';
+import { PopupComponent } from 'src/app/utils/popup/popup.component';
 
 @Component({
   selector: 'app-archivos',

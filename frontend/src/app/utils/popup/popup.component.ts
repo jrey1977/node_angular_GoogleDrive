@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Component, OnInit } from '@angular/core';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { EtiquetasService } from 'src/app/shared/etiquetas/etiquetas.service';
 import { PopupService } from 'src/app/utils/popup/services/popup.service';
@@ -14,22 +13,17 @@ export class PopupComponent implements OnInit {
   popup!: Archivo;
   statePopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
-  public _fotoSeleccionada?: Archivo;
-  @Input() set fotoSeleccionada(value: Archivo) {
-    this._fotoSeleccionada = value;
-    this.obtenerEtiquetas(this._fotoSeleccionada.id);
-  }
-
   public etiquetas: string[] = [];
+
   constructor(
     public popupService: PopupService,
-    public bsModalRef: BsModalRef,
     private etiquetaService: EtiquetasService
   ) {}
 
   ngOnInit(): void {
     this.popupService.getPopup$().subscribe((popupRecibido) => {
       this.popup = popupRecibido;
+      this.obtenerEtiquetas(this.popup.id);
     });
     this.popupService.getPopupState$().subscribe((estado) => {
       this.statePopup = estado;
@@ -37,7 +31,6 @@ export class PopupComponent implements OnInit {
   }
 
   obtenerEtiquetas(idParam: string) {
-    console.log('this._fotoSeleccionada.id', idParam);
     this.etiquetaService.obtenerEtiquetas(idParam).subscribe((res: any) => {
       console.log('Etiquetas del archivo:', res.arrayLabelNames);
       this.etiquetas = res.arrayLabelNames;
