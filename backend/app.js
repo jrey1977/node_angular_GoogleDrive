@@ -80,6 +80,7 @@ app.use(function (err, req, res, next) {
 
 // Mando credenciales de Google
 async function signInGoogle() {
+  console.log("Genero token nuevo");
   // Obtain user credentials to use for the request
   const auth = await authenticate({
     keyfilePath: path.join(__dirname, "./oauth2.keys.json"),
@@ -90,4 +91,5 @@ async function signInGoogle() {
 
 signInGoogle();
 
+module.exports.signInGoogle = signInGoogle;
 module.exports = app;

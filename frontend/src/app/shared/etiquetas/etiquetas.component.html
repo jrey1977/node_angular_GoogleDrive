@@ -11,6 +11,15 @@
       {{ _fotoSeleccionada?.name }}
     </div>
     <div class="col-8 card">
+      <div class="form-group">
+        <input type="text" placeholder="Nombre de la etiqueta" #etiqueta />
+        <button
+          class="btn btn-success"
+          (click)="agregaEtiqueta(etiqueta.value)"
+        >
+          Agregar
+        </button>
+      </div>
       <h2 *ngIf="!etiquetas.length">Esta foto todavía no se ha etiquetado</h2>
       <ng-container *ngIf="etiquetas.length">
         <div class="form-group flex-column d-flex">

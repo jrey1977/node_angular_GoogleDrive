@@ -39,4 +39,8 @@ export class EtiquetasComponent implements OnInit {
     console.log('Borro etiqueta con nombre:', etiqueta);
     this.etiquetaService.borrarEtiqueta(etiqueta);
   }
+
+  agregaEtiqueta(valor: string) {
+    console.log('El valor es ', valor);
+  }
 }
