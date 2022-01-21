@@ -20,6 +20,12 @@ const borrarEtiqueta = async (req, res) => {
   }
 };
 
+const grabarEtiqueta = async (req, res) => {
+    let etiqueta = req.body;
+    console.log('recibo esto:', etiqueta);
+}
+
 module.exports = {
   borrarEtiqueta,
+  grabarEtiqueta
 };

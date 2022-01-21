@@ -40,7 +40,15 @@ export class EtiquetasComponent implements OnInit {
     this.etiquetaService.borrarEtiqueta(etiqueta);
   }
 
-  agregaEtiqueta(valor: string) {
-    console.log('El valor es ', valor);
+  agregaEtiqueta(nombreEtiqueta: string) {
+    console.log('El valor es ', nombreEtiqueta);
+    if (this._fotoSeleccionada?.id) {
+      let idArchivo = this._fotoSeleccionada.id;
+      this.etiquetaService
+        .agregarEtiqueta(nombreEtiqueta, idArchivo)
+        .subscribe((res: any) => {
+          console.log('res:', res);
+        });
+    }
   }
 }

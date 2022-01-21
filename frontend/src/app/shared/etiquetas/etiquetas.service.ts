@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 import { Etiqueta } from './models/etiquetas.interface';
+
+const base_url = environment.urlBack;
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +24,11 @@ export class EtiquetasService {
     );
   }
 
-  agregarEtiqueta(nombreEtiqueta: string) {
-    return this.http.post<any[]>('http://localhost:3100/etiquetas/grabar/', {
+  agregarEtiqueta(nombreEtiqueta: string, idArchivo: string) {
+    const url = `${base_url}etiquetas/grabar`;
+    return this.http.post(url, {
       nombre: nombreEtiqueta,
+      idArchivo: idArchivo,
     });
   }
 }

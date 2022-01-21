@@ -80,13 +80,19 @@ app.use(function (err, req, res, next) {
 
 // Mando credenciales de Google
 async function signInGoogle() {
-  console.log("Genero token nuevo");
+  console.log('Entro a signInGoogle');
   // Obtain user credentials to use for the request
-  const auth = await authenticate({
-    keyfilePath: path.join(__dirname, "./oauth2.keys.json"),
-    scopes: "https://www.googleapis.com/auth/drive",
-  });
-  google.options({ auth });
+  try{
+    const auth = await authenticate({
+      keyfilePath: path.join(__dirname, "./oauth2.keys.json"),
+      scopes: "https://www.googleapis.com/auth/drive",
+    });
+    google.options({ auth });
+    console.log("Genero token nuevo");
+  }catch(error){
+    console.log("No he podido generar token nuevo:", error);
+  }
+  
 }
 
 signInGoogle();
