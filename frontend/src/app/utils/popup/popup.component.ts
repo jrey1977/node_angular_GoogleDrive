@@ -13,7 +13,7 @@ export class PopupComponent implements OnInit {
   popup!: Archivo;
   statePopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
-  public etiquetas: string[] = [];
+  public etiquetas: any[] = [];
 
   constructor(
     public popupService: PopupService,
@@ -31,6 +31,7 @@ export class PopupComponent implements OnInit {
   }
 
   obtenerEtiquetas(idParam: string) {
+    this.etiquetas = [];
     this.etiquetaService.obtenerEtiquetas(idParam).subscribe((res: any) => {
       console.log('Etiquetas del archivo:', res.arrayLabelNames);
       this.etiquetas = res.arrayLabelNames;

@@ -14,7 +14,6 @@ var respuesta;
 var todasLasCarpetasArr = [];
 
 graboNuevasCategorias = async (req, res = response) => {
-
   const foldersRes = await drive.files.list({
     q: "mimeType = 'application/vnd.google-apps.folder'",
   });
@@ -38,97 +37,96 @@ graboNuevasCategorias = async (req, res = response) => {
 };
 
 checkYear = async (createdTime) => {
-    let year = createdTime.split('-')[0];
-    yearExisteBBDD = await Etiqueta.find({name: year});
-    if( yearExisteBBDD.length < 1 ){
-      var etiqueta = new Etiqueta({
-          name: year,
-          categoria: "no",
-      });
-      var etiquetaGuardada = await etiqueta.save();
-      console.log('Nueva etiqueta de año grabada:', year);
-    }
-}
+  let year = createdTime.split("-")[0];
+  yearExisteBBDD = await Etiqueta.find({ name: year });
+  if (yearExisteBBDD.length < 1) {
+    var etiqueta = new Etiqueta({
+      name: year,
+      categoria: "no",
+    });
+    var etiquetaGuardada = await etiqueta.save();
+    console.log("Nueva etiqueta de año grabada:", year);
+  }
+};
 
 const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
-
   try {
     // Grabo las categorías nuevas
     const myAsyncLoopFunction = async (arrayCategorias) => {
-        for (const idCategoria of arrayCategorias) {
-            var categoria = await drive.files.get({
-                fileId: idCategoria
+      for (const idCategoria of arrayCategorias) {
+        var categoria = await drive.files.get({
+          fileId: idCategoria,
+        });
+        let etiquetaExisteBBDD = await Etiqueta.find({ id: idCategoria });
+        if (etiquetaExisteBBDD.length < 1) {
+          var etiqueta = new Etiqueta({
+            id: idCategoria,
+            name: categoria.data.name,
+            categoria: "si",
+          });
+          var etiquetaGuardada = await etiqueta.save();
+          console.log("Etiqueta/categoria grabada con id", idCategoria);
+        }
+      }
+
+      for (const file of newFiles.data.files) {
+        if (file?.parents[0]) {
+          // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
+          var nuevoArchivoBueno = await Etiqueta.find({ id: file.parents[0] });
+          if (nuevoArchivoBueno.length) {
+            var _idEtiqueta = nuevoArchivoBueno[0]._id;
+
+            var nuevoArchivo = new Archivo({
+              id: file.id,
+              name: file.name,
+              parents: file.parents[0],
+              size: file.size,
+              webContentLink: file.webContentLink,
+              webViewLink: file.webViewLink,
+              iconLink: file.iconLink,
+              hasThumbnail: file.hasThumbnail,
+              createdTime: file.createdTime,
+              modifiedTime: file.modifiedTime,
+              categoria: _idEtiqueta,
+              etiquetas: [],
+              mimeType: file.mimeType,
+              thumbnailLink: file.thumbnailLink || "",
+              width:
+                file.imageMediaMetadata?.width ||
+                file.videoMediaMetadata?.width ||
+                0,
+              height:
+                file.imageMediaMetadata?.height ||
+                file.videoMediaMetadata?.height ||
+                0,
+              durationMillis: file.videoMediaMetadata?.durationMillis | 0,
             });
-            let etiquetaExisteBBDD = await Etiqueta.find({ id: idCategoria });
-            if( etiquetaExisteBBDD.length < 1 ){
-              var etiqueta = new Etiqueta({
-                id: idCategoria,
-                name: categoria.data.name,
-                categoria: "si",
-              });
-              var etiquetaGuardada = await etiqueta.save();
-              console.log('Etiqueta/categoria grabada con id', idCategoria);
-            }
+
+            await checkYear(file.createdTime);
+
+            nuevoArchivo.save();
+            console.log(
+              `Archivo ${file.name} grabado, la id del parent es: ${file.parents[0]}`
+            );
+          } else {
+            console.log(
+              `Archivo ${file.name} no se ha grabado porque no hay categoría con id ${file.parents[0]}`
+            );
+          }
+        } else {
+          console.log("No graba el archivo porque parents es ", file?.parents);
         }
+      }
 
-        for (const file of newFiles.data.files) {
-            if (file?.parents[0]) {
-                // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
-                var nuevoArchivoBueno = await Etiqueta.find({ id: file.parents[0] });
-                if (nuevoArchivoBueno.length) {
-                    var _idEtiqueta = nuevoArchivoBueno[0]._id;
-
-                    var nuevoArchivo = new Archivo({
-                        id: file.id,
-                        name: file.name,
-                        parents: file.parents[0],
-                        size: file.size,
-                        webContentLink: file.webContentLink,
-                        webViewLink: file.webViewLink,
-                        iconLink: file.iconLink,
-                        hasThumbnail: file.hasThumbnail,
-                        createdTime: file.createdTime,
-                        modifiedTime: file.modifiedTime,
-                        categoria: _idEtiqueta,
-                        etiquetas: [],
-                        mimeType: file.mimeType,
-                        thumbnailLink: file.thumbnailLink || "",
-                        width:
-                          file.imageMediaMetadata?.width ||
-                          file.videoMediaMetadata?.width ||
-                          0,
-                        height:
-                          file.imageMediaMetadata?.height ||
-                          file.videoMediaMetadata?.height ||
-                          0,
-                        durationMillis: file.videoMediaMetadata?.durationMillis | 0,
-                    });
-
-                    await checkYear(file.createdTime);
-
-                    nuevoArchivo.save();
-                    console.log(`Archivo ${file.name} grabado, la id del parent es: ${file.parents[0]}`);
-              }else{
-                    console.log(`Archivo ${file.name} no se ha grabado porque no hay categoría con id ${file.parents[0]}`);
-              }
-            }else{
-                    console.log('No graba el archivo porque parents es ',file?.parents );
-            }
-        }
-
-        // Listo los archivos
-        getFiles();
-
-    }
+      // Listo los archivos
+      getFiles();
+    };
 
     myAsyncLoopFunction(arrayCategorias);
-    
-
   } catch (error) {
-      console.log('Ha ocurrido un error:', error);
+    console.log("Ha ocurrido un error:", error);
   }
-  
-}
+};
 
 const getNewFiles = async (req, res = response) => {
   respuesta = res;
@@ -154,19 +152,21 @@ const getNewFiles = async (req, res = response) => {
     // para grabarla en la base de datos, ya que sinó petaría al intentar grabar los nuevos archivos
     // y no encontrar su carpeta relacionada en el campo "categoría"
     if (newFiles.data.files.length) {
-        newFiles.data.files.forEach( (file) => {
-            let idCategoria = file.parents[0];
-            console.log(`idCategoria de nuevo archivo ${file.name} es ${idCategoria}`);
-            arrayNewFilesParents.push(idCategoria);
-        });
+      newFiles.data.files.forEach((file) => {
+        let idCategoria = file.parents[0];
+        console.log(
+          `idCategoria de nuevo archivo ${file.name} es ${idCategoria}`
+        );
+        arrayNewFilesParents.push(idCategoria);
+      });
 
-        const dataArr = new Set(arrayNewFilesParents);
+      const dataArr = new Set(arrayNewFilesParents);
 
-        let arrayNewFilesParentsGood = [...dataArr];
-        graboNuevasCategoriasTest(arrayNewFilesParentsGood, newFiles);
+      let arrayNewFilesParentsGood = [...dataArr];
+      graboNuevasCategoriasTest(arrayNewFilesParentsGood, newFiles);
     } else {
-        console.log("No hay nada nuevo, listo los archivos");
-        getFiles();
+      console.log("No hay nada nuevo, listo los archivos");
+      getFiles();
     }
   } else {
     console.log("No hay nada, listo la nada");
@@ -175,39 +175,39 @@ const getNewFiles = async (req, res = response) => {
 };
 
 const getYearLabels = async (req, res = response) => {
-    // Obtengo todos los archivos e itero por ellos
-    const archivos = await Archivo.find({});
-    let arrayYears = [];
+  // Obtengo todos los archivos e itero por ellos
+  const archivos = await Archivo.find({});
+  let arrayYears = [];
 
-    archivos.forEach(async (file) => {
-        var year = file.createdTime.split("-")[0];
-        arrayYears.push(year);
-    });
+  archivos.forEach(async (file) => {
+    var year = file.createdTime.split("-")[0];
+    arrayYears.push(year);
+  });
 
-    console.log('Tengo un array de ', arrayYears.length);
+  console.log("Tengo un array de ", arrayYears.length);
 
-    let dataArr = new Set(arrayYears);
-    let arrayYearsGood = [...dataArr];
-    console.log('Nuevo array: ',arrayYearsGood );
-    arrayYearsGood.forEach(async (year) => {
-        console.log('Busco etiqueta con name: ',year);
-        var etiquetasYear = await Etiqueta.find({ name: year });
-        console.log("etiquetasYear.length es ", etiquetasYear.length);
-        if (etiquetasYear.length > 0) {
-          console.log("Esta etiqueta ya estaba:", etiquetasYear);
-        } else {
-            try {
-                var etiqueta = new Etiqueta({
-                  name: year,
-                  categoria: "no",
-                });
-                etiqueta.save();
-                console.log("Guardo etiqueta");
-            } catch (error) {
-                console.log('No se ha podido grabar la etiqueta:', error);
-            }
-        }
-    })
+  let dataArr = new Set(arrayYears);
+  let arrayYearsGood = [...dataArr];
+  console.log("Nuevo array: ", arrayYearsGood);
+  arrayYearsGood.forEach(async (year) => {
+    console.log("Busco etiqueta con name: ", year);
+    var etiquetasYear = await Etiqueta.find({ name: year });
+    console.log("etiquetasYear.length es ", etiquetasYear.length);
+    if (etiquetasYear.length > 0) {
+      console.log("Esta etiqueta ya estaba:", etiquetasYear);
+    } else {
+      try {
+        var etiqueta = new Etiqueta({
+          name: year,
+          categoria: "no",
+        });
+        etiqueta.save();
+        console.log("Guardo etiqueta");
+      } catch (error) {
+        console.log("No se ha podido grabar la etiqueta:", error);
+      }
+    }
+  });
 };
 
 const getFiles = async (req, res = response) => {
@@ -247,7 +247,7 @@ const getEtiquetasArchivoBBDD = async (req, res = response) => {
     var topIndex = etiquetasArchivo.length;
     etiquetasArchivo.forEach(async (etiqueta, index) => {
       nombreEtiqueta = await Etiqueta.find({ _id: etiqueta }).select("name");
-      await arrayLabelNames.push(nombreEtiqueta[0].name);
+      await arrayLabelNames.push(nombreEtiqueta[0]);
       if (arrayLabelNames.length == topIndex) {
         arrayLabelNames = Object.values(arrayLabelNames);
         respuesta.json({

@@ -25,9 +25,9 @@
         <div class="form-group flex-column d-flex">
           <label class="form-control-label pl-2">Etiquetas:</label>
           <ul *ngIf="etiquetas.length" class="ulEtiquetas">
-            <li *ngFor="let etiqueta of etiquetas">
-              {{ etiqueta }}
-              <button class="btn" (onClick)="borrarEtiqueta(etiqueta)">
+            <li *ngFor="let etiqueta of etiquetas; let i = index">
+              {{ etiqueta.name }}
+              <button class="btn test" (click)="borrarEtiqueta(etiqueta._id)">
                 X
               </button>
             </li>

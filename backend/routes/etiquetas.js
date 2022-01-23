@@ -4,7 +4,7 @@ var router = express.Router();
 const { borrarEtiqueta, grabarEtiqueta } = require("../controllers/etiquetas");
 
 /* Borra la etiqueta recibida por parámetro */
-router.get("/borrar/:idEtiqueta", borrarEtiqueta);
+router.delete("/borrar/:idEtiqueta", borrarEtiqueta);
 
 router.post("/grabar/", grabarEtiqueta);
 
