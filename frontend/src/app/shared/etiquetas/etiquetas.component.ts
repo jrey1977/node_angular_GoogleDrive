@@ -13,9 +13,11 @@ export class EtiquetasComponent implements OnInit {
   public urlImg = environment.urlImgGoogle;
   public _fotoSeleccionada?: Archivo;
   public categoriaArchivo: string = '';
+  public idArchivo: string = '';
   @Input() set fotoSeleccionada(value: Archivo) {
     this._fotoSeleccionada = value;
     this.obtenerEtiquetas(this._fotoSeleccionada.id);
+    this.idArchivo = this._fotoSeleccionada.id;
   }
 
   public etiquetas: any[] = [];
@@ -38,9 +40,15 @@ export class EtiquetasComponent implements OnInit {
 
   borrarEtiqueta(idEtiqueta: string) {
     console.log('Borro etiqueta con id:', idEtiqueta);
-    this.etiquetaService.borrarEtiqueta(idEtiqueta).subscribe((res: any) => {
-      console.log('Resultado:', res);
-    });
+    this.etiquetaService
+      .borrarEtiqueta(idEtiqueta, this.idArchivo)
+      .subscribe((res: any) => {
+        if (res.respuesta === 'OK') {
+          alert('Etiqueta borrada');
+        } else {
+          alert('Error: ' + res.respuesta);
+        }
+      });
   }
 
   agregaEtiqueta(nombreEtiqueta: string) {

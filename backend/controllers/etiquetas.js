@@ -1,4 +1,5 @@
 const { response } = require("express");
+const mongoose = require('mongoose');  
 
 const Etiqueta = require("../models/etiqueta");
 const Archivo = require("../models/archivo");
@@ -7,26 +8,27 @@ var respuesta;
 
 const borrarEtiqueta = async (req, res) => {
   //var resDelete = res;
-  let idEtiqueta = req.params.idEtiqueta;
-  console.log("Borro etiqueta ", idEtiqueta);
+  let idEtiqueta = req.body.idEtiqueta;
+  let idArchivo = req.body.idArchivo;
+  console.log(`Borro etiqueta ${idEtiqueta} de archivo con id ${idArchivo}`);
   try {
     // Primero compruebo si esta etiqueta la usan más archivos
-    let usosEtiqueta = await Archivo.find({ etiquetas: idEtiqueta });
+    let usosEtiqueta = await Archivo.find({ etiquetas: mongoose.Types.ObjectId(idEtiqueta) });
     console.log("Cantidad de archivos con esa etiqueta: ", usosEtiqueta.length);
 
     // Si la usan más archivos, solo la quito del archivo correspondiente
-    if (usosEtiqueta > 1) {
+    if (usosEtiqueta.length > 1) {
       await Archivo.updateMany(
-        { etiquetas: idEtiqueta },
-        { $pull: { etiquetas: idEtiqueta } }
+        { id: idArchivo },
+        { $pull: { etiquetas: mongoose.Types.ObjectId(idEtiqueta) } }
       );
     } else {
       // Si no la usan más archivos, borro la etiqueta de la tabla
       // etiquetas y luego se la quito al archivo
       await Etiqueta.deleteOne({ _id: idEtiqueta });
       await Archivo.updateMany(
-        { etiquetas: idEtiqueta },
-        { $pull: { etiquetas: idEtiqueta } }
+        { id: idArchivo },
+        { $pull: { etiquetas: mongoose.Types.ObjectId(idEtiqueta) } }
       );
     }
     // Devuelvo la respuesta OK
@@ -34,6 +36,7 @@ const borrarEtiqueta = async (req, res) => {
       respuesta: "OK",
     });
   } catch (error) {
+    console.log('Error:', error);
     res.json({
       respuesta: error,
     });
