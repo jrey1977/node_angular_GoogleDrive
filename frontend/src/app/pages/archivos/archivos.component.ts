@@ -17,6 +17,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { EtiquetasComponent } from 'src/app/shared/etiquetas/etiquetas.component';
 import Swal from 'sweetalert2';
 import { PopupComponent } from 'src/app/utils/popup/popup.component';
+import { NotificationService } from 'src/app/utils/notification/notification.service';
 
 @Component({
   selector: 'app-archivos',
@@ -84,7 +85,8 @@ export class ArchivosComponent implements OnInit {
     private deviceService: DeviceDetectorService,
     private popupService: PopupService,
     private renderer: Renderer2,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -360,5 +362,9 @@ export class ArchivosComponent implements OnInit {
 
   abrirPopup(pArchivo: Archivo) {
     this.popupService.abrirPopup(pArchivo);
+  }
+
+  mostrarNotificacion(mensaje: string) {
+    this.notificationService.setMessage(mensaje);
   }
 }

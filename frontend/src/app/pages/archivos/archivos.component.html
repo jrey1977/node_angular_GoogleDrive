@@ -16,10 +16,8 @@
     [ngClass]="{ visible: showContextMenu, invisible: !showContextMenu }"
   >
     <ul class="p-0" #insideMenu>
-      <li (click)="agregarEtiquetas(fotoSeleccionada)" class="p-2">
-        Agregar etiquetas
-      </li>
-      <li (click)="borrarArchivo()" class="p-2">Eliminar foto</li>
+      <li (click)="agregarEtiquetas(fotoSeleccionada)" class="p-2">Editar</li>
+      <li (click)="borrarArchivo()" class="p-2">Eliminar</li>
     </ul>
   </div>
 
@@ -27,6 +25,8 @@
   <span *ngIf="showLoading" class="loadingSpan"
     ><img src="/assets/img/loading.gif" alt="Cargando"
   /></span>
+
+  <button (click)="mostrarNotificacion('Holiiii')">Abrir notificación</button>
 
   <!-- ARCHIVOS SIN ETIQUETAR (INFINTITE SCROLL HORZONTAL) -->
   <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">
