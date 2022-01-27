@@ -1,3 +1,4 @@
+import { animate, style } from '@angular/animations';
 import {
   Component,
   ElementRef,
@@ -6,18 +7,16 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { NgxMasonryOptions } from 'ngx-masonry';
-import { animate, style } from '@angular/animations';
-import { DeviceDetectorService } from 'ngx-device-detector';
-import { PopupService } from 'src/app/utils/popup/services/popup.service';
-import { ArchivosService } from './services/archivos.service';
-import { Archivo } from './models/archivos.interface';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { NgxMasonryOptions } from 'ngx-masonry';
 import { EtiquetasComponent } from 'src/app/shared/etiquetas/etiquetas.component';
-import Swal from 'sweetalert2';
-import { PopupComponent } from 'src/app/utils/popup/popup.component';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
+import { PopupService } from 'src/app/utils/popup/services/popup.service';
+import { environment } from 'src/environments/environment';
+import Swal from 'sweetalert2';
+import { Archivo } from './models/archivos.interface';
+import { ArchivosService } from './services/archivos.service';
 
 @Component({
   selector: 'app-archivos',
@@ -59,7 +58,6 @@ export class ArchivosComponent implements OnInit {
 
   public urlImg = environment.urlImgGoogle;
   public notification: Boolean = false;
-  public notificationMessage: String = '';
   private margenLateral: number = 0;
   public myOptions: NgxMasonryOptions = {};
   public showLoading: boolean = true;
@@ -322,8 +320,9 @@ export class ArchivosComponent implements OnInit {
             // Se ha borrado el archivo de Google Drive
             if (res.respuesta.status === 204) {
               this.notification = true;
-              this.notificationMessage =
-                'Se ha borrado el archivo de la unidad de Google Drive';
+              this.notificationService.setMessage(
+                'Se ha borrado el archivo de la unidad de Google Drive'
+              );
               // Ahora lo borro de la base datos
               try {
                 Swal.fire({
@@ -335,25 +334,26 @@ export class ArchivosComponent implements OnInit {
                   .subscribe((res: any) => {
                     // Ahora borro el archivo de la página
                     if (res.respuesta === 'ok') {
-                      console.log('Archivo eliminado');
+                      this.notificationService.setMessage('Archivo eliminado');
                       this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
                       Swal.close();
                     } else {
-                      console.log(
-                        'Algo ha pasado que no llegó ok: ',
-                        res.respuesta
+                      this.notificationService.setMessage(
+                        'Algo ha pasado que no llegó ok: ' + res.respuesta
                       );
                     }
                   });
               } catch (error) {
                 this.notification = true;
-                this.notificationMessage =
-                  'No se ha podido eliminar el archivo de la base de datos por:' +
-                  error;
+                this.notificationService.setMessage(
+                  'No se ha podido eliminar el archivo de la base de datos por: ' +
+                    error
+                );
               }
             } else {
-              this.notificationMessage =
-                'No se ha podido borrar el archivo de la unidad de Google Drive';
+              this.notificationService.setMessage(
+                'No se ha podido borrar el archivo de la unidad de Google Drive'
+              );
             }
           });
       }
