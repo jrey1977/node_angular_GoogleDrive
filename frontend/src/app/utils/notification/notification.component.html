@@ -1,1 +1,6 @@
-<p>{{ this.message }}</p>
+<div
+  class="{{ this.notification.type }} alert-{{ this.notification.type }}"
+  role="alert"
+>
+  {{ this.notification.message }}
+</div>

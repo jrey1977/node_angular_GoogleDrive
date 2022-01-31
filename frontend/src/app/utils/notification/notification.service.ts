@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { Notification } from './notification.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService {
-  private message$: Subject<string>;
+  private message$: Subject<Notification>;
 
   constructor() {
     this.message$ = new Subject();
   }
 
-  setMessage(mensaje: string) {
+  setMessage(mensaje: Notification) {
     this.message$.next(mensaje);
   }
 
-  getMessage$(): Observable<string> {
+  getMessage$(): Observable<Notification> {
     console.log('Se recibe mensaje:');
     return this.message$.asObservable();
   }

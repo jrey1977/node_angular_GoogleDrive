@@ -319,9 +319,9 @@ export class ArchivosComponent implements OnInit {
           .subscribe((res: any) => {
             // Se ha borrado el archivo de Google Drive
             if (res.respuesta.status === 204) {
-              this.notification = true;
-              this.notificationService.setMessage(
-                'Se ha borrado el archivo de la unidad de Google Drive'
+              this.mostrarNotificacion(
+                'Se ha borrado el archivo de la unidad de Google Drive',
+                'success'
               );
               // Ahora lo borro de la base datos
               try {
@@ -334,25 +334,31 @@ export class ArchivosComponent implements OnInit {
                   .subscribe((res: any) => {
                     // Ahora borro el archivo de la página
                     if (res.respuesta === 'ok') {
-                      this.notificationService.setMessage('Archivo eliminado');
+                      let note = {
+                        message: 'Archivo eliminado',
+                        type: 'success',
+                      };
+                      this.notificationService.setMessage(note);
                       this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
                       Swal.close();
                     } else {
-                      this.notificationService.setMessage(
-                        'Algo ha pasado que no llegó ok: ' + res.respuesta
+                      this.mostrarNotificacion(
+                        'Algo ha pasado que no llegó ok: ' + res.respuesta,
+                        'danger'
                       );
                     }
                   });
               } catch (error) {
-                this.notification = true;
-                this.notificationService.setMessage(
+                this.mostrarNotificacion(
                   'No se ha podido eliminar el archivo de la base de datos por: ' +
-                    error
+                    error,
+                  'danger'
                 );
               }
             } else {
-              this.notificationService.setMessage(
-                'No se ha podido borrar el archivo de la unidad de Google Drive'
+              this.mostrarNotificacion(
+                'No se ha podido borrar el archivo de la unidad de Google Drive',
+                'danger'
               );
             }
           });
@@ -364,7 +370,11 @@ export class ArchivosComponent implements OnInit {
     this.popupService.abrirPopup(pArchivo);
   }
 
-  mostrarNotificacion(mensaje: string) {
-    this.notificationService.setMessage(mensaje);
+  mostrarNotificacion(mensaje: string, tipo: string) {
+    let note = {
+      message: mensaje,
+      type: tipo,
+    };
+    this.notificationService.setMessage(note);
   }
 }

@@ -21,7 +21,9 @@
     ><img src="/assets/img/loading.gif" alt="Cargando"
   /></span>
 
-  <button (click)="mostrarNotificacion('Holiiii')">Abrir notificación</button>
+  <button (click)="mostrarNotificacion('Holiiii', 'info')">
+    Abrir notificación
+  </button>
 
   <!-- ARCHIVOS SIN ETIQUETAR (INFINTITE SCROLL HORZONTAL) -->
   <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">

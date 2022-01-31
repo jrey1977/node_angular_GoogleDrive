@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Notification } from './notification.interface';
 import { NotificationService } from './notification.service';
 
 @Component({
@@ -7,13 +8,13 @@ import { NotificationService } from './notification.service';
   styleUrls: ['./notification.component.scss'],
 })
 export class NotificationComponent implements OnInit {
-  message?: string;
+  notification!: Notification;
 
   constructor(public notificationService: NotificationService) {}
 
   ngOnInit(): void {
-    this.notificationService.getMessage$().subscribe((mensajeRecibido) => {
-      this.message = mensajeRecibido;
+    this.notificationService.getMessage$().subscribe((notificationReceived) => {
+      this.notification = notificationReceived;
     });
   }
 }
