@@ -1,6 +1,10 @@
 <div
-  *ngIf="this.notification && this.counter"
-  class="{{ this.notification.type }} alert-{{ this.notification.type }}"
+  *ngIf="this.notification && this.show === true"
+  @fadeIn
+  @fadeOut
+  class="{{ this.notification.type }} alert-{{
+    this.notification.type
+  }} notification"
   role="alert"
 >
   {{ this.notification.message }}

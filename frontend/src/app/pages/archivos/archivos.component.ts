@@ -325,20 +325,17 @@ export class ArchivosComponent implements OnInit {
               );
               // Ahora lo borro de la base datos
               try {
-                Swal.fire({
-                  title: 'Eliminando archivo...',
-                  showConfirmButton: false,
-                });
+                this.mostrarNotificacion('Eliminando archivo...', 'info');
                 this.archivoService
                   .borraArchivoBaseDatos(idArchivoEliminado)
                   .subscribe((res: any) => {
                     // Ahora borro el archivo de la página
                     if (res.respuesta === 'ok') {
-                      let note = {
-                        message: 'Archivo eliminado',
-                        type: 'success',
-                      };
-                      this.notificationService.setMessage(note);
+                      this.mostrarNotificacion(
+                        'Archivo eliminado',
+                        'success',
+                        true
+                      );
                       this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
                       Swal.close();
                     } else {
@@ -370,10 +367,11 @@ export class ArchivosComponent implements OnInit {
     this.popupService.abrirPopup(pArchivo);
   }
 
-  mostrarNotificacion(mensaje: string, tipo: string) {
+  mostrarNotificacion(mensaje: string, tipo: string, fixed?: boolean) {
     let note = {
       message: mensaje,
       type: tipo,
+      fixed: fixed,
     };
     this.notificationService.setMessage(note);
   }

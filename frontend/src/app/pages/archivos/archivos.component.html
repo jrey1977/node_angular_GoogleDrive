@@ -57,6 +57,7 @@
           class="bgVideo"
           *ngIf="filesNewsTemp[0][file].mimeType.includes('video')"
           (click)="abrirPopup(filesNewsTemp[0][file])"
+          (contextmenu)="onRightClick($event, filesNewsTemp[0][file], i)"
         ></span>
         <img
           *ngIf="filesNewsTemp[0][file].mimeType.includes('image')"
