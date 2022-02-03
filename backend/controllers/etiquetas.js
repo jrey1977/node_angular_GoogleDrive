@@ -14,7 +14,6 @@ const borrarEtiqueta = async (req, res) => {
   try {
     // Primero compruebo si esta etiqueta la usan más archivos
     let usosEtiqueta = await Archivo.find({ etiquetas: mongoose.Types.ObjectId(idEtiqueta) });
-    console.log("Cantidad de archivos con esa etiqueta: ", usosEtiqueta.length);
 
     // Si la usan más archivos, solo la quito del archivo correspondiente
     if (usosEtiqueta.length > 1) {
@@ -31,6 +30,16 @@ const borrarEtiqueta = async (req, res) => {
         { $pull: { etiquetas: mongoose.Types.ObjectId(idEtiqueta) } }
       );
     }
+    // Compruebo si al archivo le quedan etiquetas. Si no le
+    // quedan etiquetas lo paso al listado de archivos sin etiquetar
+    let archivo = await Archivo.find( {id: idArchivo} );
+    console.log('archivo:',archivo);
+    let numEtiquetas = archivo.etiquetas.length;
+    console.log('numEtiquetas:', numEtiquetas);
+    if(!numEtiquetas){
+        console.log('No le quedan etiquetas, muevo el archivo');
+    }
+
     // Devuelvo la respuesta OK
     res.json({
       respuesta: "OK",

@@ -27,7 +27,10 @@
           <ul *ngIf="etiquetas.length" class="ulEtiquetas">
             <li *ngFor="let etiqueta of etiquetas; let i = index">
               {{ etiqueta.name }}
-              <button class="btn test" (click)="borrarEtiqueta(etiqueta._id)">
+              <button
+                class="btn test"
+                (click)="borrarEtiqueta(etiqueta._id, i)"
+              >
                 X
               </button>
             </li>

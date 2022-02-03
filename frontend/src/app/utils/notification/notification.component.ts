@@ -55,7 +55,7 @@ export class NotificationComponent implements OnInit {
           if (this.fixed !== true) {
             this.show = false;
           }
-        }, 1800);
+        }, 1000);
       } else {
         this.fixed = true;
       }

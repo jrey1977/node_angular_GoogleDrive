@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
+import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { environment } from 'src/environments/environment';
 import { EtiquetasService } from './etiquetas.service';
 
@@ -23,7 +24,8 @@ export class EtiquetasComponent implements OnInit {
   public etiquetas: any[] = [];
   constructor(
     public bsModalRef: BsModalRef,
-    private etiquetaService: EtiquetasService
+    private etiquetaService: EtiquetasService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -38,15 +40,15 @@ export class EtiquetasComponent implements OnInit {
     });
   }
 
-  borrarEtiqueta(idEtiqueta: string) {
-    console.log('Borro etiqueta con id:', idEtiqueta);
+  borrarEtiqueta(idEtiqueta: string, indexEtiqueta: number) {
     this.etiquetaService
       .borrarEtiqueta(idEtiqueta, this.idArchivo)
       .subscribe((res: any) => {
         if (res.respuesta === 'OK') {
-          alert('Etiqueta borrada');
+          this.mostrarNotificacion('Etiqueta borrada', 'success');
+          this.etiquetas.splice(indexEtiqueta, 1);
         } else {
-          alert('Error: ' + res.respuesta);
+          this.mostrarNotificacion('Error', res.respuesta, true);
         }
       });
   }
@@ -62,11 +64,20 @@ export class EtiquetasComponent implements OnInit {
         .subscribe((res: any) => {
           if (res.respuesta === 'OK') {
             this.obtenerEtiquetas(idArchivo);
-            alert('Etiqueta grabada');
+            this.mostrarNotificacion('Etiqueta grabada', 'success');
           } else {
-            alert('Error: ' + res.respuesta);
+            this.mostrarNotificacion('Error', res.respuesta, true);
           }
         });
     }
+  }
+
+  mostrarNotificacion(mensaje: string, tipo: string, fixed?: boolean) {
+    let note = {
+      message: mensaje,
+      type: tipo,
+      fixed: fixed,
+    };
+    this.notificationService.setMessage(note);
   }
 }
