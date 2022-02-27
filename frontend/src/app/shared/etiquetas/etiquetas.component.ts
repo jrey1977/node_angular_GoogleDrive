@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
@@ -15,6 +15,7 @@ export class EtiquetasComponent implements OnInit {
   public _fotoSeleccionada?: Archivo;
   public categoriaArchivo: string = '';
   public idArchivo: string = '';
+
   @Input() set fotoSeleccionada(value: Archivo) {
     this._fotoSeleccionada = value;
     this.obtenerEtiquetas(this._fotoSeleccionada.id);
@@ -45,8 +46,15 @@ export class EtiquetasComponent implements OnInit {
       .borrarEtiqueta(idEtiqueta, this.idArchivo)
       .subscribe((res: any) => {
         if (res.respuesta === 'OK') {
+          console.log('Res es ', res);
           this.mostrarNotificacion('Etiqueta borrada', 'success');
+          // Quito la etiqueta del listado de etiquetas en la popup
           this.etiquetas.splice(indexEtiqueta, 1);
+          // Si el archivo ya no tiene etiquetas lo muevo al listado de
+          // archivos sin etiquetar
+          if (!res.etiquetado) {
+            this.etiquetaService.setFileStateNewToOld(false, this.idArchivo);
+          }
         } else {
           this.mostrarNotificacion('Error', res.respuesta, true);
         }
@@ -62,11 +70,18 @@ export class EtiquetasComponent implements OnInit {
       this.etiquetaService
         .agregarEtiqueta(nombreEtiquetaBueno, idArchivo)
         .subscribe((res: any) => {
+          console.log('res tras grabar etiqueta:', res);
+          let etiquetasPrevias = res.etiquetasPrevias;
           if (res.respuesta === 'OK') {
             this.obtenerEtiquetas(idArchivo);
+            if (res.etiquetasPrevias === 0) {
+              console.log('Paso el archivo a la lista de etiquetados');
+              this.etiquetaService.setFileStateOldToNew(true, this.idArchivo);
+            }
+
             this.mostrarNotificacion('Etiqueta grabada', 'success');
           } else {
-            this.mostrarNotificacion('Error', res.respuesta, true);
+            this.mostrarNotificacion(`Error: ${res.respuesta}`, 'danger');
           }
         });
     }

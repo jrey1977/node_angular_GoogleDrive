@@ -1,5 +1,5 @@
 const { response } = require("express");
-const mongoose = require('mongoose');  
+const mongoose = require("mongoose");
 
 const Etiqueta = require("../models/etiqueta");
 const Archivo = require("../models/archivo");
@@ -13,7 +13,9 @@ const borrarEtiqueta = async (req, res) => {
   console.log(`Borro etiqueta ${idEtiqueta} de archivo con id ${idArchivo}`);
   try {
     // Primero compruebo si esta etiqueta la usan más archivos
-    let usosEtiqueta = await Archivo.find({ etiquetas: mongoose.Types.ObjectId(idEtiqueta) });
+    let usosEtiqueta = await Archivo.find({
+      etiquetas: mongoose.Types.ObjectId(idEtiqueta),
+    });
 
     // Si la usan más archivos, solo la quito del archivo correspondiente
     if (usosEtiqueta.length > 1) {
@@ -32,20 +34,23 @@ const borrarEtiqueta = async (req, res) => {
     }
     // Compruebo si al archivo le quedan etiquetas. Si no le
     // quedan etiquetas lo paso al listado de archivos sin etiquetar
-    let archivo = await Archivo.find( {id: idArchivo} );
-    console.log('archivo:',archivo);
-    let numEtiquetas = archivo.etiquetas.length;
-    console.log('numEtiquetas:', numEtiquetas);
-    if(!numEtiquetas){
-        console.log('No le quedan etiquetas, muevo el archivo');
+    let archivo = await Archivo.find({ id: idArchivo });
+    console.log("archivo:", archivo);
+    let numEtiquetas = archivo[0].etiquetas.length;
+    console.log("numEtiquetas:", numEtiquetas);
+    if (!numEtiquetas) {
+      console.log("No le quedan etiquetas, muevo el archivo");
+      var tieneEtiquetas = false;
+    } else {
+      var tieneEtiquetas = true;
     }
-
     // Devuelvo la respuesta OK
     res.json({
       respuesta: "OK",
+      etiquetado: tieneEtiquetas,
     });
   } catch (error) {
-    console.log('Error:', error);
+    console.log("Error:", error);
     res.json({
       respuesta: error,
     });
@@ -56,12 +61,15 @@ const grabarEtiqueta = async (req, res) => {
   let nombreEtiqueta = req.body.nombre;
   let idArchivo = req.body.idArchivo;
   try {
+    // Compruebo si este archivo no tiene ninguna etiqueta previa,
+    // ya que si es así lo pasaré al listado de archivos etiquetados
+    let archivo = await Archivo.find({ id: idArchivo });
+    let etiquetasArchivo = archivo[0].etiquetas.length;
+
     // Primero compruebo si hay ya alguna etiqueta con ese nombre
     var etiquetaExistente = await Etiqueta.find({ name: nombreEtiqueta });
-    console.log("etiquetaExistente:", etiquetaExistente);
-    console.log("etiquetaExistenteLength:", etiquetaExistente.length);
     if (etiquetaExistente.length) {
-      // Obtengo la id de la e¡tiqueta que ya existe
+      // Obtengo la id de la etiqueta que ya existe
       console.log("Ya existia esta etiqueta");
       var idEtiqueta = etiquetaExistente[0]._id;
       console.log("Y su id es:", idEtiqueta);
@@ -82,6 +90,7 @@ const grabarEtiqueta = async (req, res) => {
     );
     res.json({
       respuesta: "OK",
+      etiquetasPrevias: etiquetasArchivo,
     });
   } catch (error) {
     console.log("Error: ", error);

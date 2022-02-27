@@ -21,9 +21,9 @@
     ><img src="/assets/img/loading.gif" alt="Cargando"
   /></span>
 
-  <button (click)="mostrarNotificacion('Holiiii', 'info')">
+  <!-- <button (click)="mostrarNotificacion('Holiiii', 'info')">
     Abrir notificación
-  </button>
+  </button> -->
 
   <!-- ARCHIVOS SIN ETIQUETAR (INFINTITE SCROLL HORZONTAL) -->
   <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">
@@ -112,11 +112,12 @@
           <hr class="fondoBarra m-0" />
         </div>
       </div>
-      <div class="contentArchivosViejos">
+      <div class="contentArchivosViejos" #listadoViejos>
         <ngx-masonry [ordered]="true" [options]="myOptions">
           <div
             ngxMasonryItem
             class="masonry-item"
+            id="{{ filesOldTemp[0][file].id }}"
             *ngFor="let file of Object.keys(filesOldTemp[0]); let i = index"
             (click)="abrirPopup(filesOldTemp[0][file])"
           >

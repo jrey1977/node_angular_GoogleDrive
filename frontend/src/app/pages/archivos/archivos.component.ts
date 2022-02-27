@@ -11,6 +11,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import { EtiquetasComponent } from 'src/app/shared/etiquetas/etiquetas.component';
+import { EtiquetasService } from 'src/app/shared/etiquetas/etiquetas.service';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { PopupService } from 'src/app/utils/popup/services/popup.service';
 import { environment } from 'src/environments/environment';
@@ -84,6 +85,7 @@ export class ArchivosComponent implements OnInit {
     private popupService: PopupService,
     private renderer: Renderer2,
     private modalService: BsModalService,
+    private etiquetaService: EtiquetasService,
     private notificationService: NotificationService
   ) {}
 
@@ -97,6 +99,44 @@ export class ArchivosComponent implements OnInit {
         e.target !== this.contextMenu.nativeElement.querySelector('li')
       ) {
         this.showContextMenu = false;
+      }
+    });
+
+    this.etiquetaService.getFileStateOldToNew$().subscribe((data: any) => {
+      // Si el state es true, el archivo no tenía etiquetas antes
+      // y lo debo moover al listado de archivos con etiqueta
+      if (data.state === true) {
+        let idArchivo = data.id;
+        console.log('idArchivo', idArchivo);
+        //console.log('this.filesOldTemp[0]', this.filesOldTemp[0]);
+        let item_removido = this.filesNewsTemp[0].filter(
+          (item: { [x: string]: any }) =>
+            'id' in item && item['id'] === idArchivo
+        );
+        this.filesOldTemp[0].unshift(item_removido[0]);
+        this.filesNewsTemp[0] = this.filesNewsTemp[0].filter(
+          (item: { [x: string]: any }) =>
+            'id' in item && item['id'] !== idArchivo
+        );
+      }
+    });
+
+    this.etiquetaService.getFileStateNewToOld$().subscribe((data: any) => {
+      // Si el state es false, el archivo ya no tiene etiquetas
+      // y lo debo moover al listado de artchivos sin etiqueta
+      if (data.state === false) {
+        let idArchivo = data.id;
+        console.log('idArchivo', idArchivo);
+        //console.log('this.filesOldTemp[0]', this.filesOldTemp[0]);
+        let item_removido = this.filesOldTemp[0].filter(
+          (item: { [x: string]: any }) =>
+            'id' in item && item['id'] === idArchivo
+        );
+        this.filesNewsTemp[0].unshift(item_removido[0]);
+        this.filesOldTemp[0] = this.filesOldTemp[0].filter(
+          (item: { [x: string]: any }) =>
+            'id' in item && item['id'] !== idArchivo
+        );
       }
     });
 
