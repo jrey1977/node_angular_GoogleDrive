@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable, Subject } from 'rxjs';
+import { Etiqueta } from './models/etiquetas.interface';
 
 const base_url = environment.urlBack;
 
@@ -11,9 +12,11 @@ const base_url = environment.urlBack;
 export class EtiquetasService {
   private movimientoArchivoNewToOld$: Subject<boolean>;
   private movimientoArchivoOldToNew$: Subject<boolean>;
+  private updateTagsList$: Subject<boolean>;
   constructor(private http: HttpClient) {
     this.movimientoArchivoNewToOld$ = new Subject();
     this.movimientoArchivoOldToNew$ = new Subject();
+    this.updateTagsList$ = new Subject();
   }
 
   setFileStateNewToOld(movimiento: boolean, idEtiqueta: string) {
@@ -40,6 +43,19 @@ export class EtiquetasService {
   getFileStateOldToNew$(): Observable<boolean> {
     console.log('Se recibe boolean:');
     return this.movimientoArchivoOldToNew$.asObservable();
+  }
+
+  updateTags(tag: any, action: 'add' | 'remove') {
+    let data: any = {
+      etiqueta: tag,
+      accion: action,
+    };
+    this.updateTagsList$.next(data);
+  }
+
+  getTagsList$(): Observable<boolean> {
+    console.log('Se recibe boolean:');
+    return this.updateTagsList$.asObservable();
   }
 
   obtenerEtiquetas(idArchivo: string) {

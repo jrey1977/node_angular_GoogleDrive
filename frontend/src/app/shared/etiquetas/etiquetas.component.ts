@@ -4,6 +4,7 @@ import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { environment } from 'src/environments/environment';
 import { EtiquetasService } from './etiquetas.service';
+import { Etiqueta } from './models/etiquetas.interface';
 
 @Component({
   selector: 'app-etiquetas',
@@ -30,7 +31,13 @@ export class EtiquetasComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Cargo componente de etiquetas');
+    this.etiquetaService.getTagsList$().subscribe((data: any) => {
+      if (data.accion === 'add') {
+        console.log('Meto etiqueta en la lista');
+      } else {
+        console.log('Saco etiqueta de la lista');
+      }
+    });
   }
 
   obtenerEtiquetas(idParam: string) {
@@ -49,7 +56,11 @@ export class EtiquetasComponent implements OnInit {
           console.log('Res es ', res);
           this.mostrarNotificacion('Etiqueta borrada', 'success');
           // Quito la etiqueta del listado de etiquetas en la popup
-          this.etiquetas.splice(indexEtiqueta, 1);
+          let etiquetaBorrada = this.etiquetas.filter(
+            (item: { [x: string]: any }) =>
+              'id' in item && item['id'] === idEtiqueta
+          );
+          this.etiquetaService.updateTags(etiquetaBorrada, 'remove');
           // Si el archivo ya no tiene etiquetas lo muevo al listado de
           // archivos sin etiquetar
           if (!res.etiquetado) {
