@@ -8,9 +8,10 @@ import { AppComponent } from './app.component';
 import { PagesModule } from './pages/pages.module';
 import { EtiquetasModule } from './shared/etiquetas/etiquetas.module';
 import { UtilsModule } from './utils/utils.module';
+import { ListadoEtiquetasComponent } from './src/app/shared/etiquetas/listado-etiquetas/listado-etiquetas.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ListadoEtiquetasComponent],
   imports: [
     PagesModule,
     BrowserModule,

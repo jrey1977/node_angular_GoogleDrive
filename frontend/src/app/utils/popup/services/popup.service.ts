@@ -7,12 +7,16 @@ import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 })
 export class PopupService {
   private popupState$: Subject<boolean>;
+  private popupMultiState$: Subject<boolean>;
   private popup$: Subject<Archivo>;
+  private popupMulti$: Subject<Archivo[]>;
 
   constructor() {
     this.popup$ = new Subject();
+    this.popupMulti$ = new Subject();
     this.popupState$ = new Subject();
     this.popupState$.next(false);
+    this.popupMultiState$ = new Subject();
   }
 
   abrirPopup(pArchivo: Archivo) {
@@ -20,8 +24,17 @@ export class PopupService {
     this.popup$.next(pArchivo);
   }
 
+  abrirPopupMulti(pArchivos: Archivo[]) {
+    this.popupMultiState$.next(true);
+    this.popupMulti$.next(pArchivos);
+  }
+
   cerrarPopup() {
     this.popupState$.next(false);
+  }
+
+  cerrarPopupMulti() {
+    this.popupMultiState$.next(false);
   }
 
   getPopup$(): Observable<Archivo> {
@@ -29,7 +42,16 @@ export class PopupService {
     return this.popup$.asObservable();
   }
 
+  getMultiPopup$(): Observable<Archivo[]> {
+    console.log('Se recibe array de datos');
+    return this.popupMulti$.asObservable();
+  }
+
   getPopupState$(): Observable<boolean> {
     return this.popupState$.asObservable();
+  }
+
+  getMultiPopupState$(): Observable<boolean> {
+    return this.popupMultiState$.asObservable();
   }
 }

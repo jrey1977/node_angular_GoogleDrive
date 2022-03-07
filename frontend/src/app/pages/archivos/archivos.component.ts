@@ -70,9 +70,12 @@ export class ArchivosComponent implements OnInit {
   public showContextMenu: boolean = false;
   public fotoSeleccionada!: Archivo;
   public indexFotoSeleccionada!: number;
+  private tipo!: string;
   private rightClickMenuPositionX!: string;
   private rightClickMenuPositionY!: string;
   public showEtiquetas: boolean = false;
+  public multiEditMode: boolean = false;
+  public arrayMultiEdit: any[] = [];
   modalRef?: BsModalRef;
 
   @ViewChild('contentArchivosNuevos') ul!: ElementRef;
@@ -185,6 +188,16 @@ export class ArchivosComponent implements OnInit {
     }
   }
 
+  updateArrayMultiEdit(item: any) {
+    if (this.arrayMultiEdit.includes(item)) {
+      var index = this.arrayMultiEdit.indexOf(item);
+      this.arrayMultiEdit.splice(index, 1);
+    } else {
+      this.arrayMultiEdit.push(item);
+    }
+    console.log('this.arrayMultiEdit es ', this.arrayMultiEdit);
+  }
+
   agregarEtiquetas(foto: Archivo) {
     console.log('Agrego etiquetas al archivo con ID ', foto.id);
     this.showContextMenu = true;
@@ -193,11 +206,12 @@ export class ArchivosComponent implements OnInit {
     this.modalRef.content.fotoSeleccionada = foto;
   }
 
-  onRightClick($event: any, archivo: Archivo, indexFoto: number) {
+  onRightClick($event: any, archivo: Archivo, tipo: string, indexFoto: number) {
     $event.preventDefault();
     this.showContextMenu = false;
     this.fotoSeleccionada = archivo;
     this.indexFotoSeleccionada = indexFoto;
+    this.tipo = tipo;
 
     this.rightClickMenuPositionX = $event.clientX + 'px';
     this.rightClickMenuPositionY = $event.clientY + 'px';
@@ -340,6 +354,11 @@ export class ArchivosComponent implements OnInit {
     });
   }
 
+  actualizoCantidades(numActual: number) {
+    this.contadorFotos = numActual;
+    this.filesOld.length = numActual;
+  }
+
   borrarArchivo() {
     Swal.fire({
       title: 'Estás seguro?',
@@ -376,7 +395,14 @@ export class ArchivosComponent implements OnInit {
                         'success',
                         true
                       );
-                      this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
+                      // Compruebo el listado y lo elimino
+                      if (this.tipo === 'nuevo') {
+                        this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
+                        this.actualizoCantidades(this.filesNewsTemp[0].length);
+                      } else {
+                        this.filesOldTemp[0].splice(indexArchivoEliminado, 1);
+                        this.actualizoCantidades(this.filesNewsTemp[0].length);
+                      }
                       Swal.close();
                     } else {
                       this.mostrarNotificacion(
@@ -405,6 +431,10 @@ export class ArchivosComponent implements OnInit {
 
   abrirPopup(pArchivo: Archivo) {
     this.popupService.abrirPopup(pArchivo);
+  }
+
+  multiEdit() {
+    this.popupService.abrirPopupMulti(this.arrayMultiEdit);
   }
 
   mostrarNotificacion(mensaje: string, tipo: string, fixed?: boolean) {

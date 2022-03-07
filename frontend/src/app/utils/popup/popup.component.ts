@@ -11,7 +11,9 @@ import { environment } from 'src/environments/environment';
 })
 export class PopupComponent implements OnInit {
   popup!: Archivo;
+  multiPopup!: Archivo[];
   statePopup: boolean = false;
+  stateMultiPopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
   public etiquetas: any[] = [];
 
@@ -30,6 +32,15 @@ export class PopupComponent implements OnInit {
     this.popupService.getPopupState$().subscribe((estado) => {
       this.statePopup = estado;
     });
+
+    // Me suscribo a los cambios que haya en popup de multi edit y que se envían como parámetro en
+    // el "next" de la función "abrirMultiPopup" del service
+    this.popupService.getMultiPopup$().subscribe((popupRecibido) => {
+      this.multiPopup = popupRecibido;
+    });
+    this.popupService.getMultiPopupState$().subscribe((estado) => {
+      this.stateMultiPopup = estado;
+    });
   }
 
   obtenerEtiquetas(idParam: string) {
@@ -43,5 +54,10 @@ export class PopupComponent implements OnInit {
   cerrarPopup() {
     console.log('Entro en cerrarPopup');
     this.popupService.cerrarPopup();
+  }
+
+  cerrarMultiPopup() {
+    console.log('Entro en cerrarMultiPopup');
+    this.popupService.cerrarPopupMulti();
   }
 }

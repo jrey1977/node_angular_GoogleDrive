@@ -5,3 +5,16 @@
 img {
   max-height: 65vh;
 }
+
+table {
+  width: 97%;
+  position: relative;
+  left: 1%;
+}
+
+table img {
+  max-height: 50px;
+}
+table td.name {
+  max-width: 50%;
+}

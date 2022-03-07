@@ -28,9 +28,32 @@
   <!-- ARCHIVOS SIN ETIQUETAR (INFINTITE SCROLL HORZONTAL) -->
   <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">
     <div class="bg-white w-100 over header">
-      <h3 class="pt-0 pt-md-5">
-        Sin etiquetar [{{ contadorFotos }} de {{ filesNew.length }}]
-      </h3>
+      <div class="row pt-5">
+        <div class="col-4">Sin etiquetar [{{ filesNew.length }} archivos]</div>
+        <div class="col-8 text-right">
+          <button
+            *ngIf="!multiEditMode"
+            class="btn btn-warning"
+            (click)="multiEditMode = !multiEditMode"
+          >
+            Edición múltiple
+          </button>
+          <button
+            *ngIf="multiEditMode"
+            class="btn btn-danger"
+            (click)="multiEditMode = !multiEditMode"
+          >
+            Cancelar
+          </button>
+          <button
+            *ngIf="multiEditMode"
+            class="btn btn-warning ms-4"
+            (click)="multiEdit()"
+          >
+            Editar seleccionados
+          </button>
+        </div>
+      </div>
       <hr class="mb-3" />
     </div>
     <button
@@ -53,16 +76,27 @@
         *ngFor="let file of Object.keys(filesNewsTemp[0]); let i = index"
         draggable="true"
       >
+        <span class="checkBoxSelection" *ngIf="multiEditMode">
+          <input
+            type="checkbox"
+            class="inputMultiElement"
+            (change)="updateArrayMultiEdit(filesNewsTemp[0][file])"
+          />
+        </span>
         <span
           class="bgVideo"
           *ngIf="filesNewsTemp[0][file].mimeType.includes('video')"
           (click)="abrirPopup(filesNewsTemp[0][file])"
-          (contextmenu)="onRightClick($event, filesNewsTemp[0][file], i)"
+          (contextmenu)="
+            onRightClick($event, filesNewsTemp[0][file], 'nuevo', i)
+          "
         ></span>
         <img
           *ngIf="filesNewsTemp[0][file].mimeType.includes('image')"
           (click)="abrirPopup(filesNewsTemp[0][file])"
-          (contextmenu)="onRightClick($event, filesNewsTemp[0][file], i)"
+          (contextmenu)="
+            onRightClick($event, filesNewsTemp[0][file], 'nuevo', i)
+          "
           class="img-fluid"
           [src]="urlImg + filesNewsTemp[0][file].id"
           [alt]="filesNewsTemp[0][file].name"
@@ -119,15 +153,25 @@
             class="masonry-item"
             id="{{ filesOldTemp[0][file].id }}"
             *ngFor="let file of Object.keys(filesOldTemp[0]); let i = index"
-            (click)="abrirPopup(filesOldTemp[0][file])"
           >
+            <span class="checkBoxSelection" *ngIf="multiEditMode">
+              <input
+                type="checkbox"
+                class="inputMultiElement"
+                (change)="updateArrayMultiEdit(filesOldTemp[0][file])"
+              />
+            </span>
             <span
               class="bgVideo"
+              (click)="abrirPopup(filesOldTemp[0][file])"
               *ngIf="filesOldTemp[0][file].mimeType.includes('video')"
             ></span>
             <img
               *ngIf="filesOldTemp[0][file].mimeType.includes('image')"
-              (contextmenu)="onRightClick($event, filesOldTemp[0][file], i)"
+              (click)="abrirPopup(filesOldTemp[0][file])"
+              (contextmenu)="
+                onRightClick($event, filesOldTemp[0][file], 'viejo', i)
+              "
               [src]="urlImg + filesOldTemp[0][file].id"
               [alt]="filesOldTemp[0][file].name"
               [id]="i"
