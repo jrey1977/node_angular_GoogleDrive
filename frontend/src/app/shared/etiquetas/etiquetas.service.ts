@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable, Subject } from 'rxjs';
 import { Etiqueta } from './models/etiquetas.interface';
 
 const base_url = environment.urlBack;
+const params = new HttpParams();
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +29,6 @@ export class EtiquetasService {
   }
 
   getFileStateNewToOld$(): Observable<boolean> {
-    console.log('Se recibe boolean:');
     return this.movimientoArchivoNewToOld$.asObservable();
   }
 
@@ -41,7 +41,6 @@ export class EtiquetasService {
   }
 
   getFileStateOldToNew$(): Observable<boolean> {
-    console.log('Se recibe boolean:');
     return this.movimientoArchivoOldToNew$.asObservable();
   }
 
@@ -54,12 +53,10 @@ export class EtiquetasService {
   }
 
   getTagsList$(): Observable<boolean> {
-    console.log('Se recibe boolean:');
     return this.updateTagsList$.asObservable();
   }
 
   obtenerEtiquetas(idArchivo: string) {
-    console.log('Pido etiquetas del archivo', idArchivo);
     return this.http.get<any[]>(
       `http://localhost:3100/archivos/etiquetas/${idArchivo}`
     );
@@ -79,5 +76,12 @@ export class EtiquetasService {
       nombre: nombreEtiqueta,
       idArchivo: idArchivo,
     });
+  }
+
+  obtenerNombresEtiquetas(arrayIds: string[]) {
+    params.append('etiquetas', JSON.stringify(arrayIds));
+
+    const url = `${base_url}etiquetas/nombres`;
+    return this.http.get(url, { params });
   }
 }

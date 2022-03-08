@@ -83,11 +83,9 @@
           <td class="text-truncate name col-4">{{ item.name }}</td>
           <td class="col-4">
             <app-listado-etiquetas
+              *ngIf="item.etiquetas"
               [arrayEtiquetas]="item.etiquetas"
             ></app-listado-etiquetas>
-            <ul>
-              <li *ngFor="let tag of item.etiquetas">{{ tag }}</li>
-            </ul>
           </td>
         </tr>
       </tbody>

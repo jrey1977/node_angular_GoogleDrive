@@ -100,7 +100,13 @@ const grabarEtiqueta = async (req, res) => {
   }
 };
 
+const obtenerNombresEtiquetas = async (req, res) => {
+  let nombreEtiqueta = req.body.nombre;
+  let idArchivo = req.body.idArchivo;
+};
+
 module.exports = {
   borrarEtiqueta,
   grabarEtiqueta,
+  obtenerNombresEtiquetas,
 };
