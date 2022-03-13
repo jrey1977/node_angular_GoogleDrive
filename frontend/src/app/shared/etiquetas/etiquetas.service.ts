@@ -79,9 +79,12 @@ export class EtiquetasService {
   }
 
   obtenerNombresEtiquetas(arrayIds: string[]) {
-    params.append('etiquetas', JSON.stringify(arrayIds));
+    console.log('Agrego a params:', JSON.stringify(arrayIds));
+    // params.append('etiquetas', { misPatrams: JSON.stringify(arrayIds)});
 
     const url = `${base_url}etiquetas/nombres`;
-    return this.http.get(url, { params });
+    return this.http.post(url, {
+      arrayIds: arrayIds,
+    });
   }
 }

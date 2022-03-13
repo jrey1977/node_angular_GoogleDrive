@@ -12,6 +12,6 @@ router.put("/borrar/", borrarEtiqueta);
 
 router.post("/grabar/", grabarEtiqueta);
 
-router.get("etiquetas/nombres/", obtenerNombresEtiquetas);
+router.post("/nombres/", obtenerNombresEtiquetas);
 
 module.exports = router;

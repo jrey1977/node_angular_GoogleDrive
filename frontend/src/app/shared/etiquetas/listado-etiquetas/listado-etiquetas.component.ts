@@ -8,13 +8,15 @@ import { EtiquetasService } from '../etiquetas.service';
 })
 export class ListadoEtiquetasComponent implements OnInit {
   _arrayEtiquetas?: string[];
+  arrayNombres?: any[];
 
   @Input() set arrayEtiquetas(valores: string[]) {
     this._arrayEtiquetas = valores;
     this.etiquetaService
       .obtenerNombresEtiquetas(this._arrayEtiquetas)
-      .subscribe((datosRecibidos) => {
-        console.log('Datos recibidos:', datosRecibidos);
+      .subscribe((datosRecibidos: any) => {
+        console.log('Datos recibidos:', Object.values(datosRecibidos.nombres));
+        this.arrayNombres = Object.values(datosRecibidos.nombres);
       });
   }
 

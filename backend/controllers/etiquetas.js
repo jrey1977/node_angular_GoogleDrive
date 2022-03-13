@@ -101,8 +101,13 @@ const grabarEtiqueta = async (req, res) => {
 };
 
 const obtenerNombresEtiquetas = async (req, res) => {
-  let nombreEtiqueta = req.body.nombre;
-  let idArchivo = req.body.idArchivo;
+  let nombresObtenidos = await Etiqueta.find({
+    _id: { $in: req.body.arrayIds },
+  });
+  res.json({
+    respuesta: "OK",
+    nombres: nombresObtenidos,
+  });
 };
 
 module.exports = {
