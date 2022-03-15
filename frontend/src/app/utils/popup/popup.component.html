@@ -47,6 +47,7 @@
   <button class="btn btn-danger" (click)="cerrarMultiPopup()">X</button>
   <div class="row">
     <h3>Añadir etiquetas</h3>
+    <ng-content select="[header]"></ng-content>
     <div class="form-group mb-5">
       <input
         type="text input-form my-3"

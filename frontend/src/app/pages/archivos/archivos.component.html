@@ -46,7 +46,7 @@
             Cancelar
           </button>
           <button
-            *ngIf="multiEditMode"
+            *ngIf="multiEditMode && this.arrayMultiEdit.length > 1"
             class="btn btn-warning ms-4"
             (click)="multiEdit()"
           >
@@ -157,7 +157,8 @@
             <span class="checkBoxSelection" *ngIf="multiEditMode">
               <input
                 type="checkbox"
-                class="inputMultiElement"
+                #checkboxMultiEdit
+                class="inputMultiElement {{ i }}"
                 (change)="updateArrayMultiEdit(filesOldTemp[0][file])"
               />
             </span>

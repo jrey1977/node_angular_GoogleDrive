@@ -46,18 +46,15 @@ export class PopupComponent implements OnInit {
   obtenerEtiquetas(idParam: string) {
     this.etiquetas = [];
     this.etiquetaService.obtenerEtiquetas(idParam).subscribe((res: any) => {
-      console.log('Etiquetas del archivo:', res.arrayLabelNames);
       this.etiquetas = res.arrayLabelNames;
     });
   }
 
   cerrarPopup() {
-    console.log('Entro en cerrarPopup');
     this.popupService.cerrarPopup();
   }
 
   cerrarMultiPopup() {
-    console.log('Entro en cerrarMultiPopup');
     this.popupService.cerrarPopupMulti();
   }
 }

@@ -6,6 +6,9 @@ import {
   OnInit,
   Renderer2,
   ViewChild,
+  AfterViewInit,
+  ViewChildren,
+  QueryList,
 } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -76,11 +79,13 @@ export class ArchivosComponent implements OnInit {
   public showEtiquetas: boolean = false;
   public multiEditMode: boolean = false;
   public arrayMultiEdit: any[] = [];
+  public checkboxesChecked: boolean = false;
   modalRef?: BsModalRef;
 
   @ViewChild('contentArchivosNuevos') ul!: ElementRef;
   @ViewChild('contextMenu') contextMenu!: ElementRef;
   @ViewChild('etiquetas') etiquetas!: ElementRef;
+  @ViewChildren('checkboxMultiEdit') misCheckboxes!: QueryList<ElementRef>;
 
   constructor(
     private archivoService: ArchivosService,
@@ -143,6 +148,17 @@ export class ArchivosComponent implements OnInit {
       }
     });
 
+    this.popupService.getCheckedInputsState$().subscribe((data: boolean) => {
+      console.log('data es', data);
+      if (!data) {
+        this.misCheckboxes.forEach((element) => {
+          element.nativeElement.checked = false;
+        });
+        this.arrayMultiEdit = [];
+      }
+      //this.checkboxes.nativeElement.checked = false;
+    });
+
     const isMobile = this.deviceService.isMobile();
     if (isMobile) {
       this.margenLateral = 5;
@@ -189,6 +205,7 @@ export class ArchivosComponent implements OnInit {
   }
 
   updateArrayMultiEdit(item: any) {
+    console.log('item seleccionado', item);
     if (this.arrayMultiEdit.includes(item)) {
       var index = this.arrayMultiEdit.indexOf(item);
       this.arrayMultiEdit.splice(index, 1);

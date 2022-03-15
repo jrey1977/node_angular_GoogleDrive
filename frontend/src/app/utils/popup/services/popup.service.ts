@@ -10,6 +10,7 @@ export class PopupService {
   private popupMultiState$: Subject<boolean>;
   private popup$: Subject<Archivo>;
   private popupMulti$: Subject<Archivo[]>;
+  private checkedInputs$: Subject<boolean>;
 
   constructor() {
     this.popup$ = new Subject();
@@ -17,6 +18,7 @@ export class PopupService {
     this.popupState$ = new Subject();
     this.popupState$.next(false);
     this.popupMultiState$ = new Subject();
+    this.checkedInputs$ = new Subject();
   }
 
   abrirPopup(pArchivo: Archivo) {
@@ -33,8 +35,13 @@ export class PopupService {
     this.popupState$.next(false);
   }
 
+  getCheckedInputsState$(): Observable<boolean> {
+    return this.checkedInputs$.asObservable();
+  }
+
   cerrarPopupMulti() {
     this.popupMultiState$.next(false);
+    this.checkedInputs$.next(false);
   }
 
   getPopup$(): Observable<Archivo> {
