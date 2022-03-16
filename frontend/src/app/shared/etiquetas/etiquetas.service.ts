@@ -14,10 +14,12 @@ export class EtiquetasService {
   private movimientoArchivoNewToOld$: Subject<boolean>;
   private movimientoArchivoOldToNew$: Subject<boolean>;
   private updateTagsList$: Subject<boolean>;
+  private filesUpdated$: Subject<boolean>;
   constructor(private http: HttpClient) {
     this.movimientoArchivoNewToOld$ = new Subject();
     this.movimientoArchivoOldToNew$ = new Subject();
     this.updateTagsList$ = new Subject();
+    this.filesUpdated$ = new Subject();
   }
 
   setFileStateNewToOld(movimiento: boolean, idEtiqueta: string) {
@@ -86,5 +88,17 @@ export class EtiquetasService {
     return this.http.post(url, {
       arrayIds: arrayIds,
     });
+  }
+
+  getArchivosActualizados$(): Observable<boolean> {
+    return this.filesUpdated$.asObservable();
+  }
+
+  actualizaArchivo(idNuevaEtiqueta: string, idArchivo: string) {
+    let data: any = {
+      idNuevaEtiquetaData: idNuevaEtiqueta,
+      idArchivoData: idArchivo,
+    };
+    this.filesUpdated$.next(data);
   }
 }

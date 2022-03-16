@@ -45,12 +45,10 @@ export class PopupService {
   }
 
   getPopup$(): Observable<Archivo> {
-    console.log('Se recibe dato');
     return this.popup$.asObservable();
   }
 
   getMultiPopup$(): Observable<Archivo[]> {
-    console.log('Se recibe array de datos');
     return this.popupMulti$.asObservable();
   }
 

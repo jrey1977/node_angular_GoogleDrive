@@ -17,7 +17,6 @@ export class NotificationService {
   }
 
   getMessage$(): Observable<Notification> {
-    console.log('Se recibe mensaje:');
     return this.message$.asObservable();
   }
 }

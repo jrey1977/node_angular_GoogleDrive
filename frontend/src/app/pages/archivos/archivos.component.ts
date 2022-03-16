@@ -110,6 +110,7 @@ export class ArchivosComponent implements OnInit {
       }
     });
 
+    // Suscripción: para pasar archivos etiquetados a listado de archivos sin etiquetar
     this.etiquetaService.getFileStateOldToNew$().subscribe((data: any) => {
       // Si el state es true, el archivo no tenía etiquetas antes
       // y lo debo moover al listado de archivos con etiqueta
@@ -129,6 +130,7 @@ export class ArchivosComponent implements OnInit {
       }
     });
 
+    // Suscripción: para pasar archivos no etiquetados a listado de archivos etiquetados
     this.etiquetaService.getFileStateNewToOld$().subscribe((data: any) => {
       // Si el state es false, el archivo ya no tiene etiquetas
       // y lo debo moover al listado de artchivos sin etiqueta
@@ -148,15 +150,30 @@ export class ArchivosComponent implements OnInit {
       }
     });
 
+    // Suscripción: para pasar actualizar fichero con nueva etiqueta en el listado que corresponda
+    this.etiquetaService.getArchivosActualizados$().subscribe((data: any) => {
+      this.filesNewsTemp[0].forEach(function (item: any, index: number) {
+        if (item.id == data.idArchivoData) {
+          console.log('Match!!');
+          item.etiquetas.push(data.idNuevaEtiquetaData);
+        }
+      });
+      this.filesOldTemp[0].forEach(function (item: any, index: number) {
+        if (item.id == data.idArchivoData) {
+          console.log('Match!!');
+          item.etiquetas.push(data.idNuevaEtiquetaData);
+        }
+      });
+    });
+
+    // Suscripción: para que si no
     this.popupService.getCheckedInputsState$().subscribe((data: boolean) => {
-      console.log('data es', data);
       if (!data) {
         this.misCheckboxes.forEach((element) => {
           element.nativeElement.checked = false;
         });
         this.arrayMultiEdit = [];
       }
-      //this.checkboxes.nativeElement.checked = false;
     });
 
     const isMobile = this.deviceService.isMobile();
@@ -205,7 +222,6 @@ export class ArchivosComponent implements OnInit {
   }
 
   updateArrayMultiEdit(item: any) {
-    console.log('item seleccionado', item);
     if (this.arrayMultiEdit.includes(item)) {
       var index = this.arrayMultiEdit.indexOf(item);
       this.arrayMultiEdit.splice(index, 1);
@@ -216,7 +232,6 @@ export class ArchivosComponent implements OnInit {
   }
 
   agregarEtiquetas(foto: Archivo) {
-    console.log('Agrego etiquetas al archivo con ID ', foto.id);
     this.showContextMenu = true;
     this.showEtiquetas = true;
     this.modalRef = this.modalService.show(EtiquetasComponent);
@@ -307,17 +322,14 @@ export class ArchivosComponent implements OnInit {
   }
 
   onScrollOld() {
-    console.log('Entro a onScrollOld');
     if (this.actualPageOld < this.finishPageOld) {
       this.showLoading = true;
       var startSlice = this.actualPageOld * this.filesPerPage;
       var endSlice = startSlice + this.filesPerPage;
       var viejas = this.filesOld.slice(startSlice, endSlice);
       viejas.forEach((elem) => {
-        console.log('porcentaje es', parseFloat(this.porcentaje));
         this.porcentaje =
           parseFloat(this.porcentaje) + this.porcentajeArchivo + '%';
-        console.log('this.porcentaje', this.porcentaje);
         this.old40Files.push(elem);
       });
       this.showLoading = true;
@@ -351,7 +363,6 @@ export class ArchivosComponent implements OnInit {
       var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
       var filesOldTemp = Array.from(this.filesOld.slice(0, this.filesPerPage));
       this.porcentajeArchivo = 100 / this.filesTemp.length;
-      console.log('porcentajeArchivo es ', this.porcentajeArchivo);
       filesNewsTemp.forEach((elem) => {
         this.new40Files.push(elem);
       });

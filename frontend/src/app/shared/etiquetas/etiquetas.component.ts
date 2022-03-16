@@ -91,7 +91,7 @@ export class EtiquetasComponent implements OnInit {
   }
 
   agregaEtiqueta(nombreEtiqueta: string) {
-    console.log('El valor es ', nombreEtiqueta);
+    console.log();
     // Quito espacios en blanco
     let nombreEtiquetaBueno = nombreEtiqueta.replace(/ /g, '');
     if (this._fotoSeleccionada?.id) {
@@ -99,15 +99,15 @@ export class EtiquetasComponent implements OnInit {
       this.etiquetaService
         .agregarEtiqueta(nombreEtiquetaBueno, idArchivo)
         .subscribe((res: any) => {
-          console.log('res tras grabar etiqueta:', res);
           let etiquetasPrevias = res.etiquetasPrevias;
+          let idNuevaEtiqueta = res.idNuevaEtiqueta;
           if (res.respuesta === 'OK') {
             this.subscriptionLabels.unsubscribe();
             this.obtenerEtiquetas(idArchivo);
             if (res.etiquetasPrevias === 0) {
-              console.log('Paso el archivo a la lista de etiquetados');
               this.etiquetaService.setFileStateOldToNew(true, this.idArchivo);
             }
+            this.etiquetaService.actualizaArchivo(idNuevaEtiqueta, idArchivo);
             this.mostrarNotificacion('Etiqueta grabada', 'success');
           } else {
             this.mostrarNotificacion(`Error: ${res.respuesta}`, 'danger');

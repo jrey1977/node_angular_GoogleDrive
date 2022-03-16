@@ -91,6 +91,7 @@ const grabarEtiqueta = async (req, res) => {
     res.json({
       respuesta: "OK",
       etiquetasPrevias: etiquetasArchivo,
+      idNuevaEtiqueta: idEtiqueta,
     });
   } catch (error) {
     console.log("Error: ", error);
