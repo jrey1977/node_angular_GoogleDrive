@@ -29,7 +29,9 @@
   <div *ngIf="filesNewsTemp[0]" class="w-100 contentNew">
     <div class="bg-white w-100 over header">
       <div class="row pt-5">
-        <div class="col-4">Sin etiquetar [{{ filesNew.length }} archivos]</div>
+        <div class="col-4">
+          <h3>Sin etiquetar [{{ filesNew.length }} archivos]</h3>
+        </div>
         <div class="col-8 text-right">
           <button
             *ngIf="!multiEditMode"
@@ -137,7 +139,7 @@
       [scrollWindow]="true"
     >
       <div class="bg-white w-100 over header">
-        <h3>Galería [{{ contadorFotos }} de {{ filesOld.length }}]</h3>
+        <h3>Galería [{{ filesOld.length }} archivos]</h3>
         <div class="position-relative mb-4 pb-2">
           <hr
             class="rellenoBarra position-absolute over m-0"

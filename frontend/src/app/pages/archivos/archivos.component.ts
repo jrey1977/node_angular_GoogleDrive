@@ -4,11 +4,10 @@ import {
   ElementRef,
   HostListener,
   OnInit,
+  QueryList,
   Renderer2,
   ViewChild,
-  AfterViewInit,
   ViewChildren,
-  QueryList,
 } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -113,20 +112,24 @@ export class ArchivosComponent implements OnInit {
     // Suscripción: para pasar archivos etiquetados a listado de archivos sin etiquetar
     this.etiquetaService.getFileStateOldToNew$().subscribe((data: any) => {
       // Si el state es true, el archivo no tenía etiquetas antes
-      // y lo debo moover al listado de archivos con etiqueta
+      // y lo debo mover al listado de archivos con etiqueta
       if (data.state === true) {
         let idArchivo = data.id;
-        console.log('idArchivo', idArchivo);
-        //console.log('this.filesOldTemp[0]', this.filesOldTemp[0]);
+        // Localizo el item a remover en el listado de archivos sin etiquetar
         let item_removido = this.filesNewsTemp[0].filter(
           (item: { [x: string]: any }) =>
             'id' in item && item['id'] === idArchivo
         );
+        // Meto el archivo en el listado de archivos etiquetados
         this.filesOldTemp[0].unshift(item_removido[0]);
+        // Quito el archivo del listado de archivos sin etiquetar
         this.filesNewsTemp[0] = this.filesNewsTemp[0].filter(
           (item: { [x: string]: any }) =>
             'id' in item && item['id'] !== idArchivo
         );
+        // Actualizo contadores de listados
+        this.filesNew.length = this.filesNew.length - 1;
+        this.filesOld.length = this.filesOld.length + 1;
       }
     });
 
@@ -136,17 +139,21 @@ export class ArchivosComponent implements OnInit {
       // y lo debo moover al listado de artchivos sin etiqueta
       if (data.state === false) {
         let idArchivo = data.id;
-        console.log('idArchivo', idArchivo);
-        //console.log('this.filesOldTemp[0]', this.filesOldTemp[0]);
+        // Localizo el item a remover en el listado de archivos etiquetados
         let item_removido = this.filesOldTemp[0].filter(
           (item: { [x: string]: any }) =>
             'id' in item && item['id'] === idArchivo
         );
+        // Meto el archivo en el listado de archivos sin etiquetar
         this.filesNewsTemp[0].unshift(item_removido[0]);
+        // Quito el archivo del listado de archivos etiquetados
         this.filesOldTemp[0] = this.filesOldTemp[0].filter(
           (item: { [x: string]: any }) =>
             'id' in item && item['id'] !== idArchivo
         );
+        // Actualizo contadores de listados
+        this.filesNew.length = this.filesNew.length + 1;
+        this.filesOld.length = this.filesOld.length - 1;
       }
     });
 
