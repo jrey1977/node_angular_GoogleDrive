@@ -11,8 +11,34 @@
       {{ _fotoSeleccionada?.name }}
     </div>
     <div class="col-8 card">
-      <div class="form-group">
-        <input type="text" placeholder="Nombre de la etiqueta" #etiqueta />
+      <div class="form-group" *ngIf="tagsDisponibles">
+        <div
+          class="custom-wrapper-example"
+          matAutocompleteOrigin
+          #origin="matAutocompleteOrigin"
+        >
+          <!-- <input
+            matInput
+            type="text"
+            class="formControl"
+            placeholder="Nombre de la etiqueta"
+            aria-label="Number"
+
+            [matAutocomplete]="auto"
+            #etiqueta
+          /> -->
+          <input
+            matInput
+            [matAutocomplete]="auto"
+            [matAutocompleteConnectedTo]="origin"
+            #etiqueta
+          />
+        </div>
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let tag of tagsDisponibles" [value]="tag.name">
+            {{ tag.name }}
+          </mat-option>
+        </mat-autocomplete>
         <button
           class="btn btn-success"
           (click)="agregaEtiqueta(etiqueta.value)"

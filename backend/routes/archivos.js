@@ -10,6 +10,7 @@ const {
   getEtiquetasArchivoBBDD,
   getYearLabels,
   insertMasivoCategorias,
+  getEtiquetasAllBBDD,
 } = require("../controllers/archivos");
 
 /* GET Archivos */
@@ -26,5 +27,8 @@ router.get("/borrar/ArchivoBBDD/:idArchivo", borrarArchivoBBDD);
 
 /* Obtiene las etiquetas de un archivo */
 router.get("/etiquetas/:idArchivo", getEtiquetasArchivoBBDD);
+
+/* Obtiene todas las etiquetas */
+router.get("/etiquetas", getEtiquetasAllBBDD);
 
 module.exports = router;

@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { PagesModule } from './pages/pages.module';
 import { EtiquetasModule } from './shared/etiquetas/etiquetas.module';
 import { UtilsModule } from './utils/utils.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,6 +20,7 @@ import { UtilsModule } from './utils/utils.module';
     UtilsModule,
     CommonModule,
     EtiquetasModule,
+    BrowserAnimationsModule,
   ],
   exports: [CommonModule, BrowserModule],
   providers: [],

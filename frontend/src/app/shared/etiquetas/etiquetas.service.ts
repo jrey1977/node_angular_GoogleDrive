@@ -101,4 +101,8 @@ export class EtiquetasService {
     };
     this.filesUpdated$.next(data);
   }
+
+  getAllTags() {
+    return this.http.get<any[]>(`http://localhost:3100/archivos/etiquetas/`);
+  }
 }

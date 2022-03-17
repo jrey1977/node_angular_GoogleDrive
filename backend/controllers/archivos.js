@@ -467,10 +467,13 @@ const borrarArchivoBBDD = async (req, res) => {
     // Borro el archivo
     await Archivo.deleteMany({ id: idArchivo });
 
-    // Si no he encontrado otros archivos con ese padre, 
+    // Si no he encontrado otros archivos con ese padre,
     // borro el padre ( siempre que no sea la carpeta "nuevas")
     var ficherosCarpeta = await Archivo.find({ parents: idParentFile });
-    if (ficherosCarpeta.length == 0 && (idParentFile !== '1y0wM99USkqzvObuf8HY43kOw6tAbJQ0s') ) {
+    if (
+      ficherosCarpeta.length == 0 &&
+      idParentFile !== "1y0wM99USkqzvObuf8HY43kOw6tAbJQ0s"
+    ) {
       await Etiqueta.deleteMany({ id: idParentFile });
       try {
         return drive.files
@@ -512,6 +515,21 @@ const borrarArchivoBBDD = async (req, res) => {
   }
 };
 
+const getEtiquetasAllBBDD = async (req, res) => {
+  try {
+    let etiquetasData = await Etiqueta.find();
+    res.json({
+      respuesta: "OK",
+      etiquetas: etiquetasData,
+    });
+  } catch (error) {
+    res.json({
+      respuesta: "Error",
+      errorData: error,
+    });
+  }
+};
+
 module.exports = {
   getNewFiles,
   getFiles,
@@ -521,4 +539,5 @@ module.exports = {
   getEtiquetasArchivoBBDD,
   getYearLabels,
   insertMasivoCategorias,
+  getEtiquetasAllBBDD,
 };

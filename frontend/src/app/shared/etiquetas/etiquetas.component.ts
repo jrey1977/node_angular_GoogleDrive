@@ -17,6 +17,7 @@ export class EtiquetasComponent implements OnInit {
   public _fotoSeleccionada?: Archivo;
   public categoriaArchivo: string = '';
   public idArchivo: string = '';
+  public tagsDisponibles?: Etiqueta[];
 
   @Input() set fotoSeleccionada(value: Archivo) {
     this._fotoSeleccionada = value;
@@ -40,6 +41,14 @@ export class EtiquetasComponent implements OnInit {
       } else {
         console.log('Saco etiqueta de la lista');
       }
+    });
+    this.obtenerEtiquetasAutoComplete();
+  }
+
+  obtenerEtiquetasAutoComplete() {
+    this.etiquetaService.getAllTags().subscribe((data: any) => {
+      console.log('data es ', data);
+      this.tagsDisponibles = data.etiquetas;
     });
   }
 
