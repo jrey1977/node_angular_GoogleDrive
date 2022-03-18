@@ -1,11 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { environment } from 'src/environments/environment';
 import { EtiquetasService } from './etiquetas.service';
 import { Etiqueta } from './models/etiquetas.interface';
+
+export interface User {
+  name: string;
+}
 
 @Component({
   selector: 'app-etiquetas',
@@ -17,7 +23,17 @@ export class EtiquetasComponent implements OnInit {
   public _fotoSeleccionada?: Archivo;
   public categoriaArchivo: string = '';
   public idArchivo: string = '';
+  public etiquetas: any[] = [];
   public tagsDisponibles?: Etiqueta[];
+
+  formControl = new FormControl();
+  autoFilter!: Observable<string[]>;
+  Items: string[] = [
+    'BoJack Horseman',
+    'Stranger Things',
+    'Ozark',
+    'Big Mouth',
+  ];
 
   @Input() set fotoSeleccionada(value: Archivo) {
     this._fotoSeleccionada = value;
@@ -25,7 +41,6 @@ export class EtiquetasComponent implements OnInit {
     this.idArchivo = this._fotoSeleccionada.id;
   }
 
-  public etiquetas: any[] = [];
   constructor(
     public bsModalRef: BsModalRef,
     private etiquetaService: EtiquetasService,
@@ -35,14 +50,32 @@ export class EtiquetasComponent implements OnInit {
   public subscriptionLabels!: Subscription;
 
   ngOnInit(): void {
-    this.etiquetaService.getTagsList$().subscribe((data: any) => {
+    /*    this.etiquetaService.getTagsList$().subscribe((data: any) => {
       if (data.accion === 'add') {
         console.log('Meto etiqueta en la lista');
       } else {
         console.log('Saco etiqueta de la lista');
       }
-    });
-    this.obtenerEtiquetasAutoComplete();
+    }); */
+
+    this.autoFilter = this.formControl.valueChanges.pipe(
+      startWith(''),
+      map((value) => {
+        console.log('entro al autoFilter', value);
+        return this.mat_filter(value);
+      })
+    );
+
+    //this.obtenerEtiquetasAutoComplete();
+  }
+
+  private mat_filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    console.log('mat_filter recibe:', filterValue);
+    console.log('Filrto en:', this.Items);
+    return this.Items.filter(
+      (option) => option.toLowerCase().indexOf(filterValue) === 0
+    );
   }
 
   obtenerEtiquetasAutoComplete() {

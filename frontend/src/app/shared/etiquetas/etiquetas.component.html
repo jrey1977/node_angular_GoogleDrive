@@ -26,7 +26,7 @@
 
             [matAutocomplete]="auto"
             #etiqueta
-          /> -->
+          />
           <input
             matInput
             [matAutocomplete]="auto"
@@ -35,42 +35,64 @@
           />
         </div>
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let tag of tagsDisponibles" [value]="tag.name">
-            {{ tag.name }}
+          <mat-option *ngFor="let tag of tagsDisponibles" [value]="tag">
+            {{ tag }}
           </mat-option>
         </mat-autocomplete>
-        <button
-          class="btn btn-success"
-          (click)="agregaEtiqueta(etiqueta.value)"
-        >
-          Agregar
-        </button>
-      </div>
-      <h2 *ngIf="!etiquetas.length">Esta foto todavía no se ha etiquetado</h2>
-      <ng-container *ngIf="etiquetas.length">
-        <div class="form-group flex-column d-flex">
-          <label class="form-control-label pl-2">Etiquetas:</label>
-          <ul *ngIf="etiquetas.length" class="ulEtiquetas">
-            <li *ngFor="let etiqueta of etiquetas; let i = index">
-              {{ etiqueta.name }}
-              <button
-                class="btn test"
-                (click)="borrarEtiqueta(etiqueta._id, i)"
-              >
-                X
-              </button>
-            </li>
-          </ul>
+
+          <button
+            class="btn btn-success"
+            (click)="agregaEtiqueta(etiqueta.value)"
+          >
+            Agregar
+          </button> -->
         </div>
-      </ng-container>
-    </div>
-    <div class="col-1"></div>
-    <div class="col-3 card">
-      <img
-        class="img-fluid imgEtiquetada"
-        [src]="urlImg + _fotoSeleccionada?.id"
-        [alt]="fotoSeleccionada?.name"
-      />
+
+        <h2 *ngIf="!etiquetas.length">Esta foto todavía no se ha etiquetado</h2>
+        <ng-container *ngIf="etiquetas.length">
+          <div class="form-group flex-column d-flex">
+            <label class="form-control-label pl-2">Etiquetas:</label>
+            <ul *ngIf="etiquetas.length" class="ulEtiquetas">
+              <li *ngFor="let etiqueta of etiquetas; let i = index">
+                {{ etiqueta.name }}
+                <button
+                  class="btn test"
+                  (click)="borrarEtiqueta(etiqueta._id, i)"
+                >
+                  X
+                </button>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="autoFilter">
+        Nuevo div con autoFilter: {{ autoFilter }}
+        <br />
+        <mat-form-field style="width: 300px; margin: 50px auto; display: block">
+          <input
+            type="text"
+            placeholder="Netflix Webseries"
+            matInput
+            [formControl]="formControl"
+            [matAutocomplete]="auto"
+          />
+
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            <mat-option *ngFor="let item of autoFilter | async" [value]="item">
+              {{ item }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-1"></div>
+      <div class="col-3 card">
+        <img
+          class="img-fluid imgEtiquetada"
+          [src]="urlImg + _fotoSeleccionada?.id"
+          [alt]="fotoSeleccionada?.name"
+        />
+      </div>
     </div>
   </div>
 </div>
