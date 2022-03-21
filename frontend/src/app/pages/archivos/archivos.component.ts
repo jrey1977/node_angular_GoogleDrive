@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { NgxMasonryOptions } from 'ngx-masonry';
+import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 import { EtiquetasComponent } from 'src/app/shared/etiquetas/etiquetas.component';
 import { EtiquetasService } from 'src/app/shared/etiquetas/etiquetas.service';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
@@ -85,6 +85,7 @@ export class ArchivosComponent implements OnInit {
   @ViewChild('contextMenu') contextMenu!: ElementRef;
   @ViewChild('etiquetas') etiquetas!: ElementRef;
   @ViewChildren('checkboxMultiEdit') misCheckboxes!: QueryList<ElementRef>;
+  @ViewChild(NgxMasonryComponent) masonry!: NgxMasonryComponent;
 
   constructor(
     private archivoService: ArchivosService,
@@ -122,6 +123,9 @@ export class ArchivosComponent implements OnInit {
         );
         // Meto el archivo en el listado de archivos etiquetados
         this.filesOldTemp[0].unshift(item_removido[0]);
+        this.masonry.reloadItems();
+        this.masonry.layout();
+
         // Quito el archivo del listado de archivos sin etiquetar
         this.filesNewsTemp[0] = this.filesNewsTemp[0].filter(
           (item: { [x: string]: any }) =>
@@ -151,6 +155,8 @@ export class ArchivosComponent implements OnInit {
           (item: { [x: string]: any }) =>
             'id' in item && item['id'] !== idArchivo
         );
+        this.masonry.reloadItems();
+        this.masonry.layout();
         // Actualizo contadores de listados
         this.filesNew.length = this.filesNew.length + 1;
         this.filesOld.length = this.filesOld.length - 1;

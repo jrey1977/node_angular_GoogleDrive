@@ -149,7 +149,11 @@
         </div>
       </div>
       <div class="contentArchivosViejos" #listadoViejos>
-        <ngx-masonry [ordered]="true" [options]="myOptions">
+        <ngx-masonry
+          [ordered]="true"
+          [options]="myOptions"
+          #NgxMasonryComponent
+        >
           <div
             ngxMasonryItem
             class="masonry-item"

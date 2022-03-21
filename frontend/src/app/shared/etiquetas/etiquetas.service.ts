@@ -103,6 +103,8 @@ export class EtiquetasService {
   }
 
   getAllTags() {
-    return this.http.get<any[]>(`http://localhost:3100/archivos/etiquetas/`);
+    return this.http.get<Etiqueta[]>(
+      `http://localhost:3100/archivos/etiquetas/`
+    );
   }
 }

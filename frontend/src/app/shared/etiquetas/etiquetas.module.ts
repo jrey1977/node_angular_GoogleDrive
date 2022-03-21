@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { AngularMaterialModule } from '../../angular-material/angular-material.module';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { EtiquetasComponent } from './etiquetas.component';
 import { ListadoEtiquetasComponent } from './listado-etiquetas/listado-etiquetas.component';
 @NgModule({
@@ -12,12 +13,12 @@ import { ListadoEtiquetasComponent } from './listado-etiquetas/listado-etiquetas
   imports: [
     CommonModule,
     BrowserModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
+    BrowserAnimationsModule,
+    AngularMaterialModule,
     ReactiveFormsModule,
+    FormsModule,
   ],
   exports: [EtiquetasComponent, ListadoEtiquetasComponent, CommonModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EtiquetasModule {}
