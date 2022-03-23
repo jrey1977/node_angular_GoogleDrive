@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Observable, Subscription } from 'rxjs';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { map, startWith } from 'rxjs/operators';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
@@ -29,7 +28,7 @@ export class EtiquetasComponent implements OnInit {
   public categoriaArchivo: string = '';
   public idArchivo: string = '';
   public etiquetas: any[] = [];
-  public tagsDisponibles?: Etiqueta[];
+  public tagsDisponiblesBBDD?: Etiqueta[];
   private arrayLetras: any = [];
 
   @Input() set fotoSeleccionada(value: Archivo) {
@@ -38,7 +37,7 @@ export class EtiquetasComponent implements OnInit {
     this.idArchivo = this._fotoSeleccionada.id;
   }
 
-  mi_grupo = [
+  /* mi_grupo = [
     {
       letter: 'A',
       names: ['Alabama', 'Alaska', 'Arizona', 'Arkansas'],
@@ -133,12 +132,12 @@ export class EtiquetasComponent implements OnInit {
       letter: 'W',
       names: ['Washington', 'West Virginia', 'Wisconsin', 'Wyoming'],
     },
-  ];
+  ]; */
 
   stateForm: FormGroup = this._formBuilder.group({
     stateGroup: '',
   });
-  stateGroups?: StateGroup[];
+  stateGroups: any[] = [];
 
   stateGroupOptions!: Observable<StateGroup[]>;
 
@@ -160,7 +159,7 @@ export class EtiquetasComponent implements OnInit {
     if (value) {
       if (this.stateGroups) {
         return this.stateGroups
-          .map((group) => ({
+          .map((group: any) => ({
             letter: group.letter,
             names: _filter(group.names, value),
           }))
@@ -183,17 +182,16 @@ export class EtiquetasComponent implements OnInit {
   obtenerEtiquetasAutoComplete() {
     this.etiquetaService.getAllTags().subscribe((data: any) => {
       console.log('data es ', data);
-      this.tagsDisponibles = data.etiquetas;
-      console.log('this.tagsDisponibles', this.tagsDisponibles);
-      if (this.tagsDisponibles) {
-        this.obtenerPrimeraLetra(this.tagsDisponibles);
+      this.tagsDisponiblesBBDD = data.etiquetas;
+      console.log('this.tagsDisponibles', this.tagsDisponiblesBBDD);
+      if (this.tagsDisponiblesBBDD) {
+        this.obtenerPrimeraLetra(this.tagsDisponiblesBBDD);
       }
     });
   }
 
-  obtenerPrimeraLetra(etiquetas: Etiqueta[]) {
-    const firstLetters = etiquetas.map((word: any) => {
-      console.log('word', word.name[0].toUpperCase());
+  obtenerPrimeraLetra(etiquetasBBDD: Etiqueta[]) {
+    const firstLetters = etiquetasBBDD.map((word: any) => {
       return word.name[0].toUpperCase();
     });
 
@@ -201,74 +199,56 @@ export class EtiquetasComponent implements OnInit {
 
     this.arrayLetras.push(uniqueChars);
 
-    this.montarDatosEtiquetas(etiquetas);
+    this.montarDatosEtiquetas(etiquetasBBDD);
   }
 
-  montarDatosEtiquetas(tags: Etiqueta[]) {
+  montarDatosEtiquetas(tagsBBDD: Etiqueta[]) {
     // Array de etiquetas
-    let tagsData = tags;
+    let tagsBBDDData = tagsBBDD;
 
-    tagsData.forEach((etiqueta) => {
+    tagsBBDDData.forEach((etiqueta) => {
       var nameTag = etiqueta.name;
       var letraTag = nameTag[0].toUpperCase();
       console.log('Chequeo esta letra: ', letraTag);
 
       if (this.arrayLetras[0].includes(letraTag)) {
         console.log('La ha encontrado');
-        console.log('this.stateGroups', this.stateGroups);
-        // if ( !this.stateGroups[0] ) {
-        //   var resultadosPorLetraArray:string[] = [];
-        //   tagsData.forEach((obj) => {
-        //     console.log('obj.name[0].toUpperCase()', obj.name[0].toUpperCase());
-        //     if (obj.name[0].toUpperCase() === letraTag) {
-        //       resultadosPorLetraArray.push();
-        //     }
-        //   });
-        //   let nuevaTag:StateGroup = {
-        //       letter: letraTag,
-        //       names: resultadosPorLetraArray
-        //   };
-        //   this.stateGroups.push(nuevaTag);
-        // } else {
-        //   console.log('this.stateGroups no es undefined:', this.stateGroups);
-        // }
+
+        // TO DO: Buscar en this.stateGroups si hay un objeto con letter == letraTag
+        // SI no hay, creo un objeto y lo meto en this.stateGroups
+        if (this.stateGroups) {
+          var results = this.stateGroups.filter(
+            (obj) => obj.letter == letraTag
+          ).length;
+        } else {
+          var results = 0;
+        }
+
+        if (results > 0) {
+          this.stateGroups?.forEach((obj) => {
+            if (obj.letter == letraTag) {
+              obj.names?.push(nameTag);
+            }
+          });
+        } else {
+          var nuevaEtiqueta = {
+            letter: letraTag,
+            names: [nameTag],
+          };
+          this.stateGroups?.push(nuevaEtiqueta);
+          console.log('Hago push en stateGroups', this.stateGroups);
+        }
       } else {
         console.log('No la ha encontrado en', this.arrayLetras);
       }
     });
 
-    // this.arrayLetras.forEach((letrasData: string) => {
-    //   console.log('letrasData iterada', letrasData);
-    //   console.log('tagsData', tagsData);
-    //   var letrasGuardadas = letrasData;
-    //   var resultadosPorLetra = tagsData.filter((dato) => {
-    //     var letraBuena = String(letrasGuardadas);
-    //     letraBuena = letraBuena.toLocaleLowerCase();
-    //     console.log('letraBuena', letraBuena);
-    //     console.log('dato.name[0]', dato.name[0]);
-    //     return dato.name[0] === letraBuena;
-    //   });
-    //   console.log('resultadosPorLetra en iteración', resultadosPorLetra);
-    //   var arrayNombresEtiquetas: string[] = [];
-    //   resultadosPorLetra.forEach((tagIterada) => {
-    //     arrayNombresEtiquetas.push(tagIterada.name);
-    //   });
-    //   var objetoEtiqueta: StateGroup = {
-    //     letter: letrasData,
-    //     names: arrayNombresEtiquetas,
-    //   };
-    //   this.stateGroups?.push(objetoEtiqueta);
-    // });
-
-    console.log('stateGroups', this.stateGroups);
-    if (this.stateGroupOptions) {
-      this.stateGroupOptions = this.stateForm
-        .get('stateGroup')!
-        .valueChanges.pipe(
-          startWith(''),
-          map((value) => this._filterGroup(value))
-        );
-    }
+    this.stateGroupOptions = this.stateForm
+      .get('stateGroup')!
+      .valueChanges.pipe(
+        startWith(''),
+        map((value) => this._filterGroup(value))
+      );
   }
 
   async obtenerEtiquetas(idParam: string) {
