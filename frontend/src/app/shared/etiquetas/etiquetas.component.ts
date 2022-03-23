@@ -6,6 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { environment } from 'src/environments/environment';
+import { isObjectBindingPattern } from 'typescript';
 import { EtiquetasService } from './etiquetas.service';
 import { Etiqueta } from './models/etiquetas.interface';
 
@@ -317,6 +318,41 @@ export class EtiquetasComponent implements OnInit {
             }
             this.etiquetaService.actualizaArchivo(idNuevaEtiqueta, idArchivo);
             this.stateForm.reset();
+            // Refresco lista de etiquetas de autocomplete
+            // con la nueva etiqueta (si es que lo es)
+            var mayLet = nombreEtiqueta[0].toUpperCase();
+            var resultsLetter = this.stateGroups.find((obj) => {
+              return (obj.letter = mayLet);
+            });
+            // Busco la primera letra, a ver si ya está en el autocomplete
+            if (resultsLetter) {
+              // Está la letra. Ahora busco si la etiqueta estaba ya
+              var results = this.stateGroups.find((obj) => {
+                return obj.names.includes(nombreEtiqueta);
+              });
+              // Estaba la letra, pero no la etiqueta
+              if (results === undefined) {
+                var newTag = {
+                  letter: nombreEtiqueta[0].toUpperCase(),
+                  names: [nombreEtiqueta],
+                };
+                // Busco el objeto con la misma letra y le meto la etiqueta
+                this.stateGroups.forEach((obj) => {
+                  if (obj.letter == mayLet) {
+                    obj.names.push(nombreEtiqueta);
+                  }
+                });
+                this.stateGroups.push(newTag);
+              }
+            } else {
+              // No había letra, así que es nueva etiqueta
+              var newTag = {
+                letter: nombreEtiqueta[0].toUpperCase(),
+                names: [nombreEtiqueta],
+              };
+              this.stateGroups.push(newTag);
+            }
+
             this.mostrarNotificacion('Etiqueta grabada', 'success');
           } else {
             this.mostrarNotificacion(`Error: ${res.respuesta}`, 'danger');
