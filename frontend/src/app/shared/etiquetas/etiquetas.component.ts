@@ -6,7 +6,6 @@ import { map, startWith } from 'rxjs/operators';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { environment } from 'src/environments/environment';
-import { isObjectBindingPattern } from 'typescript';
 import { EtiquetasService } from './etiquetas.service';
 import { Etiqueta } from './models/etiquetas.interface';
 
@@ -183,7 +182,9 @@ export class EtiquetasComponent implements OnInit {
   obtenerEtiquetasAutoComplete() {
     this.etiquetaService.getAllTags().subscribe((data: any) => {
       console.log('data es ', data);
-      this.tagsDisponiblesBBDD = data.etiquetas;
+      this.tagsDisponiblesBBDD = data.etiquetas.sort(function (a: any, b: any) {
+        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+      });
       console.log('this.tagsDisponibles', this.tagsDisponiblesBBDD);
       if (this.tagsDisponiblesBBDD) {
         this.obtenerPrimeraLetra(this.tagsDisponiblesBBDD);
@@ -336,13 +337,21 @@ export class EtiquetasComponent implements OnInit {
                   letter: nombreEtiqueta[0].toUpperCase(),
                   names: [nombreEtiqueta],
                 };
+                console.log('Meto la etiqueta en su letra:', newTag);
                 // Busco el objeto con la misma letra y le meto la etiqueta
                 this.stateGroups.forEach((obj) => {
                   if (obj.letter == mayLet) {
+                    console.log(
+                      `Esta es la letra: ${obj.letter} y coincide con ${mayLet}, así que meto la palabra ${nombreEtiqueta}`
+                    );
+                    console.log('EL objeto que coincide:', obj);
                     obj.names.push(nombreEtiqueta);
                   }
                 });
-                this.stateGroups.push(newTag);
+              } else {
+                console.log(
+                  'No cambio el autocomplete porque ya estaba la etiqueta'
+                );
               }
             } else {
               // No había letra, así que es nueva etiqueta

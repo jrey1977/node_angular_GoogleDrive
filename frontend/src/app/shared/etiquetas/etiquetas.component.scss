@@ -74,3 +74,7 @@ button:focus {
 .example-full-width {
   width: 100%;
 }
+
+::ng-deep .mat-option-text {
+  text-transform: lowercase;
+}
