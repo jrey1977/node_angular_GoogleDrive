@@ -9,6 +9,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
+import { MatTabGroup } from '@angular/material/tabs';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
@@ -80,12 +81,14 @@ export class ArchivosComponent implements OnInit {
   public arrayMultiEdit: any[] = [];
   public checkboxesChecked: boolean = false;
   modalRef?: BsModalRef;
+  public cargado: boolean = false;
 
   @ViewChild('contentArchivosNuevos') ul!: ElementRef;
   @ViewChild('contextMenu') contextMenu!: ElementRef;
   @ViewChild('etiquetas') etiquetas!: ElementRef;
   @ViewChildren('checkboxMultiEdit') misCheckboxes!: QueryList<ElementRef>;
   @ViewChild(NgxMasonryComponent) masonry!: NgxMasonryComponent;
+  @ViewChild('mtg') tg!: MatTabGroup;
 
   constructor(
     private archivoService: ArchivosService,
@@ -213,6 +216,12 @@ export class ArchivosComponent implements OnInit {
     };
 
     this.getNewFiles();
+  }
+
+  selectedIndexChange(evt: any) {
+    if (this.tg.selectedIndex) {
+      this.cargado = true;
+    }
   }
 
   @HostListener('window:scroll', [])

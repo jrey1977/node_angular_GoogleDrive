@@ -1,4 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Observable, Subscription } from 'rxjs';
@@ -36,103 +41,6 @@ export class EtiquetasComponent implements OnInit {
     this.obtenerEtiquetas(this._fotoSeleccionada.id);
     this.idArchivo = this._fotoSeleccionada.id;
   }
-
-  /* mi_grupo = [
-    {
-      letter: 'A',
-      names: ['Alabama', 'Alaska', 'Arizona', 'Arkansas'],
-    },
-    {
-      letter: 'C',
-      names: ['California', 'Colorado', 'Connecticut'],
-    },
-    {
-      letter: 'D',
-      names: ['Delaware'],
-    },
-    {
-      letter: 'F',
-      names: ['Florida'],
-    },
-    {
-      letter: 'G',
-      names: ['Georgia'],
-    },
-    {
-      letter: 'H',
-      names: ['Hawaii'],
-    },
-    {
-      letter: 'I',
-      names: ['Idaho', 'Illinois', 'Indiana', 'Iowa'],
-    },
-    {
-      letter: 'K',
-      names: ['Kansas', 'Kentucky'],
-    },
-    {
-      letter: 'L',
-      names: ['Louisiana'],
-    },
-    {
-      letter: 'M',
-      names: [
-        'Maine',
-        'Maryland',
-        'Massachusetts',
-        'Michigan',
-        'Minnesota',
-        'Mississippi',
-        'Missouri',
-        'Montana',
-      ],
-    },
-    {
-      letter: 'N',
-      names: [
-        'Nebraska',
-        'Nevada',
-        'New Hampshire',
-        'New Jersey',
-        'New Mexico',
-        'New York',
-        'North Carolina',
-        'North Dakota',
-      ],
-    },
-    {
-      letter: 'O',
-      names: ['Ohio', 'Oklahoma', 'Oregon'],
-    },
-    {
-      letter: 'P',
-      names: ['Pennsylvania'],
-    },
-    {
-      letter: 'R',
-      names: ['Rhode Island'],
-    },
-    {
-      letter: 'S',
-      names: ['South Carolina', 'South Dakota'],
-    },
-    {
-      letter: 'T',
-      names: ['Tennessee', 'Texas'],
-    },
-    {
-      letter: 'U',
-      names: ['Utah'],
-    },
-    {
-      letter: 'V',
-      names: ['Vermont', 'Virginia'],
-    },
-    {
-      letter: 'W',
-      names: ['Washington', 'West Virginia', 'Wisconsin', 'Wyoming'],
-    },
-  ]; */
 
   stateForm: FormGroup = this._formBuilder.group({
     stateGroup: '',
@@ -233,11 +141,13 @@ export class EtiquetasComponent implements OnInit {
             }
           });
         } else {
+          console.log('Esta letra no estaba así que la meto:', letraTag);
           var nuevaEtiqueta = {
             letter: letraTag,
             names: [nameTag],
           };
           this.stateGroups?.push(nuevaEtiqueta);
+
           console.log('Hago push en stateGroups', this.stateGroups);
         }
       } else {
@@ -272,13 +182,6 @@ export class EtiquetasComponent implements OnInit {
           console.log('Res es ', res);
           this.mostrarNotificacion('Etiqueta borrada', 'success');
           // Quito la etiqueta del listado de etiquetas en la popup
-
-          // let etiquetaBorrada = this.etiquetas.filter(
-          //   (item: { [x: string]: any }) =>
-          //     'id' in item && item['id'] === idEtiqueta
-          // );
-          // this.etiquetaService.updateTags(etiquetaBorrada, 'remove');
-
           if (this.etiquetas.length === 1) {
             this.etiquetas = [];
           } else {
@@ -301,7 +204,6 @@ export class EtiquetasComponent implements OnInit {
   }
 
   agregaEtiqueta(nombreEtiqueta: string) {
-    console.log();
     // Quito espacios en blanco
     let nombreEtiquetaBueno = nombreEtiqueta.replace(/ /g, '');
     if (this._fotoSeleccionada?.id) {
@@ -319,11 +221,12 @@ export class EtiquetasComponent implements OnInit {
             }
             this.etiquetaService.actualizaArchivo(idNuevaEtiqueta, idArchivo);
             this.stateForm.reset();
+
             // Refresco lista de etiquetas de autocomplete
             // con la nueva etiqueta (si es que lo es)
             var mayLet = nombreEtiqueta[0].toUpperCase();
             var resultsLetter = this.stateGroups.find((obj) => {
-              return (obj.letter = mayLet);
+              return obj.letter === mayLet;
             });
             // Busco la primera letra, a ver si ya está en el autocomplete
             if (resultsLetter) {
@@ -337,15 +240,13 @@ export class EtiquetasComponent implements OnInit {
                   letter: nombreEtiqueta[0].toUpperCase(),
                   names: [nombreEtiqueta],
                 };
-                console.log('Meto la etiqueta en su letra:', newTag);
                 // Busco el objeto con la misma letra y le meto la etiqueta
                 this.stateGroups.forEach((obj) => {
-                  if (obj.letter == mayLet) {
-                    console.log(
-                      `Esta es la letra: ${obj.letter} y coincide con ${mayLet}, así que meto la palabra ${nombreEtiqueta}`
-                    );
-                    console.log('EL objeto que coincide:', obj);
+                  if (obj.letter === mayLet) {
                     obj.names.push(nombreEtiqueta);
+                    obj.names.sort(function (a: any, b: any) {
+                      return a.toLowerCase().localeCompare(b.toLowerCase());
+                    });
                   }
                 });
               } else {
@@ -356,12 +257,33 @@ export class EtiquetasComponent implements OnInit {
             } else {
               // No había letra, así que es nueva etiqueta
               var newTag = {
-                letter: nombreEtiqueta[0].toUpperCase(),
+                letter: nombreEtiqueta[0].toLowerCase(),
                 names: [nombreEtiqueta],
               };
-              this.stateGroups.push(newTag);
+              // Averiguo el lugar del array en el que debo hacer el push
+              var index = 0;
+              this.stateGroups.forEach((obj) => {
+                console.log('Valor1', nombreEtiqueta[0].toLowerCase());
+                console.log('Valor2', obj.letter.toLowerCase());
+                var resultado = nombreEtiqueta[0]
+                  .toLowerCase()
+                  .localeCompare(obj.letter.toLowerCase());
+                if (resultado != -1) {
+                  console.log(
+                    'Resultado del if es:',
+                    nombreEtiqueta[0]
+                      .toLowerCase()
+                      .localeCompare(obj.letter.toLowerCase())
+                  );
+                  index++;
+                  console.log(
+                    'Valor 1 más peque que valor 2. Index es:',
+                    index
+                  );
+                }
+              });
+              this.stateGroups.splice(index, 0, newTag);
             }
-
             this.mostrarNotificacion('Etiqueta grabada', 'success');
           } else {
             this.mostrarNotificacion(`Error: ${res.respuesta}`, 'danger');
