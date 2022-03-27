@@ -54,10 +54,14 @@ export class NotificationComponent implements OnInit {
           // ha habido una notificación posterior que si lo es
           if (this.fixed !== true) {
             this.show = false;
+            console.log('Oculto la window');
           }
         }, 1000);
       } else {
         this.fixed = true;
+        setTimeout(() => {
+          this.show = false;
+        }, 1000);
       }
       this.notification = notificationReceived;
     });

@@ -38,20 +38,28 @@ export class ArchivosComponent implements OnInit {
   // Todos los archivos con etiqueta
   public filesNew: any[] = [];
 
-  // Los archivos nuevos y viejos que se están mostrando
-  public filesNewsTemp: any[] = [];
-  public filesOldTemp: any[] = [];
+  // // Los archivos nuevos y viejos que se están mostrando
+  // public filesNewsTemp: any[] = [];
+  // public filesOldTemp: any[] = [];
 
-  // Todos los viejos
+  // // Todos los viejos
   public filesOld: any[] = [];
 
-  // Infinite Scroll New Files
-  private actualPageNew: number = 1;
-  private finishPageNew: number = 1;
+  // Todos los archivos: con y sin etiqueta
+  public filesAll: any[] = [];
+  // Todos los archivos que se están mostrando
+  public filesAllTemp: any[] = [];
+  // Infinite Scroll All Files
+  private actualPageAll: number = 1;
+  private finishPageAll: number = 1;
 
-  // Infinite Scroll Old Files
-  private actualPageOld: number = 1;
-  private finishPageOld: number = 1;
+  // // Infinite Scroll New Files
+  // private actualPageNew: number = 1;
+  // private finishPageNew: number = 1;
+
+  // // Infinite Scroll Old Files
+  // private actualPageOld: number = 1;
+  // private finishPageOld: number = 1;
 
   public showGoUpButton: boolean = false;
   private filesPerPage: number = 40;
@@ -101,88 +109,23 @@ export class ArchivosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Menú contextual al pinchar con el botón derecho en cualquier lugar de la pantalla
-    this.renderer.listen('window', 'click', (e: Event) => {
-      if (
-        e.target !== this.contextMenu.nativeElement &&
-        e.target !== this.contextMenu.nativeElement.querySelector('div') &&
-        e.target !== this.contextMenu.nativeElement.querySelector('ul') &&
-        e.target !== this.contextMenu.nativeElement.querySelector('li')
-      ) {
-        this.showContextMenu = false;
-      }
-    });
-
-    // Suscripción: para pasar archivos etiquetados a listado de archivos sin etiquetar
-    this.etiquetaService.getFileStateOldToNew$().subscribe((data: any) => {
-      // Si el state es true, el archivo no tenía etiquetas antes
-      // y lo debo mover al listado de archivos con etiqueta
-      if (data.state === true) {
-        let idArchivo = data.id;
-        // Localizo el item a remover en el listado de archivos sin etiquetar
-        let item_removido = this.filesNewsTemp[0].filter(
-          (item: { [x: string]: any }) =>
-            'id' in item && item['id'] === idArchivo
-        );
-        // Meto el archivo en el listado de archivos etiquetados
-        this.filesOldTemp[0].unshift(item_removido[0]);
-        this.masonry.reloadItems();
-        this.masonry.layout();
-
-        // Quito el archivo del listado de archivos sin etiquetar
-        this.filesNewsTemp[0] = this.filesNewsTemp[0].filter(
-          (item: { [x: string]: any }) =>
-            'id' in item && item['id'] !== idArchivo
-        );
-        // Actualizo contadores de listados
-        this.filesNew.length = this.filesNew.length - 1;
-        this.filesOld.length = this.filesOld.length + 1;
-      }
-    });
-
-    // Suscripción: para pasar archivos no etiquetados a listado de archivos etiquetados
-    this.etiquetaService.getFileStateNewToOld$().subscribe((data: any) => {
-      // Si el state es false, el archivo ya no tiene etiquetas
-      // y lo debo moover al listado de artchivos sin etiqueta
-      if (data.state === false) {
-        let idArchivo = data.id;
-        // Localizo el item a remover en el listado de archivos etiquetados
-        let item_removido = this.filesOldTemp[0].filter(
-          (item: { [x: string]: any }) =>
-            'id' in item && item['id'] === idArchivo
-        );
-        // Meto el archivo en el listado de archivos sin etiquetar
-        this.filesNewsTemp[0].unshift(item_removido[0]);
-        // Quito el archivo del listado de archivos etiquetados
-        this.filesOldTemp[0] = this.filesOldTemp[0].filter(
-          (item: { [x: string]: any }) =>
-            'id' in item && item['id'] !== idArchivo
-        );
-        this.masonry.reloadItems();
-        this.masonry.layout();
-        // Actualizo contadores de listados
-        this.filesNew.length = this.filesNew.length + 1;
-        this.filesOld.length = this.filesOld.length - 1;
-      }
-    });
-
     // Suscripción: para pasar actualizar fichero con nueva etiqueta en el listado que corresponda
     this.etiquetaService.getArchivosActualizados$().subscribe((data: any) => {
-      this.filesNewsTemp[0].forEach(function (item: any, index: number) {
+      this.filesAllTemp[0].forEach(function (item: any, index: number) {
         if (item.id == data.idArchivoData) {
+          var etiquetaData = data.idNuevaEtiquetaData;
           console.log('Match!!');
-          item.etiquetas.push(data.idNuevaEtiquetaData);
-        }
-      });
-      this.filesOldTemp[0].forEach(function (item: any, index: number) {
-        if (item.id == data.idArchivoData) {
-          console.log('Match!!');
-          item.etiquetas.push(data.idNuevaEtiquetaData);
+          var indexEtiqueta = item.etiquetas.indexOf(data.idNuevaEtiquetaData);
+          if (item.etiquetas.indexOf(data.idNuevaEtiquetaData) != -1) {
+            item.etiquetas.splice(indexEtiqueta, 1);
+          } else {
+            item.etiquetas.push(data.idNuevaEtiquetaData);
+          }
         }
       });
     });
 
-    // Suscripción: para que si no
+    // Suscripción: para quitar la selección de checkboxes cuando se cierra la pop-up de edición múltiple
     this.popupService.getCheckedInputsState$().subscribe((data: boolean) => {
       if (!data) {
         this.misCheckboxes.forEach((element) => {
@@ -218,10 +161,8 @@ export class ArchivosComponent implements OnInit {
     this.getNewFiles();
   }
 
-  selectedIndexChange(evt: any) {
-    if (this.tg.selectedIndex) {
-      this.cargado = true;
-    }
+  doStuff(evento: any) {
+    console.log('Evento:', evento);
   }
 
   @HostListener('window:scroll', [])
@@ -254,6 +195,7 @@ export class ArchivosComponent implements OnInit {
   }
 
   agregarEtiquetas(foto: Archivo) {
+    console.log('Voy a editar esta foto:', foto);
     this.showContextMenu = true;
     this.showEtiquetas = true;
     this.modalRef = this.modalService.show(EtiquetasComponent);
@@ -308,55 +250,26 @@ export class ArchivosComponent implements OnInit {
   }
 
   add40NewFiles() {
-    if (this.filesNewsTemp.length) {
-      this.filesNewsTemp.concat(this.new40Files);
-    } else {
-      this.filesNewsTemp.push(this.new40Files);
-    }
-  }
-
-  add40OldFiles() {
-    if (this.filesOldTemp.length) {
-      this.filesOldTemp.concat(this.old40Files);
-      this.contadorFotos = this.filesOldTemp[0].length;
+    if (this.filesAllTemp.length) {
+      this.filesAllTemp.concat(this.new40Files);
       this.showLoading = false;
     } else {
-      this.filesOldTemp.push(this.old40Files);
-      this.contadorFotos = this.filesOldTemp[0].length;
+      this.filesAllTemp.push(this.new40Files);
       this.showLoading = false;
     }
   }
 
   onScrollNew() {
     console.log('Entro a onScrollNew');
-    if (this.actualPageNew < this.finishPageNew) {
-      var startSlice = this.actualPageNew * this.filesPerPage;
+    if (this.actualPageAll < this.finishPageAll) {
+      var startSlice = this.actualPageAll * this.filesPerPage;
       var endSlice = startSlice + this.filesPerPage;
       var nuevas = this.filesNew.slice(startSlice, endSlice);
       nuevas.forEach((elem) => {
         this.new40Files.push(elem);
       });
       this.add40NewFiles();
-      this.actualPageNew++;
-    } else {
-      console.log('No more lines. Finish page!');
-    }
-  }
-
-  onScrollOld() {
-    if (this.actualPageOld < this.finishPageOld) {
-      this.showLoading = true;
-      var startSlice = this.actualPageOld * this.filesPerPage;
-      var endSlice = startSlice + this.filesPerPage;
-      var viejas = this.filesOld.slice(startSlice, endSlice);
-      viejas.forEach((elem) => {
-        this.porcentaje =
-          parseFloat(this.porcentaje) + this.porcentajeArchivo + '%';
-        this.old40Files.push(elem);
-      });
-      this.showLoading = true;
-      this.add40OldFiles();
-      this.actualPageOld++;
+      this.actualPageAll++;
     } else {
       console.log('No more lines. Finish page!');
     }
@@ -380,21 +293,15 @@ export class ArchivosComponent implements OnInit {
         (file) => file.etiquetas.length > 0
       );
 
-      this.finishPageNew = Math.ceil(this.filesNew.length / this.filesPerPage);
-      this.finishPageOld = Math.ceil(this.filesOld.length / this.filesPerPage);
-      var filesNewsTemp = Array.from(this.filesNew.slice(0, this.filesPerPage));
-      var filesOldTemp = Array.from(this.filesOld.slice(0, this.filesPerPage));
-      this.porcentajeArchivo = 100 / this.filesTemp.length;
+      this.finishPageAll = Math.ceil(this.filesTemp.length / this.filesPerPage);
+      var filesNewsTemp = Array.from(
+        this.filesTemp.slice(0, this.filesPerPage)
+      );
+
       filesNewsTemp.forEach((elem) => {
         this.new40Files.push(elem);
       });
       this.add40NewFiles();
-      filesOldTemp.forEach((elem) => {
-        this.porcentaje =
-          parseFloat(this.porcentaje) + this.porcentajeArchivo + '%';
-        this.old40Files.push(elem);
-      });
-      this.add40OldFiles();
     });
   }
 
@@ -409,7 +316,7 @@ export class ArchivosComponent implements OnInit {
     this.filesOld.length = numActual;
   }
 
-  borrarArchivo() {
+  borrarArchivo(fotoSeleccionadaParam: any, index: number) {
     Swal.fire({
       title: 'Estás seguro?',
       text: 'Si lo borras no podrás recuperar el archivo!',
@@ -420,8 +327,8 @@ export class ArchivosComponent implements OnInit {
       confirmButtonText: 'Si, bórralo!',
     }).then((result: any) => {
       if (result.isConfirmed) {
-        var idArchivoEliminado = this.fotoSeleccionada.id;
-        var indexArchivoEliminado = this.indexFotoSeleccionada;
+        var idArchivoEliminado = fotoSeleccionadaParam.id;
+        var indexArchivoEliminado = index;
 
         this.archivoService
           .borraArchivo(idArchivoEliminado)
@@ -445,14 +352,7 @@ export class ArchivosComponent implements OnInit {
                         'success',
                         true
                       );
-                      // Compruebo el listado y lo elimino
-                      if (this.tipo === 'nuevo') {
-                        this.filesNewsTemp[0].splice(indexArchivoEliminado, 1);
-                        this.actualizoCantidades(this.filesNewsTemp[0].length);
-                      } else {
-                        this.filesOldTemp[0].splice(indexArchivoEliminado, 1);
-                        this.actualizoCantidades(this.filesNewsTemp[0].length);
-                      }
+                      this.filesAllTemp[0].splice(indexArchivoEliminado, 1);
                       Swal.close();
                     } else {
                       this.mostrarNotificacion(

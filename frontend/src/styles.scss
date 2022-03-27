@@ -1,6 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~bootstrap/dist/css/bootstrap.css";
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 .over {
   z-index: 2;
@@ -23,10 +22,15 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: rgb(244, 246, 249) !important;
 }
 
 .cdk-overlay-container,
 .cdk-global-overlay-wrapper,
 .cdk-overlay-connected-position-bounding-box {
   z-index: 9000;
+}
+
+body .text-muted {
+  color: rgb(153, 171, 180) !important;
 }

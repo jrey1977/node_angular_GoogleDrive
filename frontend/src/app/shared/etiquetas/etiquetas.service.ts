@@ -11,39 +11,11 @@ const params = new HttpParams();
   providedIn: 'root',
 })
 export class EtiquetasService {
-  private movimientoArchivoNewToOld$: Subject<boolean>;
-  private movimientoArchivoOldToNew$: Subject<boolean>;
   private updateTagsList$: Subject<boolean>;
   private filesUpdated$: Subject<boolean>;
   constructor(private http: HttpClient) {
-    this.movimientoArchivoNewToOld$ = new Subject();
-    this.movimientoArchivoOldToNew$ = new Subject();
     this.updateTagsList$ = new Subject();
     this.filesUpdated$ = new Subject();
-  }
-
-  setFileStateNewToOld(movimiento: boolean, idEtiqueta: string) {
-    let data: any = {
-      state: movimiento,
-      id: idEtiqueta,
-    };
-    this.movimientoArchivoNewToOld$.next(data);
-  }
-
-  getFileStateNewToOld$(): Observable<boolean> {
-    return this.movimientoArchivoNewToOld$.asObservable();
-  }
-
-  setFileStateOldToNew(movimiento: boolean, idEtiqueta: string) {
-    let data: any = {
-      state: movimiento,
-      id: idEtiqueta,
-    };
-    this.movimientoArchivoOldToNew$.next(data);
-  }
-
-  getFileStateOldToNew$(): Observable<boolean> {
-    return this.movimientoArchivoOldToNew$.asObservable();
   }
 
   updateTags(tag: any, action: 'add' | 'remove') {

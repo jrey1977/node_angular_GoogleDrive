@@ -1,49 +1,69 @@
-<div
-  class="position-fixed bg-white w-100 h-100 p-3 p-md-5 popup"
-  *ngIf="statePopup"
->
-  <button class="btn btn-danger" (click)="cerrarPopup()">X</button>
-  <h2 class="text-center">{{ popup.name }}</h2>
-  <div class="contenedorArchivo m-auto text-center">
-    <!--VIDEO-->
-    <ng-container *ngIf="popup.mimeType?.includes('video')">
-      <video
-        controls
-        preload="none"
-        [poster]="popup.thumbnailLink"
-        width="100%"
-        playsinline
+<div class="position-fixed w-100 h-100 p-3 p-md-5 popup" *ngIf="statePopup">
+  <div class="fondoPopUp"></div>
+
+  <div class="contenedorArchivo m-auto text-center position-relative">
+    <!--BOTÓN DE CERRAR-->
+    <div class="w-auto position-relative d-inline-block text-right">
+      <button
+        title="Close (Esc)"
+        type="button"
+        class="mfp-close position-relative text-white"
+        (click)="cerrarPopup()"
       >
-        <source [src]="popup.webViewLink" type="video/mp4" />
-        Video not supported
-      </video>
-    </ng-container>
-    <!--FOTO-->
-    <ng-container *ngIf="popup.mimeType?.includes('image')">
-      <img
-        [src]="urlImg + popup.id"
-        [alt]="popup.name"
-        class="mt-4 img-fluid"
-      />
-    </ng-container>
+        ×
+      </button>
+      <!--VIDEO-->
+      <ng-container *ngIf="popup.mimeType?.includes('video')">
+        <video
+          controls
+          preload="none"
+          [poster]="popup.thumbnailLink"
+          width="100%"
+          playsinline
+        >
+          <source [src]="popup.webViewLink" type="video/mp4" />
+          Video not supported
+        </video>
+      </ng-container>
+      <!--FOTO-->
+      <ng-container *ngIf="popup.mimeType?.includes('image')">
+        <img
+          [src]="urlImg + popup.id"
+          [alt]="popup.name"
+          class="mt-1 img-fluid"
+        />
+      </ng-container>
+    </div>
     <!--ETIQUETAS-->
     <ng-container *ngIf="etiquetas.length">
-      <div class="form-group flex-column d-flex">
-        <label class="form-control-label pl-2">Etiquetas:</label>
-        <ul *ngIf="etiquetas.length" class="ulEtiquetas">
-          <li *ngFor="let etiqueta of etiquetas">
-            {{ etiqueta.name }}
-          </li>
-        </ul>
+      <div class="form-group flex-column d-flex panel-info">
+        <div class="form-group mb-0">
+          Tags:
+          <ul *ngIf="etiquetas.length" class="ulEtiquetas">
+            <li
+              *ngFor="let etiqueta of etiquetas"
+              class="badge badge-secondary"
+            >
+              {{ etiqueta.name }}
+              <!-- <i (click)="borrarEtiqueta(etiqueta)" class="icon-trash"></i> -->
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!etiquetas.length">
+      <div class="form-group flex-column d-flex panel-info text-white">
+        Cargando etiquetas...
       </div>
     </ng-container>
   </div>
 </div>
 
 <div
-  class="position-fixed bg-white w-100 h-100 p-3 p-md-5 popup"
+  class="position-fixed w-100 h-100 p-3 p-md-5 popup"
   *ngIf="stateMultiPopup"
 >
+  <div class="fondoPopUp"></div>
   <button class="btn btn-danger" (click)="cerrarMultiPopup()">X</button>
   <div class="row">
     <h3>Añadir etiquetas</h3>

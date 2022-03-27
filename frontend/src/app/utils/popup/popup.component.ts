@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { EtiquetasService } from 'src/app/shared/etiquetas/etiquetas.service';
+import { Etiqueta } from 'src/app/shared/etiquetas/models/etiquetas.interface';
 import { PopupService } from 'src/app/utils/popup/services/popup.service';
 import { environment } from 'src/environments/environment';
 
@@ -15,7 +16,7 @@ export class PopupComponent implements OnInit {
   statePopup: boolean = false;
   stateMultiPopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
-  public etiquetas: any[] = [];
+  public etiquetas: Etiqueta[] = [];
 
   constructor(
     public popupService: PopupService,
@@ -41,6 +42,10 @@ export class PopupComponent implements OnInit {
     this.popupService.getMultiPopupState$().subscribe((estado) => {
       this.stateMultiPopup = estado;
     });
+  }
+
+  borrarEtiqueta(etiqueta: any) {
+    console.log('Etiqueta que se borra:', etiqueta);
   }
 
   obtenerEtiquetas(idParam: string) {

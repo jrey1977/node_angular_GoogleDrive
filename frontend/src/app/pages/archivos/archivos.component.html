@@ -4,119 +4,114 @@
     Genera base de datos
   </button> -->
 
-  <!-- CONTEXT MENU -->
-  <div
-    class="p-3 border bg-light contextMenu"
-    #contextMenu
-    [ngClass]="{ visible: showContextMenu, invisible: !showContextMenu }"
-  >
-    <ul class="p-0" #insideMenu>
-      <li (click)="agregarEtiquetas(fotoSeleccionada)" class="p-2">Editar</li>
-      <li (click)="borrarArchivo()" class="p-2">Eliminar</li>
-    </ul>
-  </div>
-
   <!-- LOADING BAR -->
   <span *ngIf="showLoading" class="loadingSpan"
     ><img src="/assets/img/loading.gif" alt="Cargando"
   /></span>
 
-  <!-- <button (click)="mostrarNotificacion('Holiiii', 'info')">
-    Abrir notificación
-  </button> -->
-
-  <h3>Galería multimedia</h3>
-
-  <mat-tab-group
-    animationDuration="0ms"
-    #mtg
-    (selectedIndexChange)="selectedIndexChange($event)"
-  >
-    <mat-tab label="Archivos sin etiquetar" *ngIf="filesNewsTemp[0]">
-      <div class="w-100 contentNew">
-        <div
-          infiniteScroll
-          [infiniteScrollDistance]="2"
-          (scrolled)="onScrollNew()"
-          [scrollWindow]="true"
-          #contentArchivosNuevos
-        >
-          <div class="bg-white w-100 over header">
-            <div class="row pt-5">
-              <div class="col-4">
-                <h3>Sin etiquetar [{{ filesNew.length }} archivos]</h3>
-              </div>
-              <div class="col-8 text-right">
-                <button
-                  *ngIf="!multiEditMode"
-                  class="btn btn-warning"
-                  (click)="multiEditMode = !multiEditMode"
+  <div *ngIf="filesAllTemp[0]">
+    <div class="w-100 contentNew">
+      <div
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        (scrolled)="onScrollNew()"
+        [scrollWindow]="true"
+        #contentArchivosNuevos
+      >
+        <div class="w-100 over header">
+          <div class="row pt-5">
+            <div class="col-4">
+              <h4 class="card-title">Galería multimedia</h4>
+              <h6 class="card-subtitle m-b-20 text-muted">
+                <b>{{ filesNew.length }}</b> Archivos
+                <small
+                  >[<b>{{ filesNew.length - filesOld.length }}</b> sin
+                  etiquetar]</small
                 >
-                  Edición múltiple
-                </button>
-                <button
-                  *ngIf="multiEditMode"
-                  class="btn btn-danger"
-                  (click)="multiEditMode = !multiEditMode"
-                >
-                  Cancelar
-                </button>
-                <button
-                  *ngIf="multiEditMode && this.arrayMultiEdit.length > 1"
-                  class="btn btn-warning ms-4"
-                  (click)="multiEdit()"
-                >
-                  Editar seleccionados
-                </button>
-              </div>
+              </h6>
             </div>
-            <hr class="mb-3" />
-          </div>
-          <div class="contentArchivos">
-            <ngx-masonry
-              [ordered]="true"
-              [options]="myOptions"
-              #NgxMasonryComponent
-            >
-              <div
-                ngxMasonryItem
-                class="masonry-item"
-                id="{{ filesNewsTemp[0][file].id }}"
-                *ngFor="
-                  let file of Object.keys(filesNewsTemp[0]);
-                  let i = index
-                "
+            <div class="col-8 text-right">
+              <button
+                *ngIf="!multiEditMode"
+                class="btn btn-outline-dark"
+                (click)="multiEditMode = !multiEditMode"
               >
+                <i class="icon-pencil me-3"></i>Edición múltiple
+              </button>
+              <button
+                *ngIf="multiEditMode"
+                class="btn btn-danger"
+                (click)="multiEditMode = !multiEditMode"
+              >
+                Cancelar
+              </button>
+              <button
+                *ngIf="multiEditMode && this.arrayMultiEdit.length > 1"
+                class="btn btn-warning ms-4"
+                (click)="multiEdit()"
+              >
+                <i class="icon-pencil me-3"></i>Editar seleccionados
+              </button>
+            </div>
+          </div>
+          <hr class="mb-3" />
+        </div>
+        <div class="contentArchivos">
+          <ngx-masonry
+            [ordered]="true"
+            [options]="myOptions"
+            #NgxMasonryComponent
+          >
+            <div
+              ngxMasonryItem
+              class="masonry-item"
+              [ngClass]="{
+                noetiquetada: filesAllTemp[0][file].etiquetas.length === 0
+              }"
+              id="{{ filesAllTemp[0][file].id }}"
+              *ngFor="let file of Object.keys(filesAllTemp[0]); let i = index"
+            >
+              <div class="el-overlay-1">
                 <span class="checkBoxSelection" *ngIf="multiEditMode">
                   <input
                     type="checkbox"
                     #checkboxMultiEdit
                     class="inputMultiElement {{ i }}"
-                    (change)="updateArrayMultiEdit(filesNewsTemp[0][file])"
+                    (change)="updateArrayMultiEdit(filesAllTemp[0][file])"
                   />
                 </span>
                 <span
                   class="bgVideo"
-                  (click)="abrirPopup(filesNewsTemp[0][file])"
-                  *ngIf="filesNewsTemp[0][file].mimeType.includes('video')"
+                  (click)="abrirPopup(filesAllTemp[0][file])"
+                  *ngIf="filesAllTemp[0][file].mimeType.includes('video')"
                 ></span>
                 <img
-                  *ngIf="filesNewsTemp[0][file].mimeType.includes('image')"
-                  (click)="abrirPopup(filesNewsTemp[0][file])"
-                  (contextmenu)="
-                    onRightClick($event, filesNewsTemp[0][file], 'viejo', i)
-                  "
-                  [src]="urlImg + filesNewsTemp[0][file].id"
-                  [alt]="filesNewsTemp[0][file].name"
+                  *ngIf="filesAllTemp[0][file].mimeType.includes('image')"
+                  [src]="urlImg + filesAllTemp[0][file].id"
+                  [alt]="filesAllTemp[0][file].name"
                   [id]="i"
                   class="img-fluid"
                 />
+                <div class="el-overlay">
+                  <ul class="el-info">
+                    <li (click)="abrirPopup(filesAllTemp[0][file])">
+                      <span><i class="icon-magnifier"></i></span>
+                    </li>
+                    <li (click)="agregarEtiquetas(filesAllTemp[0][file])">
+                      <span><i class="icon-pencil"></i></span>
+                    </li>
+                    <li (click)="borrarArchivo(filesAllTemp[0][file], i)">
+                      <span><i class="icon-trash"></i></span>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </ngx-masonry>
-          </div>
+            </div>
+          </ngx-masonry>
         </div>
+      </div>
 
-        <!-- <li
+      <!-- <li
             class="new-item"
             *ngFor="let file of Object.keys(filesNewsTemp[0]); let i = index"
             draggable="true"
@@ -164,8 +159,9 @@
               <span class="options d-md-none">X</span>
             </div>
           </li> -->
-      </div>
-    </mat-tab>
+    </div>
+  </div>
+  <!-- </mat-tab>
     <mat-tab label="Galería" *ngIf="filesOldTemp[0]">
       <div class="w-100 contentOld" *ngIf="cargado">
         <div
@@ -226,7 +222,7 @@
         </div>
       </div>
     </mat-tab>
-  </mat-tab-group>
+  </mat-tab-group> -->
 
   <!-- ARCHIVOS SIN ETIQUETAR (INFINTITE SCROLL HORZONTAL) -->
 

@@ -191,12 +191,7 @@ export class EtiquetasComponent implements OnInit {
               this.obtenerEtiquetas(idArchivo);
             }
           }
-
-          // Si el archivo ya no tiene etiquetas lo muevo al listado de
-          // archivos sin etiquetar
-          if (!res.etiquetado) {
-            this.etiquetaService.setFileStateNewToOld(false, this.idArchivo);
-          }
+          this.etiquetaService.actualizaArchivo(idEtiqueta, this.idArchivo);
         } else {
           this.mostrarNotificacion('Error', res.respuesta, true);
         }
@@ -216,9 +211,6 @@ export class EtiquetasComponent implements OnInit {
           if (res.respuesta === 'OK') {
             this.subscriptionLabels.unsubscribe();
             this.obtenerEtiquetas(idArchivo);
-            if (res.etiquetasPrevias === 0) {
-              this.etiquetaService.setFileStateOldToNew(true, this.idArchivo);
-            }
             this.etiquetaService.actualizaArchivo(idNuevaEtiqueta, idArchivo);
             this.stateForm.reset();
 
