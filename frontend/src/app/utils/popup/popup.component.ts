@@ -17,6 +17,8 @@ export class PopupComponent implements OnInit {
   stateMultiPopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
   public etiquetas: Etiqueta[] = [];
+  public etiquetasLength: boolean = false;
+  public mensajeCargando: string = '';
 
   constructor(
     public popupService: PopupService,
@@ -50,8 +52,14 @@ export class PopupComponent implements OnInit {
 
   obtenerEtiquetas(idParam: string) {
     this.etiquetas = [];
+    this.etiquetasLength = false;
+    this.mensajeCargando = 'Cargando etiquetas...';
     this.etiquetaService.obtenerEtiquetas(idParam).subscribe((res: any) => {
       this.etiquetas = res.arrayLabelNames;
+      if (this.etiquetas.length > 0) {
+        this.etiquetasLength = true;
+        this.mensajeCargando = '';
+      }
     });
   }
 

@@ -2,8 +2,8 @@
   <div class="fondoPopUp"></div>
 
   <div class="contenedorArchivo m-auto text-center position-relative">
-    <!--BOTÓN DE CERRAR-->
     <div class="w-auto position-relative d-inline-block text-right">
+      <!--BOTÓN DE CERRAR-->
       <button
         title="Close (Esc)"
         type="button"
@@ -51,11 +51,15 @@
         </div>
       </div>
     </ng-container>
-    <ng-container *ngIf="!etiquetas.length">
-      <div class="form-group flex-column d-flex panel-info text-white">
-        Cargando etiquetas...
+    <div
+      class="form-group flex-column d-flex panel-info text-white"
+      *ngIf="!etiquetas.length && !etiquetasLength"
+    >
+      <div>{{ mensajeCargando }}</div>
+      <div class="form-group">
+        <label>Fecha de subida:</label> {{ popup.createdTime }}
       </div>
-    </ng-container>
+    </div>
   </div>
 </div>
 
