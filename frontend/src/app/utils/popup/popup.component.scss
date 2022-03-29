@@ -98,3 +98,14 @@ button.mfp-close {
   color: #fff;
   background-color: #6c757d;
 }
+
+.iconInfo {
+  position: absolute;
+  cursor: pointer;
+  top: 6px;
+  right: 1rem;
+}
+
+.panel-cerrado *:not(.iconInfo) {
+  display: none;
+}

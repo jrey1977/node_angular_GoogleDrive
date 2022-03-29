@@ -34,28 +34,30 @@
         />
       </ng-container>
     </div>
-    <!--ETIQUETAS-->
-    <ng-container *ngIf="etiquetas.length">
-      <div class="form-group flex-column d-flex panel-info">
-        <div class="form-group mb-0">
-          Tags:
-          <ul *ngIf="etiquetas.length" class="ulEtiquetas">
-            <li
-              *ngFor="let etiqueta of etiquetas"
-              class="badge badge-secondary"
-            >
-              {{ etiqueta.name }}
-              <!-- <i (click)="borrarEtiqueta(etiqueta)" class="icon-trash"></i> -->
-            </li>
-          </ul>
-        </div>
-      </div>
-    </ng-container>
     <div
-      class="form-group flex-column d-flex panel-info text-white"
-      *ngIf="!etiquetas.length && !etiquetasLength"
+      class="form-group flex-column d-flex panel-info text-white open-close-container"
+      [@openClose]="isOpen ? 'open' : 'closed'"
+      [ngClass]="{ 'panel-abierto': isOpen, 'panel-cerrado': !isOpen }"
     >
-      <div>{{ mensajeCargando }}</div>
+      <i class="icon-info text-light iconInfo" (click)="toggle()"></i>
+
+      <!--ETIQUETAS-->
+      <ng-container *ngIf="etiquetas.length" class="open-close-container">
+        <div class="form-group flex-column d-flex">
+          <div class="form-group mb-0">
+            Tags:
+            <ul *ngIf="etiquetas.length" class="ulEtiquetas">
+              <li
+                *ngFor="let etiqueta of etiquetas"
+                class="badge badge-secondary"
+              >
+                {{ etiqueta.name }}
+                <!-- <i (click)="borrarEtiqueta(etiqueta)" class="icon-trash"></i> -->
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ng-container>
       <div class="form-group">
         <label>Fecha de subida:</label> {{ popup.createdTime }}
       </div>
