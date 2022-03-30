@@ -1,5 +1,6 @@
 const { response } = require("express");
 const { google } = require("googleapis");
+const { moment } = require("moment");
 
 const Archivo = require("../models/archivo");
 const Etiqueta = require("../models/etiqueta");
@@ -378,6 +379,26 @@ const insertMasivoArchivos = async (primeraVez = false) => {
             console.log("Grabo archivo " + archivosGrabados);
             var _idEtiqueta = archivoBueno[0]._id;
 
+            fechaCreacionPrevia = new Date(file.createdTime);
+            fechaCreacionDefinitiva =
+              moment.fechaCreacionPrevia("dddd") +
+              " " +
+              moment.fechaCreacionPrevia("Do") +
+              " de " +
+              moment.fechaCreacionPrevia("MMMM") +
+              " de " +
+              moment.fechaCreacionPrevia("YYYY");
+
+            fechaModificacionPrevia = new Date(file.modifiedTime);
+            fechaModificacionDefinitiva =
+              moment.fechaModificacionPrevia("dddd") +
+              " " +
+              moment.fechaModificacionPrevia("Do") +
+              " de " +
+              moment.fechaModificacionPrevia("MMMM") +
+              " de " +
+              moment.fechaModificacionPrevia("YYYY");
+
             var archivo = new Archivo({
               id: file.id,
               name: file.name,
@@ -387,8 +408,8 @@ const insertMasivoArchivos = async (primeraVez = false) => {
               webViewLink: file.webViewLink,
               iconLink: file.iconLink,
               hasThumbnail: file.hasThumbnail,
-              createdTime: file.createdTime,
-              modifiedTime: file.modifiedTime,
+              createdTime: fechaCreacionDefinitiva,
+              modifiedTime: fechaModificacionDefinitiva,
               categoria: _idEtiqueta,
               etiquetas: [],
               mimeType: file.mimeType,

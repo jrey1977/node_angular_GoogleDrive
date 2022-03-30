@@ -35,7 +35,7 @@
       </ng-container>
     </div>
     <div
-      class="form-group flex-column d-flex panel-info text-white open-close-container"
+      class="flex-column d-flex panel-info text-white open-close-container"
       [@openClose]="isOpen ? 'open' : 'closed'"
       [ngClass]="{ 'panel-abierto': isOpen, 'panel-cerrado': !isOpen }"
     >
@@ -43,7 +43,7 @@
 
       <!--ETIQUETAS-->
       <ng-container *ngIf="etiquetas.length" class="open-close-container">
-        <div class="form-group flex-column d-flex">
+        <div class="flex-column d-flex mb-3">
           <div class="form-group mb-0">
             Tags:
             <ul *ngIf="etiquetas.length" class="ulEtiquetas">
@@ -58,9 +58,7 @@
           </div>
         </div>
       </ng-container>
-      <div class="form-group">
-        <label>Fecha de subida:</label> {{ popup.createdTime }}
-      </div>
+      <div><label>Fecha de subida:</label> {{ popup.createdTime }}</div>
     </div>
   </div>
 </div>

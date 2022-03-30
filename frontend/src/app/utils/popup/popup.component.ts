@@ -33,8 +33,8 @@ import { environment } from 'src/environments/environment';
           overflow: 'hidden',
         })
       ),
-      transition('open => closed', [animate('0.3s')]),
-      transition('closed => open', [animate('0.5s')]),
+      transition('open => closed', [animate('0.3s ease-out')]),
+      transition('closed => open', [animate('0.4s ease-in')]),
     ]),
   ],
   templateUrl: './popup.component.html',
@@ -93,6 +93,7 @@ export class PopupComponent implements OnInit {
 
   cerrarPopup() {
     this.popupService.cerrarPopup();
+    this.isOpen = false;
   }
 
   cerrarMultiPopup() {
