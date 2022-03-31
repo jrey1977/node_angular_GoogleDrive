@@ -44,7 +44,7 @@
       <!--ETIQUETAS-->
       <ng-container *ngIf="etiquetas.length" class="open-close-container">
         <div class="flex-column d-flex mb-3">
-          <div class="form-group mb-0">
+          <div class="form-group mb-0 ms-2 ps-1">
             Tags:
             <ul *ngIf="etiquetas.length" class="ulEtiquetas">
               <li
@@ -58,7 +58,18 @@
           </div>
         </div>
       </ng-container>
-      <div><label>Fecha de subida:</label> {{ popup.createdTime }}</div>
+      <div>
+        <ul>
+          <li class="me-4">
+            <label><b>Fecha de subida:</b></label>
+            {{ popup.createdTime }}
+          </li>
+          <li class="me-4">
+            <label><b>Tamaño:</b></label> {{ mb }}
+          </li>
+          <li><b>Álbum:</b> {{ carpeta }}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

@@ -41,6 +41,10 @@ const ArchivoSchema = Schema({
     type: String,
     required: true,
   },
+  createdOriginalTime: {
+    type: String,
+    required: false,
+  },
   categoria: {
     type: Schema.Types.ObjectId,
     ref: "Etiqueta",

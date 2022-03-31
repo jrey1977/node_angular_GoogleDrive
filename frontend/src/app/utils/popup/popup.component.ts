@@ -34,7 +34,7 @@ import { environment } from 'src/environments/environment';
         })
       ),
       transition('open => closed', [animate('0.3s ease-out')]),
-      transition('closed => open', [animate('0.4s ease-in')]),
+      transition('closed => open', [animate('0.4s ease-out')]),
     ]),
   ],
   templateUrl: './popup.component.html',
@@ -47,6 +47,8 @@ export class PopupComponent implements OnInit {
   stateMultiPopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
   public etiquetas: Etiqueta[] = [];
+  public mb?: string;
+  public carpeta?: any;
 
   isOpen = false;
 
@@ -60,6 +62,14 @@ export class PopupComponent implements OnInit {
     // el "next" de la función "abrirPopup" del service
     this.popupService.getPopup$().subscribe((popupRecibido) => {
       this.popup = popupRecibido;
+      this.mb = (this.popup.size / 1000000).toFixed(2) + 'MB';
+      this.etiquetaService
+        .obtenerNombreCarpeta(this.popup.parents[0])
+        .subscribe((data: any) => {
+          this.carpeta = data.nombre;
+          console.log('this.carpeta', this.carpeta);
+        });
+      console.log('this.carpeta 2', this.carpeta);
       this.obtenerEtiquetas(this.popup.id);
     });
     this.popupService.getPopupState$().subscribe((estado) => {

@@ -79,4 +79,10 @@ export class EtiquetasService {
       `http://localhost:3100/archivos/etiquetas/`
     );
   }
+
+  obtenerNombreCarpeta(idEtiqueta: string) {
+    return this.http.get<any[]>(
+      `http://localhost:3100/etiquetas/nombre/${idEtiqueta}`
+    );
+  }
 }

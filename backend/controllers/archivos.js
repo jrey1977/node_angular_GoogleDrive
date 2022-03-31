@@ -135,8 +135,12 @@ const getNewFiles = async (req, res = response) => {
   var archivosBBDD = await Archivo.find();
   if (archivosBBDD.length) {
     // Primero obtengo la fecha de modificación más reciente en la base de datos
-    var ultimoArchivo = await Archivo.find().sort({ createdTime: -1 }).limit(1);
-    var fechaUltimoArchivo = ultimoArchivo[0].createdTime;
+    var ultimoArchivo = await Archivo.find()
+      .sort({ createdOriginalTime: -1 })
+      .limit(1);
+    console.log("ultimoArchivo[0]", ultimoArchivo[0]);
+    var fechaUltimoArchivo = ultimoArchivo[0].createdOriginalTime;
+    console.log("fechaUltimoArchivo: ", fechaUltimoArchivo);
 
     // Ahora busco en la unidad de Google Drive todos los ficheros
     // con fecha de modificación posterior
@@ -216,16 +220,20 @@ const getFiles = async (req, res = response) => {
 
   const archivos = await Archivo.find({});
 
+  console.log("223");
+
   const totalFiles = [];
 
   archivos.forEach((file) => {
     totalFiles.push(file);
   });
 
+  console.log("229");
+
   // Ordeno los resultados por fecha de creación descendiente
   totalFiles.sort(function (a, b) {
-    var keyB = new Date(a.modifiedTime),
-      keyA = new Date(b.modifiedTime);
+    var keyB = new Date(a.createdOriginalTime),
+      keyA = new Date(b.createdOriginalTime);
     // Compare the 2 dates
     if (keyA < keyB) return -1;
     if (keyA > keyB) return 1;
@@ -356,6 +364,8 @@ const insertMasivoCategorias = async (req, res) => {
 };
 
 let archivosGrabados = 1;
+let archivosTotalesNum;
+let tantoPorciento = 0;
 const insertMasivoArchivos = async (primeraVez = false) => {
   // Si es la primera llamada a la función, borro todo antes
   if (primeraVez) {
@@ -371,33 +381,29 @@ const insertMasivoArchivos = async (primeraVez = false) => {
         orderBy: "createdTime desc",
       });
 
+      archivosTotalesNum = response.data.files.length;
+      console.log("archivosTotalesNum:", archivosTotalesNum);
+      resultadosPorCadaUnoPorCiento = archivosTotalesNum / 100;
+      console.log(
+        "resultadosPorCadaUnoPorCiento:",
+        resultadosPorCadaUnoPorCiento
+      );
+      console.log("Tanto por ciento: " + tantoPorciento + "%");
+
       response.data.files.forEach(async function (file) {
         if (file?.parents) {
           // Compruebo que esta imagen o video pertenezca a alguna de las etiquetas que son categoría
           var archivoBueno = await Etiqueta.find({ id: file.parents[0] });
           if (archivoBueno.length) {
-            console.log("Grabo archivo " + archivosGrabados);
             var _idEtiqueta = archivoBueno[0]._id;
 
             fechaCreacionPrevia = new Date(file.createdTime);
             fechaCreacionDefinitiva =
-              moment.fechaCreacionPrevia("dddd") +
-              " " +
-              moment.fechaCreacionPrevia("Do") +
-              " de " +
-              moment.fechaCreacionPrevia("MMMM") +
-              " de " +
-              moment.fechaCreacionPrevia("YYYY");
+              fechaCreacionPrevia.toLocaleDateString("es-es");
 
             fechaModificacionPrevia = new Date(file.modifiedTime);
             fechaModificacionDefinitiva =
-              moment.fechaModificacionPrevia("dddd") +
-              " " +
-              moment.fechaModificacionPrevia("Do") +
-              " de " +
-              moment.fechaModificacionPrevia("MMMM") +
-              " de " +
-              moment.fechaModificacionPrevia("YYYY");
+              fechaModificacionPrevia.toLocaleDateString("es-es");
 
             var archivo = new Archivo({
               id: file.id,
@@ -410,6 +416,7 @@ const insertMasivoArchivos = async (primeraVez = false) => {
               hasThumbnail: file.hasThumbnail,
               createdTime: fechaCreacionDefinitiva,
               modifiedTime: fechaModificacionDefinitiva,
+              createdOriginalTime: file.createdTime,
               categoria: _idEtiqueta,
               etiquetas: [],
               mimeType: file.mimeType,
@@ -427,6 +434,11 @@ const insertMasivoArchivos = async (primeraVez = false) => {
 
             archivo.save();
             archivosGrabados++;
+
+            if (archivosGrabados % resultadosPorCadaUnoPorCiento === 0) {
+              tantoPorciento++;
+              console.log("Tanto por ciento: " + tantoPorciento + "%");
+            }
           }
         }
       });

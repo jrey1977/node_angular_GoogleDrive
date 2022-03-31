@@ -70,7 +70,7 @@ button.mfp-close {
   position: fixed;
   left: 0;
   bottom: 0;
-  width: 99vw;
+  width: 100vw;
   overflow: auto;
   color: white;
   padding: 1rem;
@@ -103,7 +103,7 @@ button.mfp-close {
   position: absolute;
   cursor: pointer;
   top: 6px;
-  right: 1rem;
+  right: 1.5rem;
 }
 
 .panel-cerrado *:not(.iconInfo) {

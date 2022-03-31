@@ -111,8 +111,20 @@ const obtenerNombresEtiquetas = async (req, res) => {
   });
 };
 
+const obtenerNombreEtiqueta = async (req, res) => {
+  let idEtiqueta = req.params.idEtiqueta;
+  let nombreObtenido = await Etiqueta.find({
+    id: idEtiqueta,
+  });
+  res.json({
+    respuesta: "OK",
+    nombre: nombreObtenido[0].name,
+  });
+};
+
 module.exports = {
   borrarEtiqueta,
   grabarEtiqueta,
   obtenerNombresEtiquetas,
+  obtenerNombreEtiqueta,
 };
