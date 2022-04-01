@@ -22,7 +22,7 @@
     "pug": "^3.0.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.1101.2",
+    "@angular-devkit/build-angular": "^13.3.1",
     "connect-livereload": "^0.6.1",
     "livereload": "^0.9.3",
     "nodemon": "^2.0.12"
