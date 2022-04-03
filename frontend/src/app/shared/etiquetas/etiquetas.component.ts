@@ -1,7 +1,10 @@
+import { DOCUMENT } from '@angular/common';
 import {
   Component,
   ComponentFactoryResolver,
+  Inject,
   Input,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -27,7 +30,7 @@ export const _filter = (opt: string[], value: string): string[] => {
   templateUrl: './etiquetas.component.html',
   styleUrls: ['./etiquetas.component.scss'],
 })
-export class EtiquetasComponent implements OnInit {
+export class EtiquetasComponent implements OnInit, OnDestroy {
   public urlImg = environment.urlImgGoogle;
   public _fotoSeleccionada?: Archivo;
   public categoriaArchivo: string = '';
@@ -40,6 +43,9 @@ export class EtiquetasComponent implements OnInit {
     this._fotoSeleccionada = value;
     this.obtenerEtiquetas(this._fotoSeleccionada.id);
     this.idArchivo = this._fotoSeleccionada.id;
+    if (this._fotoSeleccionada.etiquetas) {
+      this.obtenerEtiquetasAutoComplete(this._fotoSeleccionada.etiquetas);
+    }
   }
 
   stateForm: FormGroup = this._formBuilder.group({
@@ -53,14 +59,18 @@ export class EtiquetasComponent implements OnInit {
     public bsModalRef: BsModalRef,
     private etiquetaService: EtiquetasService,
     private notificationService: NotificationService,
-    private _formBuilder: FormBuilder
+    private _formBuilder: FormBuilder,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   public subscriptionLabels!: Subscription;
 
   ngOnInit(): void {
-    console.log('Cargo componente etiquetas');
-    this.obtenerEtiquetasAutoComplete();
+    this.document.body.classList.add('overflow-hidden');
+  }
+
+  ngOnDestroy(): void {
+    this.document.body.classList.remove('overflow-hidden');
   }
 
   private _filterGroup(value: string): StateGroup[] {
@@ -87,13 +97,39 @@ export class EtiquetasComponent implements OnInit {
     }
   }
 
-  obtenerEtiquetasAutoComplete() {
+  obtenerEtiquetasAutoComplete(arrayEtiquetasParaExcluir: string[]) {
+    console.log('Etiquetas que debería excluir:', arrayEtiquetasParaExcluir);
     this.etiquetaService.getAllTags().subscribe((data: any) => {
-      console.log('data es ', data);
-      this.tagsDisponiblesBBDD = data.etiquetas.sort(function (a: any, b: any) {
+      console.log(
+        'this.tagsDisponibles length antes del filtrado:',
+        data.etiquetas.length
+      );
+      this.tagsDisponiblesBBDD = data.etiquetas.filter(
+        (tagIterado: Etiqueta) => {
+          if (tagIterado._id) {
+            if (arrayEtiquetasParaExcluir.indexOf(tagIterado?._id) === -1) {
+              console.log('Etiqueta para autocomplete:', tagIterado?._id);
+              return tagIterado;
+            } else {
+              console.log('Etiqueta repetida:', tagIterado?._id);
+              return false;
+            }
+          } else {
+            console.log('No se ha encontrado id de etiqueta:', tagIterado?._id);
+            return tagIterado;
+          }
+        }
+      );
+      this.tagsDisponiblesBBDD = this.tagsDisponiblesBBDD?.sort(function (
+        a: any,
+        b: any
+      ) {
         return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
       });
-      console.log('this.tagsDisponibles', this.tagsDisponiblesBBDD);
+      console.log(
+        'this.tagsDisponibles length tras filtrado:',
+        this.tagsDisponiblesBBDD
+      );
       if (this.tagsDisponiblesBBDD) {
         this.obtenerPrimeraLetra(this.tagsDisponiblesBBDD);
       }
@@ -119,13 +155,10 @@ export class EtiquetasComponent implements OnInit {
     tagsBBDDData.forEach((etiqueta) => {
       var nameTag = etiqueta.name;
       var letraTag = nameTag[0].toUpperCase();
-      console.log('Chequeo esta letra: ', letraTag);
 
       if (this.arrayLetras[0].includes(letraTag)) {
-        console.log('La ha encontrado');
-
-        // TO DO: Buscar en this.stateGroups si hay un objeto con letter == letraTag
-        // SI no hay, creo un objeto y lo meto en this.stateGroups
+        // Busco en this.stateGroups si hay un objeto con letter == letraTag
+        // Si no hay, creo un objeto y lo meto en this.stateGroups
         if (this.stateGroups) {
           var results = this.stateGroups.filter(
             (obj) => obj.letter == letraTag
@@ -141,14 +174,11 @@ export class EtiquetasComponent implements OnInit {
             }
           });
         } else {
-          console.log('Esta letra no estaba así que la meto:', letraTag);
           var nuevaEtiqueta = {
             letter: letraTag,
             names: [nameTag],
           };
           this.stateGroups?.push(nuevaEtiqueta);
-
-          console.log('Hago push en stateGroups', this.stateGroups);
         }
       } else {
         console.log('No la ha encontrado en', this.arrayLetras);
@@ -159,7 +189,10 @@ export class EtiquetasComponent implements OnInit {
       .get('stateGroup')!
       .valueChanges.pipe(
         startWith(''),
-        map((value) => this._filterGroup(value))
+        map((value) => {
+          console.log('Hay que meter una así en el autocomplete:', value);
+          return this._filterGroup(value);
+        })
       );
   }
 
@@ -174,7 +207,7 @@ export class EtiquetasComponent implements OnInit {
     console.log('results', this.subscriptionLabels);
   }
 
-  borrarEtiqueta(idEtiqueta: string, indexEtiqueta: number) {
+  borrarEtiqueta(idEtiqueta: string, nameEtiqueta: string) {
     this.etiquetaService
       .borrarEtiqueta(idEtiqueta, this.idArchivo)
       .subscribe((res: any) => {
@@ -191,6 +224,15 @@ export class EtiquetasComponent implements OnInit {
               this.obtenerEtiquetas(idArchivo);
             }
           }
+          // Añado la etiqueta al autocomplete
+          this.stateGroups.forEach((obj) => {
+            if (obj.letter === nameEtiqueta[0].toUpperCase()) {
+              obj.names.push(nameEtiqueta);
+              obj.names.sort(function (a: any, b: any) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+              });
+            }
+          });
           this.etiquetaService.actualizaArchivo(idEtiqueta, this.idArchivo);
         } else {
           this.mostrarNotificacion('Error', res.respuesta, true);
@@ -200,7 +242,7 @@ export class EtiquetasComponent implements OnInit {
 
   agregaEtiqueta(nombreEtiqueta: string) {
     // Quito espacios en blanco
-    let nombreEtiquetaBueno = nombreEtiqueta.replace(/ /g, '');
+    let nombreEtiquetaBueno = nombreEtiqueta.trim();
     if (this._fotoSeleccionada?.id) {
       let idArchivo = this._fotoSeleccionada.id;
       this.etiquetaService
@@ -215,66 +257,34 @@ export class EtiquetasComponent implements OnInit {
             this.stateForm.reset();
 
             // Refresco lista de etiquetas de autocomplete
-            // con la nueva etiqueta (si es que lo es)
+            // quitando la etiqueta que acabo de meter (si es que estaba)
             var mayLet = nombreEtiqueta[0].toUpperCase();
             var resultsLetter = this.stateGroups.find((obj) => {
               return obj.letter === mayLet;
             });
-            // Busco la primera letra, a ver si ya está en el autocomplete
+            // Busco la primera letra, a ver si ya estaba en el autocomplete
             if (resultsLetter) {
-              // Está la letra. Ahora busco si la etiqueta estaba ya
+              // Estaba la letra. Ahora busco la etiqueta
               var results = this.stateGroups.find((obj) => {
                 return obj.names.includes(nombreEtiqueta);
               });
-              // Estaba la letra, pero no la etiqueta
-              if (results === undefined) {
-                var newTag = {
-                  letter: nombreEtiqueta[0].toUpperCase(),
-                  names: [nombreEtiqueta],
-                };
-                // Busco el objeto con la misma letra y le meto la etiqueta
-                this.stateGroups.forEach((obj) => {
+              // Estaba la etiqueta también, la quito del autocomplete
+              // para evitar duplicidades
+              if (results != undefined) {
+                var indexElem = -1;
+                var indexName = -1;
+                this.stateGroups.forEach((obj, i) => {
                   if (obj.letter === mayLet) {
-                    obj.names.push(nombreEtiqueta);
-                    obj.names.sort(function (a: any, b: any) {
-                      return a.toLowerCase().localeCompare(b.toLowerCase());
-                    });
+                    if (obj.names.indexOf(nombreEtiqueta) != -1) {
+                      indexElem = i;
+                      indexName = obj.names.indexOf(nombreEtiqueta);
+                    }
                   }
                 });
-              } else {
-                console.log(
-                  'No cambio el autocomplete porque ya estaba la etiqueta'
-                );
-              }
-            } else {
-              // No había letra, así que es nueva etiqueta
-              var newTag = {
-                letter: nombreEtiqueta[0].toLowerCase(),
-                names: [nombreEtiqueta],
-              };
-              // Averiguo el lugar del array en el que debo hacer el push
-              var index = 0;
-              this.stateGroups.forEach((obj) => {
-                console.log('Valor1', nombreEtiqueta[0].toLowerCase());
-                console.log('Valor2', obj.letter.toLowerCase());
-                var resultado = nombreEtiqueta[0]
-                  .toLowerCase()
-                  .localeCompare(obj.letter.toLowerCase());
-                if (resultado != -1) {
-                  console.log(
-                    'Resultado del if es:',
-                    nombreEtiqueta[0]
-                      .toLowerCase()
-                      .localeCompare(obj.letter.toLowerCase())
-                  );
-                  index++;
-                  console.log(
-                    'Valor 1 más peque que valor 2. Index es:',
-                    index
-                  );
+                if (indexElem != -1) {
+                  this.stateGroups[indexElem].names.splice(indexName, 1);
                 }
-              });
-              this.stateGroups.splice(index, 0, newTag);
+              }
             }
             this.mostrarNotificacion('Etiqueta grabada', 'success');
           } else {
