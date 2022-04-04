@@ -92,7 +92,7 @@
                   [id]="i"
                   class="img-fluid"
                 />
-                <div class="el-overlay">
+                <div class="el-overlay" *ngIf="!multiEditMode">
                   <ul class="el-info">
                     <li (click)="abrirPopup(filesAllTemp[0][file])">
                       <span><i class="icon-magnifier"></i></span>

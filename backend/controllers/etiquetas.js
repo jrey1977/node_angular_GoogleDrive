@@ -26,9 +26,11 @@ const borrarEtiqueta = async (req, res) => {
     } else {
       // Si no la usan más archivos y no es una etiqueta de categoría,
       //  borro la etiqueta de la tabla etiquetas y luego se la quito al archivo
-      var etiqueta = await Etiqueta.find( {_id: mongoose.Types.ObjectId(idEtiqueta)});
-      console.log('etiqueta encontrada:', etiqueta);
-      if(etiqueta[0].categoria === "no"){
+      var etiqueta = await Etiqueta.find({
+        _id: mongoose.Types.ObjectId(idEtiqueta),
+      });
+      console.log("etiqueta encontrada:", etiqueta);
+      if (etiqueta[0].categoria === "no") {
         await Etiqueta.deleteOne({ _id: idEtiqueta });
       }
       await Archivo.updateMany(
@@ -128,12 +130,24 @@ const obtenerNombreEtiqueta = async (req, res) => {
 
 const obtenerUsosEtiqueta = async (req, res) => {
   let idEtiqueta = req.params.idEtiqueta;
+  console.log("Busco etiqueta con id", idEtiqueta);
+  let etiqueta = await Etiqueta.find({
+    _id: mongoose.Types.ObjectId(idEtiqueta),
+  });
+  console.log("Etiqueta encontrada?:", etiqueta);
   let usosEtiqueta = await Archivo.find({
     etiquetas: mongoose.Types.ObjectId(idEtiqueta),
   });
+  var categoria;
+  if (etiqueta.length > 0) {
+    categoria = etiqueta[0].categoria;
+  } else {
+    categoria = "no";
+  }
   res.json({
     respuesta: "OK",
     usos: usosEtiqueta.length,
+    categoria,
   });
 };
 
@@ -142,5 +156,5 @@ module.exports = {
   grabarEtiqueta,
   obtenerNombresEtiquetas,
   obtenerNombreEtiqueta,
-  obtenerUsosEtiqueta
+  obtenerUsosEtiqueta,
 };

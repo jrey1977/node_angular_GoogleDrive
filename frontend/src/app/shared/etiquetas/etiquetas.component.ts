@@ -223,7 +223,10 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
             .obtenerUsosEtiqueta(idEtiqueta)
             .subscribe((data: any) => {
               // La etiqueta es usada por otros archivos: Añado la etiqueta al autocomplete
-              if (data.usos > 0) {
+              if (
+                data.usos > 0 ||
+                (data.usos === 0 && data.categoria === 'si')
+              ) {
                 // Busco la letra en el autocomplete y hago el push en el array de nombres
                 var resultsLetter = this.stateGroups.find((obj) => {
                   return obj.letter === letraEtiqueta;
