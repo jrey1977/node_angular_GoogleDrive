@@ -1,12 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import {
-  Component,
-  ComponentFactoryResolver,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Observable, Subscription } from 'rxjs';
@@ -208,6 +201,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   }
 
   borrarEtiqueta(idEtiqueta: string, nameEtiqueta: string) {
+    var letraEtiqueta = nameEtiqueta[0].toUpperCase();
     this.etiquetaService
       .borrarEtiqueta(idEtiqueta, this.idArchivo)
       .subscribe((res: any) => {
@@ -224,15 +218,42 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
               this.obtenerEtiquetas(idArchivo);
             }
           }
-          // Añado la etiqueta al autocomplete
-          this.stateGroups.forEach((obj) => {
-            if (obj.letter === nameEtiqueta[0].toUpperCase()) {
-              obj.names.push(nameEtiqueta);
-              obj.names.sort(function (a: any, b: any) {
-                return a.toLowerCase().localeCompare(b.toLowerCase());
-              });
-            }
-          });
+          // Compruebo si esa etiqueta la usa algún archivo más
+          this.etiquetaService
+            .obtenerUsosEtiqueta(idEtiqueta)
+            .subscribe((data: any) => {
+              // La etiqueta es usada por otros archivos: Añado la etiqueta al autocomplete
+              if (data.usos > 0) {
+                // Busco la letra en el autocomplete y hago el push en el array de nombres
+                var resultsLetter = this.stateGroups.find((obj) => {
+                  return obj.letter === letraEtiqueta;
+                });
+                if (resultsLetter) {
+                  this.stateGroups.forEach((obj) => {
+                    if (obj.letter === letraEtiqueta) {
+                      console.log(
+                        'Etiqueta usada por otros y con letra ya existente; la meto en autocomplete'
+                      );
+                      obj.names.push(nameEtiqueta);
+                      obj.names.sort(function (a: any, b: any) {
+                        return a.toLowerCase().localeCompare(b.toLowerCase());
+                      });
+                    }
+                  });
+                } else {
+                  // Si no está la letra de la etiqueta en el autocomplete debo meterla en el lugar que corresponde
+                  var nuevoObjeto = {
+                    letter: letraEtiqueta,
+                    names: [nameEtiqueta],
+                  };
+                  this.stateGroups.push(nuevoObjeto);
+                  this.stateGroups.sort((a, b) =>
+                    a.letter > b.letter ? 1 : -1
+                  );
+                }
+              }
+            });
+
           this.etiquetaService.actualizaArchivo(idEtiqueta, this.idArchivo);
         } else {
           this.mostrarNotificacion('Error', res.respuesta, true);
@@ -283,6 +304,15 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
                 });
                 if (indexElem != -1) {
                   this.stateGroups[indexElem].names.splice(indexName, 1);
+                  console.log(
+                    'this.stateGroups[indexElem].names.length',
+                    this.stateGroups[indexElem].names.length
+                  );
+                  // Si es la única dentro del grupo de letra, quitar la letra también
+                  if (this.stateGroups[indexElem].names.length === 0) {
+                    console.log('Me cargo la letra !');
+                    this.stateGroups.splice(indexElem, 1);
+                  }
                 }
               }
             }

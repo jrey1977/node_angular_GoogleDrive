@@ -10,7 +10,7 @@ const borrarEtiqueta = async (req, res) => {
   //var resDelete = res;
   let idEtiqueta = req.body.idEtiqueta;
   let idArchivo = req.body.idArchivo;
-  console.log(`Borro etiqueta ${idEtiqueta} de archivo con id ${idArchivo}`);
+
   try {
     // Primero compruebo si esta etiqueta la usan más archivos
     let usosEtiqueta = await Archivo.find({
@@ -24,9 +24,13 @@ const borrarEtiqueta = async (req, res) => {
         { $pull: { etiquetas: mongoose.Types.ObjectId(idEtiqueta) } }
       );
     } else {
-      // Si no la usan más archivos, borro la etiqueta de la tabla
-      // etiquetas y luego se la quito al archivo
-      await Etiqueta.deleteOne({ _id: idEtiqueta });
+      // Si no la usan más archivos y no es una etiqueta de categoría,
+      //  borro la etiqueta de la tabla etiquetas y luego se la quito al archivo
+      var etiqueta = await Etiqueta.find( {_id: mongoose.Types.ObjectId(idEtiqueta)});
+      console.log('etiqueta encontrada:', etiqueta);
+      if(etiqueta[0].categoria === "no"){
+        await Etiqueta.deleteOne({ _id: idEtiqueta });
+      }
       await Archivo.updateMany(
         { id: idArchivo },
         { $pull: { etiquetas: mongoose.Types.ObjectId(idEtiqueta) } }
@@ -122,9 +126,21 @@ const obtenerNombreEtiqueta = async (req, res) => {
   });
 };
 
+const obtenerUsosEtiqueta = async (req, res) => {
+  let idEtiqueta = req.params.idEtiqueta;
+  let usosEtiqueta = await Archivo.find({
+    etiquetas: mongoose.Types.ObjectId(idEtiqueta),
+  });
+  res.json({
+    respuesta: "OK",
+    usos: usosEtiqueta.length,
+  });
+};
+
 module.exports = {
   borrarEtiqueta,
   grabarEtiqueta,
   obtenerNombresEtiquetas,
   obtenerNombreEtiqueta,
+  obtenerUsosEtiqueta
 };

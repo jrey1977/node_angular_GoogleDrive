@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { Observable, Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { Etiqueta } from './models/etiquetas.interface';
 
 const base_url = environment.urlBack;
@@ -83,6 +83,12 @@ export class EtiquetasService {
   obtenerNombreCarpeta(idEtiqueta: string) {
     return this.http.get<any[]>(
       `http://localhost:3100/etiquetas/nombre/${idEtiqueta}`
+    );
+  }
+
+  obtenerUsosEtiqueta(idEtiqueta: string) {
+    return this.http.get<any[]>(
+      `http://localhost:3100/etiquetas/usos/${idEtiqueta}`
     );
   }
 }

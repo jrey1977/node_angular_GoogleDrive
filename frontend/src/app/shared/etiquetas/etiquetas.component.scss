@@ -92,6 +92,7 @@ button:focus {
   border: 5px solid #2271b1;
   display: inline-block;
   position: relative;
+  max-width: 96%;
   &::after {
     content: url("../../../assets/img/selected.png");
     position: absolute;
@@ -101,6 +102,7 @@ button:focus {
   .imgEtiquetada {
     width: auto;
     max-height: 70vh;
+    max-width: 100%;
   }
 }
 
