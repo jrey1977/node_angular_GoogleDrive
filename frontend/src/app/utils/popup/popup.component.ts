@@ -67,9 +67,7 @@ export class PopupComponent implements OnInit {
         .obtenerNombreCarpeta(this.popup.parents[0])
         .subscribe((data: any) => {
           this.carpeta = data.nombre;
-          console.log('this.carpeta', this.carpeta);
         });
-      console.log('this.carpeta 2', this.carpeta);
       this.obtenerEtiquetas(this.popup.id);
     });
     this.popupService.getPopupState$().subscribe((estado) => {

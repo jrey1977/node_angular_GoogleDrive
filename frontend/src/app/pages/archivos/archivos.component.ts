@@ -16,6 +16,7 @@ import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 import { EtiquetasComponent } from 'src/app/shared/etiquetas/etiquetas.component';
 import { EtiquetasService } from 'src/app/shared/etiquetas/etiquetas.service';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
+import { PopupComponent } from 'src/app/utils/popup/popup.component';
 import { PopupService } from 'src/app/utils/popup/services/popup.service';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
@@ -89,6 +90,7 @@ export class ArchivosComponent implements OnInit {
   public arrayMultiEdit: any[] = [];
   public checkboxesChecked: boolean = false;
   modalRef?: BsModalRef;
+  modalRef2?: BsModalRef;
   public cargado: boolean = false;
 
   @ViewChild('contentArchivosNuevos') ul!: ElementRef;
@@ -202,6 +204,13 @@ export class ArchivosComponent implements OnInit {
     this.modalRef.content.fotoSeleccionada = foto;
   }
 
+  edicionMultiple() {
+    this.modalRef2 = this.modalService.show(PopupComponent);
+    //this.modalRef.content.fotosSeleccionadas = this.arrayMultiEdit;
+
+    this.popupService.abrirPopupMulti(this.arrayMultiEdit);
+  }
+
   onRightClick($event: any, archivo: Archivo, tipo: string, indexFoto: number) {
     $event.preventDefault();
     this.showContextMenu = false;
@@ -223,30 +232,6 @@ export class ArchivosComponent implements OnInit {
       this.rightClickMenuPositionY
     );
     this.showContextMenu = true;
-  }
-
-  scrollLeft() {
-    console.log('Hago scroll a la izda.');
-    let style = getComputedStyle(this.ul.nativeElement);
-    this.anchoUl = parseInt(style.width);
-    //this.ul.nativeElement.scrollLeft -= this.anchoUl;
-    this.ul.nativeElement.scrollBy({
-      left: -this.anchoUl,
-      behavior: 'smooth',
-    });
-    console.log('ancho', this.anchoUl);
-  }
-
-  scrollRight() {
-    console.log('Hago scroll a la dcha.');
-    let style = getComputedStyle(this.ul.nativeElement);
-    this.anchoUl = parseInt(style.width);
-    //this.ul.nativeElement.scrollLeft += this.anchoUl
-    this.ul.nativeElement.scrollBy({
-      left: +this.anchoUl,
-      behavior: 'smooth',
-    });
-    console.log('ancho', this.anchoUl);
   }
 
   add40NewFiles() {
