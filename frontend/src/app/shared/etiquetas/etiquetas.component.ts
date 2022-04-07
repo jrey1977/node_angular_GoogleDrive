@@ -6,6 +6,7 @@ import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
+import { PopupService } from 'src/app/utils/popup/services/popup.service';
 import { environment } from 'src/environments/environment';
 import { EtiquetasService } from './etiquetas.service';
 import { Etiqueta } from './models/etiquetas.interface';
@@ -26,11 +27,16 @@ export const _filter = (opt: string[], value: string): string[] => {
 export class EtiquetasComponent implements OnInit, OnDestroy {
   public urlImg = environment.urlImgGoogle;
   public _fotoSeleccionada?: Archivo;
+  public _fotosSeleccionadas?: Archivo[];
   public categoriaArchivo: string = '';
   public idArchivo: string = '';
   public etiquetas: any[] = [];
   public tagsDisponiblesBBDD?: Etiqueta[];
   private arrayLetras: any = [];
+  public stateEdit = false;
+  public stateMultiEdit = false;
+  editPopup!: Archivo;
+  multiPopup!: Archivo[];
 
   @Input() set fotoSeleccionada(value: Archivo) {
     this._fotoSeleccionada = value;
@@ -39,6 +45,10 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     if (this._fotoSeleccionada.etiquetas) {
       this.obtenerEtiquetasAutoComplete(this._fotoSeleccionada.etiquetas);
     }
+  }
+
+  @Input() set fotoSeleccionadas(value: Archivo[]) {
+    this._fotosSeleccionadas = value;
   }
 
   stateForm: FormGroup = this._formBuilder.group({
@@ -52,6 +62,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     public bsModalRef: BsModalRef,
     private etiquetaService: EtiquetasService,
     private notificationService: NotificationService,
+    public popupService: PopupService,
     private _formBuilder: FormBuilder,
     @Inject(DOCUMENT) private document: Document
   ) {}
@@ -60,6 +71,23 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.document.body.classList.add('overflow-hidden');
+
+    // Me suscribo a los cambios que haya en popup de edit y multi-edit
+    this.popupService.getEditPopup$().subscribe((popupRecibido) => {
+      this.editPopup = popupRecibido;
+    });
+
+    this.popupService.getEditPopupState$().subscribe((estado) => {
+      this.stateEdit = estado;
+    });
+
+    this.popupService.getMultiEditPopup$().subscribe((popupRecibido) => {
+      this.multiPopup = popupRecibido;
+    });
+
+    this.popupService.getMultiEditPopupState$().subscribe((estado) => {
+      this.stateMultiEdit = estado;
+    });
   }
 
   ngOnDestroy(): void {
@@ -91,24 +119,16 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   }
 
   obtenerEtiquetasAutoComplete(arrayEtiquetasParaExcluir: string[]) {
-    console.log('Etiquetas que debería excluir:', arrayEtiquetasParaExcluir);
     this.etiquetaService.getAllTags().subscribe((data: any) => {
-      console.log(
-        'this.tagsDisponibles length antes del filtrado:',
-        data.etiquetas.length
-      );
       this.tagsDisponiblesBBDD = data.etiquetas.filter(
         (tagIterado: Etiqueta) => {
           if (tagIterado._id) {
             if (arrayEtiquetasParaExcluir.indexOf(tagIterado?._id) === -1) {
-              console.log('Etiqueta para autocomplete:', tagIterado?._id);
               return tagIterado;
             } else {
-              console.log('Etiqueta repetida:', tagIterado?._id);
               return false;
             }
           } else {
-            console.log('No se ha encontrado id de etiqueta:', tagIterado?._id);
             return tagIterado;
           }
         }
@@ -119,10 +139,6 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
       ) {
         return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
       });
-      console.log(
-        'this.tagsDisponibles length tras filtrado:',
-        this.tagsDisponiblesBBDD
-      );
       if (this.tagsDisponiblesBBDD) {
         this.obtenerPrimeraLetra(this.tagsDisponiblesBBDD);
       }
@@ -190,7 +206,6 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   }
 
   async obtenerEtiquetas(idParam: string) {
-    console.log('entro a obtenerEtiquetas');
     this.subscriptionLabels = await this.etiquetaService
       .obtenerEtiquetas(idParam)
       .subscribe((res: any) => {

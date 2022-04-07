@@ -6,9 +6,11 @@
   color: #000;
   background: none;
   border: 0;
-  top: -3vh;
+  top: 1vh;
   position: relative;
   right: 1%;
+  padding: 0;
+  z-index: 2;
 }
 
 .card {
@@ -200,8 +202,7 @@ button:focus {
 }
 
 ::ng-deep .modal-content {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding: 0 !important;
 }
 
 ::ng-deep .mat-optgroup-label,

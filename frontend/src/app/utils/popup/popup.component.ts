@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   trigger,
   state,
@@ -7,12 +7,12 @@ import {
   transition,
   // ...
 } from '@angular/animations';
-import { first, take } from 'rxjs/operators';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { EtiquetasService } from 'src/app/shared/etiquetas/etiquetas.service';
 import { Etiqueta } from 'src/app/shared/etiquetas/models/etiquetas.interface';
 import { PopupService } from 'src/app/utils/popup/services/popup.service';
 import { environment } from 'src/environments/environment';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-popup',
@@ -42,9 +42,7 @@ import { environment } from 'src/environments/environment';
 })
 export class PopupComponent implements OnInit {
   popup!: Archivo;
-  multiPopup!: Archivo[];
   statePopup: boolean = false;
-  stateMultiPopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
   public etiquetas: Etiqueta[] = [];
   public mb?: string;
@@ -54,7 +52,8 @@ export class PopupComponent implements OnInit {
 
   constructor(
     public popupService: PopupService,
-    private etiquetaService: EtiquetasService
+    private etiquetaService: EtiquetasService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
@@ -72,15 +71,6 @@ export class PopupComponent implements OnInit {
     });
     this.popupService.getPopupState$().subscribe((estado) => {
       this.statePopup = estado;
-    });
-
-    // Me suscribo a los cambios que haya en popup de multi edit y que se envían como parámetro en
-    // el "next" de la función "abrirMultiPopup" del service
-    this.popupService.getMultiPopup$().subscribe((popupRecibido) => {
-      this.multiPopup = popupRecibido;
-    });
-    this.popupService.getMultiPopupState$().subscribe((estado) => {
-      this.stateMultiPopup = estado;
     });
   }
 
@@ -102,9 +92,6 @@ export class PopupComponent implements OnInit {
   cerrarPopup() {
     this.popupService.cerrarPopup();
     this.isOpen = false;
-  }
-
-  cerrarMultiPopup() {
-    this.popupService.cerrarPopupMulti();
+    this.document.body.classList.remove('overflow-hidden');
   }
 }

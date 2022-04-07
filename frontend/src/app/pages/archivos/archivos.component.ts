@@ -1,8 +1,10 @@
 import { animate, style } from '@angular/animations';
+import { DOCUMENT } from '@angular/common';
 import {
   Component,
   ElementRef,
   HostListener,
+  Inject,
   OnInit,
   QueryList,
   Renderer2,
@@ -16,7 +18,6 @@ import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 import { EtiquetasComponent } from 'src/app/shared/etiquetas/etiquetas.component';
 import { EtiquetasService } from 'src/app/shared/etiquetas/etiquetas.service';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
-import { PopupComponent } from 'src/app/utils/popup/popup.component';
 import { PopupService } from 'src/app/utils/popup/services/popup.service';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
@@ -77,8 +78,6 @@ export class ArchivosComponent implements OnInit {
   public contadorFotos: number = 40;
   public porcentaje: string = '0%';
   public porcentajeArchivo: number = 0;
-  private popup!: Archivo;
-  private anchoUl!: number;
   public showContextMenu: boolean = false;
   public fotoSeleccionada!: Archivo;
   public indexFotoSeleccionada!: number;
@@ -107,7 +106,8 @@ export class ArchivosComponent implements OnInit {
     private renderer: Renderer2,
     private modalService: BsModalService,
     private etiquetaService: EtiquetasService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
@@ -116,7 +116,6 @@ export class ArchivosComponent implements OnInit {
       this.filesAllTemp[0].forEach(function (item: any, index: number) {
         if (item.id == data.idArchivoData) {
           var etiquetaData = data.idNuevaEtiquetaData;
-          console.log('Match!!');
           var indexEtiqueta = item.etiquetas.indexOf(data.idNuevaEtiquetaData);
           if (item.etiquetas.indexOf(data.idNuevaEtiquetaData) != -1) {
             item.etiquetas.splice(indexEtiqueta, 1);
@@ -193,22 +192,20 @@ export class ArchivosComponent implements OnInit {
     } else {
       this.arrayMultiEdit.push(item);
     }
-    console.log('this.arrayMultiEdit es ', this.arrayMultiEdit);
   }
 
   agregarEtiquetas(foto: Archivo) {
-    console.log('Voy a editar esta foto:', foto);
     this.showContextMenu = true;
     this.showEtiquetas = true;
     this.modalRef = this.modalService.show(EtiquetasComponent);
     this.modalRef.content.fotoSeleccionada = foto;
+    this.popupService.abrirCerrarPopupEdit(true);
   }
 
   edicionMultiple() {
-    this.modalRef2 = this.modalService.show(PopupComponent);
-    //this.modalRef.content.fotosSeleccionadas = this.arrayMultiEdit;
-
-    this.popupService.abrirPopupMulti(this.arrayMultiEdit);
+    this.modalRef = this.modalService.show(EtiquetasComponent);
+    this.modalRef.content.fotosSeleccionadas = this.arrayMultiEdit;
+    this.popupService.abrirCerrarPopupMulti(true);
   }
 
   onRightClick($event: any, archivo: Archivo, tipo: string, indexFoto: number) {
@@ -269,7 +266,6 @@ export class ArchivosComponent implements OnInit {
   // y si es así los grabo en la base de datos
   getNewFiles() {
     this.archivoService.getFiles().subscribe((res: any) => {
-      console.log('Recibo esto:', res);
       this.filesTemp = Array.from(res.totalFiles);
       this.filesNew = this.filesTemp.filter(
         (file) => file.etiquetas.length < 1
@@ -365,11 +361,8 @@ export class ArchivosComponent implements OnInit {
   }
 
   abrirPopup(pArchivo: Archivo) {
+    this.document.body.classList.add('overflow-hidden');
     this.popupService.abrirPopup(pArchivo);
-  }
-
-  multiEdit() {
-    this.popupService.abrirPopupMulti(this.arrayMultiEdit);
   }
 
   mostrarNotificacion(mensaje: string, tipo: string, fixed?: boolean) {

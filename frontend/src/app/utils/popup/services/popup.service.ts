@@ -11,6 +11,8 @@ export class PopupService {
   private popup$: Subject<Archivo>;
   private popupMulti$: Subject<Archivo[]>;
   private checkedInputs$: Subject<boolean>;
+  private popupEdit$: Subject<Archivo>;
+  private popupEditState$: Subject<boolean>;
 
   constructor() {
     this.popup$ = new Subject();
@@ -19,6 +21,8 @@ export class PopupService {
     this.popupState$.next(false);
     this.popupMultiState$ = new Subject();
     this.checkedInputs$ = new Subject();
+    this.popupEdit$ = new Subject();
+    this.popupEditState$ = new Subject();
   }
 
   abrirPopup(pArchivo: Archivo) {
@@ -26,9 +30,12 @@ export class PopupService {
     this.popup$.next(pArchivo);
   }
 
-  abrirPopupMulti(pArchivos: Archivo[]) {
-    this.popupMultiState$.next(true);
-    this.popupMulti$.next(pArchivos);
+  abrirCerrarPopupEdit(condition: boolean) {
+    this.popupEditState$.next(condition);
+  }
+
+  abrirCerrarPopupMulti(condition: boolean) {
+    this.popupMultiState$.next(condition);
   }
 
   cerrarPopup() {
@@ -48,15 +55,23 @@ export class PopupService {
     return this.popup$.asObservable();
   }
 
-  getMultiPopup$(): Observable<Archivo[]> {
-    return this.popupMulti$.asObservable();
-  }
-
   getPopupState$(): Observable<boolean> {
     return this.popupState$.asObservable();
   }
 
-  getMultiPopupState$(): Observable<boolean> {
+  getEditPopup$(): Observable<Archivo> {
+    return this.popupEdit$.asObservable();
+  }
+
+  getEditPopupState$(): Observable<boolean> {
+    return this.popupEditState$.asObservable();
+  }
+
+  getMultiEditPopup$(): Observable<Archivo[]> {
+    return this.popupMulti$.asObservable();
+  }
+
+  getMultiEditPopupState$(): Observable<boolean> {
     return this.popupMultiState$.asObservable();
   }
 }
