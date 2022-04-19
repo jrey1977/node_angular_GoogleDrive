@@ -11,7 +11,6 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { MatTabGroup } from '@angular/material/tabs';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
@@ -89,7 +88,6 @@ export class ArchivosComponent implements OnInit {
   public arrayMultiEdit: any[] = [];
   public checkboxesChecked: boolean = false;
   modalRef?: BsModalRef;
-  modalRef2?: BsModalRef;
   public cargado: boolean = false;
 
   @ViewChild('contentArchivosNuevos') ul!: ElementRef;
@@ -97,7 +95,6 @@ export class ArchivosComponent implements OnInit {
   @ViewChild('etiquetas') etiquetas!: ElementRef;
   @ViewChildren('checkboxMultiEdit') misCheckboxes!: QueryList<ElementRef>;
   @ViewChild(NgxMasonryComponent) masonry!: NgxMasonryComponent;
-  @ViewChild('mtg') tg!: MatTabGroup;
 
   constructor(
     private archivoService: ArchivosService,
@@ -111,7 +108,7 @@ export class ArchivosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Suscripción: para pasar actualizar fichero con nueva etiqueta en el listado que corresponda
+    // Suscripción: para actualizar fichero con una etiqueta nueva o con una etiqueta menos
     this.etiquetaService.getArchivosActualizados$().subscribe((data: any) => {
       this.filesAllTemp[0].forEach(function (item: any, index: number) {
         if (item.id == data.idArchivoData) {
@@ -136,6 +133,7 @@ export class ArchivosComponent implements OnInit {
       }
     });
 
+    // OPCIONES DE GRID MASONRY
     const isMobile = this.deviceService.isMobile();
     if (isMobile) {
       this.margenLateral = 5;
@@ -143,7 +141,6 @@ export class ArchivosComponent implements OnInit {
       this.margenLateral = 20;
     }
 
-    // OPCIONES DE GRID MASONRY
     this.myOptions = {
       gutter: this.margenLateral,
       resize: true,
@@ -160,10 +157,6 @@ export class ArchivosComponent implements OnInit {
     };
 
     this.getNewFiles();
-  }
-
-  doStuff(evento: any) {
-    console.log('Evento:', evento);
   }
 
   @HostListener('window:scroll', [])
@@ -204,6 +197,7 @@ export class ArchivosComponent implements OnInit {
 
   edicionMultiple() {
     this.modalRef = this.modalService.show(EtiquetasComponent);
+    console.log('Envio datos de estos items:', this.arrayMultiEdit);
     this.modalRef.content.fotosSeleccionadas = this.arrayMultiEdit;
     this.popupService.abrirCerrarPopupMulti(true);
   }
