@@ -72,30 +72,46 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   ) {}
 
   public subscriptionLabels!: Subscription;
+  public subscriptionEditPopUp!: Subscription;
+  public subscriptionEditPopUpState!: Subscription;
+  public subscriptionMultiEditPopUp!: Subscription;
+  public subscriptionMultiEditPopUpState!: Subscription;
 
   ngOnInit(): void {
     this.document.body.classList.add('overflow-hidden');
 
     // Me suscribo a los cambios que haya en popup de edit y multi-edit
-    this.popupService.getEditPopup$().subscribe((popupRecibido) => {
-      this.editPopup = popupRecibido;
-    });
+    this.subscriptionEditPopUp = this.popupService
+      .getEditPopup$()
+      .subscribe((popupRecibido) => {
+        this.editPopup = popupRecibido;
+      });
 
-    this.popupService.getEditPopupState$().subscribe((estado) => {
-      this.stateEdit = estado;
-    });
+    this.subscriptionEditPopUpState = this.popupService
+      .getEditPopupState$()
+      .subscribe((estado) => {
+        this.stateEdit = estado;
+      });
 
-    this.popupService.getMultiEditPopup$().subscribe((popupRecibido) => {
-      this.multiPopup = popupRecibido;
-    });
+    this.subscriptionMultiEditPopUp = this.popupService
+      .getMultiEditPopup$()
+      .subscribe((popupRecibido) => {
+        this.multiPopup = popupRecibido;
+      });
 
-    this.popupService.getMultiEditPopupState$().subscribe((estado) => {
-      this.stateMultiEdit = estado;
-    });
+    this.subscriptionMultiEditPopUpState = this.popupService
+      .getMultiEditPopupState$()
+      .subscribe((estado) => {
+        this.stateMultiEdit = estado;
+      });
   }
 
   ngOnDestroy(): void {
     this.document.body.classList.remove('overflow-hidden');
+    this.subscriptionEditPopUp.unsubscribe();
+    this.subscriptionEditPopUpState.unsubscribe();
+    this.subscriptionMultiEditPopUp.unsubscribe();
+    this.subscriptionMultiEditPopUpState.unsubscribe();
   }
 
   private _filterGroup(value: string): StateGroup[] {

@@ -77,6 +77,14 @@ const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
           if (nuevoArchivoBueno.length) {
             var _idEtiqueta = nuevoArchivoBueno[0]._id;
 
+            fechaCreacionPrevia = new Date(file.createdTime);
+            fechaCreacionDefinitiva =
+              fechaCreacionPrevia.toLocaleDateString("es-es");
+
+            fechaModificacionPrevia = new Date(file.modifiedTime);
+            fechaModificacionDefinitiva =
+              fechaModificacionPrevia.toLocaleDateString("es-es");
+
             var nuevoArchivo = new Archivo({
               id: file.id,
               name: file.name,
@@ -86,8 +94,9 @@ const graboNuevasCategoriasTest = async (arrayCategorias, newFiles) => {
               webViewLink: file.webViewLink,
               iconLink: file.iconLink,
               hasThumbnail: file.hasThumbnail,
-              createdTime: file.createdTime,
-              modifiedTime: file.modifiedTime,
+              createdTime: fechaCreacionDefinitiva,
+              modifiedTime: fechaModificacionDefinitiva,
+              createdOriginalTime: file.createdTime,
               categoria: _idEtiqueta,
               etiquetas: [],
               mimeType: file.mimeType,

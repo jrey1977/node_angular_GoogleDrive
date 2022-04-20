@@ -50,17 +50,10 @@ export class ArchivosComponent implements OnInit {
   public filesAll: any[] = [];
   // Todos los archivos que se están mostrando
   public filesAllTemp: any[] = [];
+
   // Infinite Scroll All Files
   private actualPageAll: number = 1;
   private finishPageAll: number = 1;
-
-  // // Infinite Scroll New Files
-  // private actualPageNew: number = 1;
-  // private finishPageNew: number = 1;
-
-  // // Infinite Scroll Old Files
-  // private actualPageOld: number = 1;
-  // private finishPageOld: number = 1;
 
   public showGoUpButton: boolean = false;
   private filesPerPage: number = 40;
