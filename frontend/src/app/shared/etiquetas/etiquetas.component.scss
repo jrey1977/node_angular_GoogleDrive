@@ -201,6 +201,10 @@ button:focus {
   background-color: #6c757d;
 }
 
+.tableMultiEdit td img {
+  width: 100%;
+}
+
 ::ng-deep .modal-content {
   padding: 0 !important;
 }

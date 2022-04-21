@@ -47,7 +47,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     }
   }
 
-  @Input() set fotoSeleccionadas(value: Archivo[]) {
+  @Input() set fotosSeleccionadas(value: Archivo[]) {
     this._fotosSeleccionadas = value;
     console.log('this._fotosSeleccionadas', this._fotosSeleccionadas);
     if (this._fotosSeleccionadas) {
