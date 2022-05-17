@@ -451,10 +451,36 @@ img[alt]:after {
   transform: translateZ(0);
 }
 
-.el-overlay-1:hover img {
+::ng-deep body:not(.multi-edit) .el-overlay-1:hover img {
   -ms-transform: scale(1.2) translateZ(0);
   -webkit-transform: scale(1.2) translateZ(0);
   transform: scale(1.2) translateZ(0);
+}
+
+::ng-deep body.multi-edit .el-overlay-1 {
+  position: relative;
+}
+
+::ng-deep body.multi-edit .el-overlay-1::after{
+  content: url(/assets/img/unchecked.png);
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 36px;
+  height: 31px;
+}
+
+::ng-deep body.multi-edit .el-overlay-1.seleccionada::after{
+  content: url(/assets/img/checked.png);
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 36px;
+  height: 31px;
+}
+
+::ng-deep body.multi-edit .el-overlay-1.seleccionada{
+  border: 3px solid black;
 }
 
 .el-info > li span {

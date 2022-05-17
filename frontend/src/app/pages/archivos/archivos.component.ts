@@ -80,6 +80,7 @@ export class ArchivosComponent implements OnInit {
   public multiEditMode: boolean = false;
   public arrayMultiEdit: any[] = [];
   public checkboxesChecked: boolean = false;
+  public arraySeleccionados: any[] = [];
   modalRef?: BsModalRef;
   public cargado: boolean = false;
 
@@ -180,6 +181,12 @@ export class ArchivosComponent implements OnInit {
     }
   }
 
+  updateArrayMultiEditImg(item: any, idItem: number) {
+    if (this.multiEditMode) {
+      this.updateArrayMultiEdit(item);
+    }
+  }
+
   agregarEtiquetas(foto: Archivo) {
     this.showContextMenu = true;
     this.showEtiquetas = true;
@@ -193,6 +200,16 @@ export class ArchivosComponent implements OnInit {
     console.log('Envio datos de estos items:', this.arrayMultiEdit);
     this.modalRef.content.fotosSeleccionadas = this.arrayMultiEdit;
     this.popupService.abrirCerrarPopupMulti(true);
+  }
+
+  modoMultiEdit() {
+    this.multiEditMode = !this.multiEditMode;
+    this.document.body.classList.add('multi-edit');
+  }
+
+  cancelarMultiEdit() {
+    this.multiEditMode = !this.multiEditMode;
+    this.document.body.classList.remove('multi-edit');
   }
 
   onRightClick($event: any, archivo: Archivo, tipo: string, indexFoto: number) {

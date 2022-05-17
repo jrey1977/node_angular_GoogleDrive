@@ -34,14 +34,14 @@
               <button
                 *ngIf="!multiEditMode"
                 class="btn btn-outline-dark"
-                (click)="multiEditMode = !multiEditMode"
+                (click)="modoMultiEdit()"
               >
                 <i class="icon-pencil me-3"></i>Edición múltiple
               </button>
               <button
                 *ngIf="multiEditMode"
                 class="btn btn-danger"
-                (click)="multiEditMode = !multiEditMode"
+                (click)="cancelarMultiEdit()"
               >
                 Cancelar
               </button>
@@ -71,15 +71,22 @@
               id="{{ filesAllTemp[0][file].id }}"
               *ngFor="let file of Object.keys(filesAllTemp[0]); let i = index"
             >
-              <div class="el-overlay-1">
-                <span class="checkBoxSelection" *ngIf="multiEditMode">
+              <div
+                class="el-overlay-1"
+                [ngClass]="
+                  this.arrayMultiEdit.includes(filesAllTemp[0][file])
+                    ? 'seleccionada'
+                    : ''
+                "
+              >
+                <!-- <span class="checkBoxSelection" *ngIf="multiEditMode">
                   <input
                     type="checkbox"
                     #checkboxMultiEdit
                     class="inputMultiElement {{ i }}"
                     (change)="updateArrayMultiEdit(filesAllTemp[0][file])"
                   />
-                </span>
+                </span> -->
                 <span
                   class="bgVideo"
                   (click)="abrirPopup(filesAllTemp[0][file])"
@@ -91,6 +98,7 @@
                   [alt]="filesAllTemp[0][file].name"
                   [id]="i"
                   class="img-fluid"
+                  (click)="updateArrayMultiEditImg(filesAllTemp[0][file], i)"
                 />
                 <div class="el-overlay" *ngIf="!multiEditMode">
                   <ul class="el-info">

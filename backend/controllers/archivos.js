@@ -147,9 +147,7 @@ const getNewFiles = async (req, res = response) => {
     var ultimoArchivo = await Archivo.find()
       .sort({ createdOriginalTime: -1 })
       .limit(1);
-    console.log("ultimoArchivo[0]", ultimoArchivo[0]);
     var fechaUltimoArchivo = ultimoArchivo[0].createdOriginalTime;
-    console.log("fechaUltimoArchivo: ", fechaUltimoArchivo);
 
     // Ahora busco en la unidad de Google Drive todos los ficheros
     // con fecha de modificación posterior
