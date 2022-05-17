@@ -197,19 +197,18 @@ export class ArchivosComponent implements OnInit {
 
   edicionMultiple() {
     this.modalRef = this.modalService.show(EtiquetasComponent);
-    console.log('Envio datos de estos items:', this.arrayMultiEdit);
     this.modalRef.content.fotosSeleccionadas = this.arrayMultiEdit;
     this.popupService.abrirCerrarPopupMulti(true);
   }
 
-  modoMultiEdit() {
+  editMulti() {
+    this.document.body.classList.add('edicionMultiple');
     this.multiEditMode = !this.multiEditMode;
-    this.document.body.classList.add('multi-edit');
   }
 
-  cancelarMultiEdit() {
+  cancelMulti() {
+    this.document.body.classList.remove('edicionMultiple');
     this.multiEditMode = !this.multiEditMode;
-    this.document.body.classList.remove('multi-edit');
   }
 
   onRightClick($event: any, archivo: Archivo, tipo: string, indexFoto: number) {
