@@ -451,7 +451,7 @@ img[alt]:after {
   transform: translateZ(0);
 }
 
-::ng-deep body:not(.edicionMultiple) .el-overlay-1:hover img {
+::ng-deep body:not(.multi-edit) .el-overlay-1:hover img {
   -ms-transform: scale(1.2) translateZ(0);
   -webkit-transform: scale(1.2) translateZ(0);
   transform: scale(1.2) translateZ(0);
@@ -479,8 +479,20 @@ img[alt]:after {
   height: 31px;
 }
 
+::ng-deep body.multi-edit .el-overlay-1 img{
+  opacity: 0.5;
+}
+
 ::ng-deep body.multi-edit .el-overlay-1.seleccionada{
-  border: 3px solid black;
+  border: 2px solid transparent;
+}
+
+::ng-deep body.multi-edit .el-overlay-1.seleccionada img{
+  opacity: 1;
+}
+
+::ng-deep body.multi-edit .el-overlay-1.seleccionada{
+  border: 2px solid black;
 }
 
 .el-info > li span {

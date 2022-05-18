@@ -28,6 +28,13 @@ export class ArchivosService {
     );
   }
 
+  borraArchivos(idsArchivos: string[]) {
+    console.log('Toca borrar esto: ', idsArchivos);
+    /* return this.http.get<any[]>(
+      `${this.urlBack}archivos/borrar/${idsArchivos}`
+    ); */
+  }
+
   creoBaseDatos() {
     console.log('Creo Base de datos');
     return this.http.get<any[]>(this.urlBack + 'archivos/generaBDatos');

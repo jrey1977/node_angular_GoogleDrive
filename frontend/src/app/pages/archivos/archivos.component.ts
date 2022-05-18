@@ -201,14 +201,19 @@ export class ArchivosComponent implements OnInit {
     this.popupService.abrirCerrarPopupMulti(true);
   }
 
-  editMulti() {
-    this.document.body.classList.add('edicionMultiple');
-    this.multiEditMode = !this.multiEditMode;
+  borradoMultiple() {
+    console.log('Archivos a borrar:', this.arrayMultiEdit);
+    this.archivoService.borraArchivos(this.arrayMultiEdit);
   }
 
-  cancelMulti() {
-    this.document.body.classList.remove('edicionMultiple');
+  modoMultiEdit() {
     this.multiEditMode = !this.multiEditMode;
+    this.document.body.classList.add('multi-edit');
+  }
+
+  cancelarMultiEdit() {
+    this.multiEditMode = !this.multiEditMode;
+    this.document.body.classList.remove('multi-edit');
   }
 
   onRightClick($event: any, archivo: Archivo, tipo: string, indexFoto: number) {
