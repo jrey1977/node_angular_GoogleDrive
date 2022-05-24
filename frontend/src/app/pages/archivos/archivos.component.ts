@@ -201,11 +201,6 @@ export class ArchivosComponent implements OnInit {
     this.popupService.abrirCerrarPopupMulti(true);
   }
 
-  borradoMultiple() {
-    console.log('Archivos a borrar:', this.arrayMultiEdit);
-    this.archivoService.borraArchivos(this.arrayMultiEdit);
-  }
-
   modoMultiEdit() {
     this.multiEditMode = !this.multiEditMode;
     this.document.body.classList.add('multi-edit');
@@ -366,6 +361,11 @@ export class ArchivosComponent implements OnInit {
           });
       }
     });
+  }
+
+  borradoMultiple() {
+    console.log('Archivos a borrar:', this.arrayMultiEdit);
+    this.archivoService.borraArchivos(this.arrayMultiEdit);
   }
 
   abrirPopup(pArchivo: Archivo) {

@@ -19,6 +19,7 @@ export class ArchivosService {
   }
 
   borraArchivo(idArchivo: string) {
+    console.log('Borro', idArchivo);
     return this.http.get<any[]>(`${this.urlBack}archivos/borrar/${idArchivo}`);
   }
 
@@ -29,10 +30,10 @@ export class ArchivosService {
   }
 
   borraArchivos(idsArchivos: string[]) {
-    console.log('Toca borrar esto: ', idsArchivos);
-    /* return this.http.get<any[]>(
-      `${this.urlBack}archivos/borrar/${idsArchivos}`
-    ); */
+    idsArchivos.forEach((idArchivo) => {
+      console.log('Borro archivo con id: ', idArchivo);
+      this.borraArchivo(idArchivo);
+    });
   }
 
   creoBaseDatos() {
