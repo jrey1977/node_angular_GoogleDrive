@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { forkJoin, of, timer } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -29,11 +30,21 @@ export class ArchivosService {
     );
   }
 
-  borraArchivos(idsArchivos: string[]) {
+  async borraArchivos(idsArchivos: any[]) {
+    console.log('Array con estas ids', idsArchivos);
+
+    var arrayObservables: any[] = [];
+
     idsArchivos.forEach((idArchivo) => {
-      console.log('El tipo de dato es: ', typeof idArchivo);
-      console.log('Borro archivo con id: ', idArchivo);
-      this.borraArchivo(idArchivo);
+      arrayObservables.push(
+        this.http.get<any[]>(`${this.urlBack}archivos/borrar/${idArchivo}`)
+      );
+    });
+
+    const observable = forkJoin(arrayObservables);
+    observable.subscribe({
+      next: (value) => console.log('Respuesta del observable:', value),
+      complete: () => console.log('This is how it ends!'),
     });
   }
 

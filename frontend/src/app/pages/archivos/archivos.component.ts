@@ -365,7 +365,11 @@ export class ArchivosComponent implements OnInit {
 
   borradoMultiple() {
     console.log('Archivos a borrar:', this.arrayMultiEdit);
-    this.archivoService.borraArchivos(this.arrayMultiEdit);
+    var arrayIds: any = [];
+    this.arrayMultiEdit.forEach((archivo) => {
+      arrayIds.push(archivo.id);
+    });
+    this.archivoService.borraArchivos(arrayIds);
   }
 
   abrirPopup(pArchivo: Archivo) {
