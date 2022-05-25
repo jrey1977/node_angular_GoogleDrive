@@ -31,6 +31,7 @@ export class ArchivosService {
 
   borraArchivos(idsArchivos: string[]) {
     idsArchivos.forEach((idArchivo) => {
+      console.log('El tipo de dato es: ', typeof idArchivo);
       console.log('Borro archivo con id: ', idArchivo);
       this.borraArchivo(idArchivo);
     });

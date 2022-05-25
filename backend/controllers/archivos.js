@@ -474,6 +474,7 @@ const creoBaseDatos = async (_req, _res) => {
 const borrarAchivo = async (req, res) => {
   //var resDelete = res;
   let idArchivo = req.params.idArchivo;
+  console.log('idArchivo a borrar:', idArchivo);
   try {
     return drive.files
       .delete({
