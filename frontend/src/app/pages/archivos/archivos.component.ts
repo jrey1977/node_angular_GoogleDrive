@@ -79,6 +79,7 @@ export class ArchivosComponent implements OnInit {
   public showEtiquetas: boolean = false;
   public multiEditMode: boolean = false;
   public arrayMultiEdit: any[] = [];
+  public arrayMultiEditIds: number[] = [];
   public checkboxesChecked: boolean = false;
   public arraySeleccionados: any[] = [];
   modalRef?: BsModalRef;
@@ -172,18 +173,23 @@ export class ArchivosComponent implements OnInit {
     }
   }
 
-  updateArrayMultiEdit(item: any) {
+  updateArrayMultiEdit(item: any, idItem: number) {
     if (this.arrayMultiEdit.includes(item)) {
+      // Elimino archivo de array de archivos
       var index = this.arrayMultiEdit.indexOf(item);
       this.arrayMultiEdit.splice(index, 1);
+      //Elimino índice de array de índices
+      var indexIndice = this.arrayMultiEditIds.indexOf(idItem);
+      this.arrayMultiEditIds.splice(indexIndice, 1);
     } else {
       this.arrayMultiEdit.push(item);
+      this.arrayMultiEditIds.push(idItem);
     }
   }
 
   updateArrayMultiEditImg(item: any, idItem: number) {
     if (this.multiEditMode) {
-      this.updateArrayMultiEdit(item);
+      this.updateArrayMultiEdit(item, idItem);
     }
   }
 
@@ -364,12 +370,23 @@ export class ArchivosComponent implements OnInit {
   }
 
   borradoMultiple() {
-    console.log('Archivos a borrar:', this.arrayMultiEdit);
-    var arrayIds: any = [];
-    this.arrayMultiEdit.forEach((archivo) => {
-      arrayIds.push(archivo.id);
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¡Si los borras no podrás recuperar los archivos!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '¡Si joder, bórralos!',
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        var arrayIds: any = [];
+        this.arrayMultiEdit.forEach((archivo) => {
+          arrayIds.push(archivo.id);
+        });
+        this.archivoService.borraArchivos(arrayIds, this.arrayMultiEditIds);
+      }
     });
-    this.archivoService.borraArchivos(arrayIds);
   }
 
   abrirPopup(pArchivo: Archivo) {
