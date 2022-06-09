@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, Subject } from 'rxjs';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { environment } from 'src/environments/environment';
 
@@ -8,10 +8,13 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ArchivosService {
+  private archivosListados$: Subject<number[]>;
   constructor(
     private http: HttpClient,
     private notificationService: NotificationService
-  ) {}
+  ) {
+    this.archivosListados$ = new Subject();
+  }
   urlBack = environment.urlBack;
 
   /* getFiles() {
@@ -32,6 +35,14 @@ export class ArchivosService {
     return this.http.get<any[]>(
       `${this.urlBack}archivos/borrar/ArchivoBBDD/${idArchivo}`
     );
+  }
+
+  getListadoArchivos$(): Observable<number[]> {
+    return this.archivosListados$.asObservable();
+  }
+
+  actualizarListadoArchivos(arrayIds:number[]) {
+    this.archivosListados$.next(arrayIds);
   }
 
   async borraArchivos(idsArchivos: any[], indicesArchivos: number[]) {
@@ -55,11 +66,11 @@ export class ArchivosService {
         }
       },
       complete: () => {
-        this.mostrarNotificacion(
-          'Se han borrado los archivos de la unidad de Google Drive',
-          'success'
-        );
         if (resultsObservable) {
+          this.mostrarNotificacion(
+            'Se han borrado los archivos de la unidad de Google Drive',
+            'success'
+          );
           var arrayObservables2: any[] = [];
           idsArchivos.forEach((idArchivo) => {
             arrayObservables2.push(
@@ -83,6 +94,8 @@ export class ArchivosService {
                   'Se han borrado los archivos de la unidad de MongoDB',
                   'success'
                 );
+                // Quito los archivos del grid
+                this.actualizarListadoArchivos(indicesArchivos);
               } else {
                 console.log(
                   'No se han podido eliminar los archivos de MongoDB'

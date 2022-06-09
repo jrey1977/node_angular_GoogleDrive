@@ -128,6 +128,17 @@ export class ArchivosComponent implements OnInit {
       }
     });
 
+    // Suscripción: para actualizar listado de archivos
+    this.archivoService
+      .getListadoArchivos$()
+      .subscribe((arrayDelete: number[]) => {
+        let elementosBorrados = 0;
+        arrayDelete.forEach((elementoBorrado) => {
+          this.filesAllTemp[0].splice(elementoBorrado - elementosBorrados, 1);
+          elementosBorrados++;
+        });
+      });
+
     // OPCIONES DE GRID MASONRY
     const isMobile = this.deviceService.isMobile();
     if (isMobile) {
