@@ -20,7 +20,7 @@
       >
         <div class="w-100 over header">
           <div class="row pt-5">
-            <div class="col-4">
+            <div class="col-12 col-md-4">
               <h4 class="card-title">Galería multimedia</h4>
               <h6 class="card-subtitle m-b-20 text-muted">
                 <b>{{ filesNew.length }}</b> Archivos
@@ -30,7 +30,7 @@
                 >
               </h6>
             </div>
-            <div class="col-8 text-right">
+            <div class="col-12 col-md-8 text-start text-md-end">
               <button
                 *ngIf="!multiEditMode"
                 class="btn btn-outline-dark"
@@ -99,7 +99,10 @@
                   [id]="i"
                   class="img-fluid"
                 />
-                <div class="el-overlay" *ngIf="!multiEditMode">
+                <div
+                  class="el-overlay d-none d-md-block"
+                  *ngIf="!multiEditMode"
+                >
                   <ul class="el-info">
                     <li (click)="abrirPopup(filesAllTemp[0][file])">
                       <span><i class="icon-magnifier"></i></span>
