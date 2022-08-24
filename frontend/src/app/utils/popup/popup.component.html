@@ -1,38 +1,50 @@
-<div class="position-fixed w-100 h-100 p-3 p-md-5 popup" *ngIf="statePopup">
+<div class="position-fixed w-100 h-100 p-2 p-md-5 popup" *ngIf="statePopup">
   <div class="fondoPopUp"></div>
 
-  <div class="contenedorArchivo m-auto text-center position-relative">
-    <div class="w-auto position-relative d-inline-block text-right">
-      <!--BOTÓN DE CERRAR-->
-      <button
-        title="Close (Esc)"
-        type="button"
-        class="mfp-close position-relative text-white"
-        (click)="cerrarPopup()"
-      >
-        ×
-      </button>
-      <!--VIDEO-->
-      <ng-container *ngIf="popup.mimeType?.includes('video')">
-        <video
-          controls
-          preload="none"
-          [poster]="popup.thumbnailLink"
-          width="100%"
-          playsinline
-        >
-          <source [src]="popup.webViewLink" type="video/mp4" />
-          Video not supported
-        </video>
-      </ng-container>
-      <!--FOTO-->
-      <ng-container *ngIf="popup.mimeType?.includes('image')">
-        <img
-          [src]="urlImg + popup.id"
-          [alt]="popup.name"
-          class="mt-1 img-fluid"
-        />
-      </ng-container>
+  <div class="contenedorArchivo m-auto text-center position-relative h-100">
+    <div class="w-auto position-relative d-inline-block text-right h-100">
+      <!--CABECERA-->
+      <div class="cabeceraPopUp row mx-0 position-fixed w-100">
+        <div class="col-2 ps-0 text-left">
+          <!--BOTÓN DE CERRAR-->
+          <span
+            class="cerrarPopUp position-relative text-white"
+            (click)="cerrarPopup()"
+          ></span>
+        </div>
+        <!--NOMBRE DE LA IMAGEN-->
+        <div class="col-7 text-white">{{ popup.name }}</div>
+        <!--BOTONES DEW DESCARGA Y MENÚ CONTEXTUAL-->
+        <div class="col-3 col-md-2 row mx-0 ps-4">
+          <span class="botonDescarga col-6 me-2"></span>
+          <span class="botonInfo col-6"></span>
+        </div>
+      </div>
+
+      <!--CONTENEDOR ARCHIVO-->
+      <div class="row mx-0 align-items-center h-100">
+        <!--VIDEO-->
+        <ng-container *ngIf="popup.mimeType?.includes('video')">
+          <video
+            controls
+            preload="none"
+            [poster]="popup.thumbnailLink"
+            width="100%"
+            playsinline
+          >
+            <source [src]="popup.webViewLink" type="video/mp4" />
+            Video not supported
+          </video>
+        </ng-container>
+        <!--FOTO-->
+        <ng-container *ngIf="popup.mimeType?.includes('image')">
+          <img
+            [src]="urlImg + popup.id"
+            [alt]="popup.name"
+            class="mt-1 img-fluid"
+          />
+        </ng-container>
+      </div>
     </div>
     <div
       class="flex-column d-flex panel-info text-white open-close-container"

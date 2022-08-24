@@ -84,6 +84,8 @@ export class ArchivosComponent implements OnInit {
   public arraySeleccionados: any[] = [];
   modalRef?: BsModalRef;
   public cargado: boolean = false;
+  public isMobile: boolean = false;
+  public isTablet: boolean = false;
 
   @ViewChild('contentArchivosNuevos') ul!: ElementRef;
   @ViewChild('contextMenu') contextMenu!: ElementRef;
@@ -103,6 +105,8 @@ export class ArchivosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isMobile = this.deviceService.isMobile();
+    this.isTablet = this.deviceService.isTablet();
     // Suscripción: para actualizar fichero con una etiqueta nueva o con una etiqueta menos
     this.etiquetaService.getArchivosActualizados$().subscribe((data: any) => {
       this.filesAllTemp[0].forEach(function (item: any, index: number) {
@@ -140,8 +144,7 @@ export class ArchivosComponent implements OnInit {
       });
 
     // OPCIONES DE GRID MASONRY
-    const isMobile = this.deviceService.isMobile();
-    if (isMobile) {
+    if (this.isMobile) {
       this.margenLateral = 5;
     } else {
       this.margenLateral = 20;

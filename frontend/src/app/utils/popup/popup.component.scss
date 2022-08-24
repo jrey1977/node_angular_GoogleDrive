@@ -25,7 +25,7 @@ table td.name {
   left: 0;
   width: 100%;
   height: 100vh;
-  background: rgb(0, 0, 0, 0.7);
+  background: rgb(0, 0, 0, 0.8);
 }
 
 .mfp-zoom-out-cur,
@@ -33,16 +33,6 @@ table td.name {
   cursor: zoom-out;
 }
 
-.mfp-image-holder .mfp-close,
-.mfp-iframe-holder .mfp-close {
-  color: rgb(255, 255, 255);
-  right: -6px;
-  text-align: right;
-  padding-right: 6px;
-  width: 100%;
-}
-
-button.mfp-close,
 button.mfp-arrow {
   overflow: visible;
   cursor: pointer;
@@ -59,10 +49,17 @@ button.mfp-arrow {
   color: rgb(51, 51, 51) !important;
 }
 
-button.mfp-close {
-  width: 4%;
-  left: 96%;
-  color: white !important;
+span.cerrarPopUp {
+  background: url(/assets/img/sprite.svg);
+  border: 0;
+  background-position: 0 -3250px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .panel-info {
@@ -108,4 +105,22 @@ button.mfp-close {
 
 .panel-cerrado *:not(.iconInfo) {
   display: none;
+}
+
+.botonInfo {
+  background: url(/assets/img/sprite.svg);
+  border: 0;
+  background-position: 0 -874px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.botonDescarga {
+  background: url(/assets/img/sprite.svg);
+  border: 0;
+  background-position: 0 -482px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
 }
