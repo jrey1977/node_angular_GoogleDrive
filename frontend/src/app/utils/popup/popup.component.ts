@@ -44,9 +44,11 @@ export class PopupComponent implements OnInit {
   popup!: Archivo;
   statePopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
+  public webContentLink: string = '';
   public etiquetas: Etiqueta[] = [];
   public mb?: string;
   public carpeta?: any;
+  public showMenu: boolean = false;
 
   isOpen = false;
 
@@ -61,6 +63,8 @@ export class PopupComponent implements OnInit {
     // el "next" de la función "abrirPopup" del service
     this.popupService.getPopup$().subscribe((popupRecibido) => {
       this.popup = popupRecibido;
+      this.webContentLink = this.popup.webContentLink;
+      console.log('popup es', this.popup);
       this.mb = (this.popup.size / 1000000).toFixed(2) + 'MB';
       this.etiquetaService
         .obtenerNombreCarpeta(this.popup.parents[0])
@@ -76,6 +80,10 @@ export class PopupComponent implements OnInit {
 
   toggle() {
     this.isOpen = !this.isOpen;
+  }
+
+  showHideMenu() {
+    this.showMenu = !this.showMenu;
   }
 
   borrarEtiqueta(etiqueta: any) {
