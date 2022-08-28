@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 import { EtiquetasModule } from '../shared/etiquetas/etiquetas.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AngularMaterialModule } from '../angular-material/angular-material.module';
-
+import { UtilsModule } from '../utils/utils.module';
 @NgModule({
   declarations: [ArchivosComponent, NotFoundComponent, HomeComponent],
   imports: [
@@ -22,6 +22,7 @@ import { AngularMaterialModule } from '../angular-material/angular-material.modu
     AngularMaterialModule,
     RouterModule,
     EtiquetasModule,
+    UtilsModule,
     ModalModule.forRoot(),
   ],
   exports: [CommonModule],

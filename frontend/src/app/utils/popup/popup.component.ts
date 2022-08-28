@@ -43,12 +43,12 @@ import { DOCUMENT } from '@angular/common';
 export class PopupComponent implements OnInit {
   popup!: Archivo;
   statePopup: boolean = false;
+  showPopup: boolean = false;
   public urlImg = environment.urlImgGoogle;
   public webContentLink: string = '';
   public etiquetas: Etiqueta[] = [];
   public mb?: string;
   public carpeta?: any;
-  public showMenu: boolean = false;
 
   isOpen = false;
 
@@ -75,15 +75,14 @@ export class PopupComponent implements OnInit {
     });
     this.popupService.getPopupState$().subscribe((estado) => {
       this.statePopup = estado;
+      if (this.statePopup) {
+        this.showPopup = false;
+      }
     });
   }
 
   toggle() {
     this.isOpen = !this.isOpen;
-  }
-
-  showHideMenu() {
-    this.showMenu = !this.showMenu;
   }
 
   borrarEtiqueta(etiqueta: any) {

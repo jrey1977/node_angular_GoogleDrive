@@ -8,9 +8,7 @@
   </button> -->
 
   <!-- LOADING BAR -->
-  <span *ngIf="showLoading" class="loadingSpan"
-    ><img src="/assets/img/loading.gif" alt="Cargando"
-  /></span>
+  <app-loading [showLoadingInput]="showLoading"></app-loading>
 
   <div *ngIf="filesAllTemp[0]">
     <div class="w-100 contentNew">
@@ -72,54 +70,68 @@
             [options]="myOptions"
             #NgxMasonryComponent
           >
+            <!-- <div
+              ngxMasonryItem
+              class="masonry-item"
+              [ngClass]="{
+                noetiquetada: filesAllTemp[file].etiquetas.length === 0
+              }"
+              id="{{ filesAllTemp[0][file].id }}"
+              *ngFor="let file of Object.keys(filesAllTemp); let i = index"
+            >   -->
             <div
               ngxMasonryItem
               class="masonry-item"
               [ngClass]="{
-                noetiquetada: filesAllTemp[0][file].etiquetas.length === 0
+                noetiquetada: file.etiquetas.length === 0
               }"
-              id="{{ filesAllTemp[0][file].id }}"
-              *ngFor="let file of Object.keys(filesAllTemp[0]); let i = index"
+              id="{{ file.id }}"
+              *ngFor="let file of this.filesAllTemp; let i = index"
             >
               <div
                 class="el-overlay-1"
                 [ngClass]="
-                  this.arrayMultiEdit.includes(filesAllTemp[0][file])
-                    ? 'seleccionada'
-                    : ''
+                  this.arrayMultiEdit.includes(file) ? 'seleccionada' : ''
                 "
-                (click)="updateArrayMultiEditImg(filesAllTemp[0][file], i)"
+                (click)="updateArrayMultiEditImg(file, i)"
               >
                 <span
                   class="bgVideo"
-                  (click)="abrirPopup(filesAllTemp[0][file])"
-                  *ngIf="filesAllTemp[0][file].mimeType.includes('video')"
+                  (click)="abrirPopup(file)"
+                  *ngIf="file.mimeType.includes('video')"
                 ></span>
                 <img
-                  *ngIf="filesAllTemp[0][file].mimeType.includes('image')"
-                  [src]="urlImg + filesAllTemp[0][file].id"
-                  [alt]="filesAllTemp[0][file].name"
+                  *ngIf="file.mimeType.includes('image')"
+                  [src]="urlImg + file.id"
+                  [alt]="file.name"
                   [id]="i"
                   class="img-fluid"
-                  (click)="
-                    (isMobile || isTablet) && abrirPopup(filesAllTemp[0][file])
-                  "
+                  (click)="(isMobile || isTablet) && abrirPopup(file)"
                 />
                 <ng-container *ngIf="isMobile || isTablet">
-                  <div class="row mx-0 footerThumbMobile py-1">
+                  <div class="row mx-0 footerThumbMobile py-2">
                     <span
                       class="col-2"
                       [ngClass]="{
-                        iconImg:
-                          filesAllTemp[0][file].mimeType.includes('image'),
-                        iconVideo:
-                          filesAllTemp[0][file].mimeType.includes('video')
+                        iconImg: file.mimeType.includes('image'),
+                        iconVideo: file.mimeType.includes('video')
                       }"
                     ></span>
-                    <span class="col-8 nameThumb">{{
-                      filesAllTemp[0][file].name
-                    }}</span>
-                    <span class="col-2 iconInfo"></span>
+                    <span class="col-8 nameThumb">{{ file.name }}</span>
+                    <span
+                      class="col-2 iconInfo"
+                      (click)="showHideMenu($event)"
+                    ></span>
+                    <div class="menuContextualPopUp">
+                      <ul class="py-2">
+                        <li class="px-4 py-1" (click)="agregarEtiquetas(file)">
+                          Etiquetar
+                        </li>
+                        <li class="px-4 py-1" (click)="borrarArchivo(file, i)">
+                          Eliminar
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </ng-container>
                 <div
@@ -127,13 +139,13 @@
                   *ngIf="!multiEditMode"
                 >
                   <ul class="el-info">
-                    <li (click)="abrirPopup(filesAllTemp[0][file])">
+                    <li (click)="abrirPopup(file)">
                       <span><i class="icon-magnifier"></i></span>
                     </li>
-                    <li (click)="agregarEtiquetas(filesAllTemp[0][file])">
+                    <li (click)="agregarEtiquetas(file)">
                       <span><i class="icon-pencil"></i></span>
                     </li>
-                    <li (click)="borrarArchivo(filesAllTemp[0][file], i)">
+                    <li (click)="borrarArchivo(file, i)">
                       <span><i class="icon-trash"></i></span>
                     </li>
                   </ul>

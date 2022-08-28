@@ -39,10 +39,6 @@ export class ArchivosComponent implements OnInit {
   // Todos los archivos con etiqueta
   public filesNew: any[] = [];
 
-  // // Los archivos nuevos y viejos que se están mostrando
-  // public filesNewsTemp: any[] = [];
-  // public filesOldTemp: any[] = [];
-
   // // Todos los viejos
   public filesOld: any[] = [];
 
@@ -86,6 +82,7 @@ export class ArchivosComponent implements OnInit {
   public cargado: boolean = false;
   public isMobile: boolean = false;
   public isTablet: boolean = false;
+  public showMenu: boolean = false;
 
   @ViewChild('contentArchivosNuevos') ul!: ElementRef;
   @ViewChild('contextMenu') contextMenu!: ElementRef;
@@ -109,14 +106,14 @@ export class ArchivosComponent implements OnInit {
     this.isTablet = this.deviceService.isTablet();
     // Suscripción: para actualizar fichero con una etiqueta nueva o con una etiqueta menos
     this.etiquetaService.getArchivosActualizados$().subscribe((data: any) => {
-      this.filesAllTemp[0].forEach(function (item: any, index: number) {
+      this.filesAllTemp.forEach(function (item: any, index: number) {
         if (item.id == data.idArchivoData) {
           var etiquetaData = data.idNuevaEtiquetaData;
-          var indexEtiqueta = item.etiquetas.indexOf(data.idNuevaEtiquetaData);
-          if (item.etiquetas.indexOf(data.idNuevaEtiquetaData) != -1) {
+          var indexEtiqueta = item.etiquetas.indexOf(etiquetaData);
+          if (item.etiquetas.indexOf(etiquetaData) != -1) {
             item.etiquetas.splice(indexEtiqueta, 1);
           } else {
-            item.etiquetas.push(data.idNuevaEtiquetaData);
+            item.etiquetas.push(etiquetaData);
           }
         }
       });
@@ -207,6 +204,15 @@ export class ArchivosComponent implements OnInit {
     }
   }
 
+  showHideMenu(elem: any) {
+    const menuContextual = elem.target.nextSibling;
+    if (menuContextual.style.display == 'none') {
+      this.renderer.setStyle(menuContextual, 'display', 'block');
+    } else {
+      this.renderer.setStyle(menuContextual, 'display', 'none');
+    }
+  }
+
   agregarEtiquetas(foto: Archivo) {
     this.showContextMenu = true;
     this.showEtiquetas = true;
@@ -231,7 +237,7 @@ export class ArchivosComponent implements OnInit {
     this.document.body.classList.remove('multi-edit');
   }
 
-  onRightClick($event: any, archivo: Archivo, tipo: string, indexFoto: number) {
+  /*onRightClick($event: any, archivo: Archivo, tipo: string, indexFoto: number) {
     $event.preventDefault();
     this.showContextMenu = false;
     this.fotoSeleccionada = archivo;
@@ -252,14 +258,16 @@ export class ArchivosComponent implements OnInit {
       this.rightClickMenuPositionY
     );
     this.showContextMenu = true;
-  }
+  }*/
 
   add40NewFiles() {
     if (this.filesAllTemp.length) {
-      this.filesAllTemp.concat(this.new40Files);
-      this.showLoading = false;
+      console.log('this.filesAllTemp', this.filesAllTemp);
+      this.filesAllTemp.concat(this.new40Files[0]);
+      console.log('this.filesAllTemp', this.filesAllTemp);
     } else {
       this.filesAllTemp.push(this.new40Files);
+      this.filesAllTemp = this.filesAllTemp[0];
       this.showLoading = false;
     }
   }
@@ -356,7 +364,7 @@ export class ArchivosComponent implements OnInit {
                         'success',
                         true
                       );
-                      this.filesAllTemp[0].splice(indexArchivoEliminado, 1);
+                      this.filesAllTemp.splice(indexArchivoEliminado, 1);
                       Swal.close();
                     } else {
                       this.mostrarNotificacion(

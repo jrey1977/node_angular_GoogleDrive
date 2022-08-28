@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { EtiquetasService } from '../etiquetas.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { EtiquetasService } from '../etiquetas.service';
   templateUrl: './listado-etiquetas.component.html',
   styleUrls: ['./listado-etiquetas.component.scss'],
 })
-export class ListadoEtiquetasComponent implements OnInit {
+export class ListadoEtiquetasComponent {
   _arrayEtiquetas?: string[];
   arrayNombres?: any[];
 
@@ -21,8 +21,4 @@ export class ListadoEtiquetasComponent implements OnInit {
   }
 
   constructor(private etiquetaService: EtiquetasService) {}
-
-  ngOnInit(): void {
-    console.log('Array de ids:', this._arrayEtiquetas);
-  }
 }
