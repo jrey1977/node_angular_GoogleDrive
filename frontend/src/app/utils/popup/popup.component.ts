@@ -61,7 +61,7 @@ export class PopupComponent implements OnInit {
   ngOnInit(): void {
     // Me suscribo a los cambios que haya en popup y que se envían como parámetro en
     // el "next" de la función "abrirPopup" del service
-    this.popupService.getPopup$().subscribe((popupRecibido) => {
+    this.popupService.getPopup$().subscribe((popupRecibido: Archivo) => {
       this.popup = popupRecibido;
       this.webContentLink = this.popup.webContentLink;
       console.log('popup es', this.popup);
