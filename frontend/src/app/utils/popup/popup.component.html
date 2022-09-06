@@ -54,7 +54,10 @@
               [src]="urlImg + popup.id"
               [alt]="popup.name"
               class="mt-1 img-fluid"
+              [ngClass]="{ 'zoomIn': zoom, 'zoomOut': !zoom }"
+              (click)="zoomInOut()"
             />
+
           </ng-container>
         </div>
       </div>

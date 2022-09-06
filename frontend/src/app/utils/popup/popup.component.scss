@@ -129,3 +129,13 @@ span.cerrarPopUp {
   z-index: 2;
   min-width: 360px;
 }
+
+.zoomIn{
+  transform: scale(1.5);
+  transition-duration: 1s;
+}
+
+.zoomOut{
+  transform: scale(1);
+  transition-duration: 1s;
+}

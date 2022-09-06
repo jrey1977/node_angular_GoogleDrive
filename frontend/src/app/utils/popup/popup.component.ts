@@ -4,8 +4,7 @@ import {
   state,
   style,
   animate,
-  transition,
-  // ...
+  transition
 } from '@angular/animations';
 import { Archivo } from 'src/app/pages/archivos/models/archivos.interface';
 import { EtiquetasService } from 'src/app/shared/etiquetas/etiquetas.service';
@@ -13,6 +12,7 @@ import { Etiqueta } from 'src/app/shared/etiquetas/models/etiquetas.interface';
 import { PopupService } from 'src/app/utils/popup/services/popup.service';
 import { environment } from 'src/environments/environment';
 import { DOCUMENT } from '@angular/common';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-popup',
@@ -49,16 +49,22 @@ export class PopupComponent implements OnInit {
   public etiquetas: Etiqueta[] = [];
   public mb?: string;
   public carpeta?: any;
+  zoom:boolean = false;
+  public isMobile: boolean = false;
+  public isTablet: boolean = false;
 
   isOpen = false;
 
   constructor(
     public popupService: PopupService,
     private etiquetaService: EtiquetasService,
+    private deviceService: DeviceDetectorService,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
+    this.isMobile = this.deviceService.isMobile();
+    this.isTablet = this.deviceService.isTablet();
     // Me suscribo a los cambios que haya en popup y que se envían como parámetro en
     // el "next" de la función "abrirPopup" del service
     this.popupService.getPopup$().subscribe((popupRecibido: Archivo) => {
@@ -79,6 +85,12 @@ export class PopupComponent implements OnInit {
         this.showPopup = false;
       }
     });
+  }
+
+  zoomInOut(){
+    if(!this.isMobile){
+      this.zoom = !this.zoom;
+    }
   }
 
   toggle() {

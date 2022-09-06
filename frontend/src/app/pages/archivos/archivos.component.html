@@ -10,8 +10,8 @@
   <!-- LOADING BAR -->
   <app-loading [showLoadingInput]="showLoading"></app-loading>
 
-  <div *ngIf="filesAllTemp[0]">
-    <div class="w-100 contentNew">
+  <div *ngIf="filesAllTemp[0]" class="no-scroll-x">
+    <div class="w-100 contentNew px-2 px-md-0">
       <div
         infiniteScroll
         [infiniteScrollDistance]="2"
@@ -106,7 +106,7 @@
                   [alt]="file.name"
                   [id]="i"
                   class="img-fluid"
-                  (click)="(isMobile || isTablet) && abrirPopup(file)"
+                  (click)="( (isMobile || isTablet) && !multiEditMode) && abrirPopup(file)"
                 />
                 <ng-container *ngIf="isMobile || isTablet">
                   <div class="row mx-0 footerThumbMobile py-2">
@@ -122,7 +122,7 @@
                       class="col-2 iconInfo"
                       (click)="showHideMenu($event)"
                     ></span>
-                    <div class="menuContextualPopUp">
+                    <div class="menuContextualPopUp" >
                       <ul class="py-2">
                         <li class="px-4 py-1" (click)="agregarEtiquetas(file)">
                           Etiquetar

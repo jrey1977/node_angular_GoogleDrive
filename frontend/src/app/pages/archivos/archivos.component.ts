@@ -205,11 +205,12 @@ export class ArchivosComponent implements OnInit {
   }
 
   showHideMenu(elem: any) {
+    console.log('Muestra menú!!');
     const menuContextual = elem.target.nextSibling;
-    if (menuContextual.style.display == 'none') {
-      this.renderer.setStyle(menuContextual, 'display', 'block');
+    if (menuContextual.classList.contains('visible')) {
+      this.renderer.removeClass(menuContextual,'visible');
     } else {
-      this.renderer.setStyle(menuContextual, 'display', 'none');
+      this.renderer.addClass(menuContextual,'visible');
     }
   }
 
@@ -262,10 +263,10 @@ export class ArchivosComponent implements OnInit {
 
   add40NewFiles() {
     if (this.filesAllTemp.length) {
-      console.log('this.filesAllTemp', this.filesAllTemp);
+      console.log('Añado 40 archivos más...');
       this.filesAllTemp.concat(this.new40Files[0]);
-      console.log('this.filesAllTemp', this.filesAllTemp);
     } else {
+      console.log('¡Añado los primeros archivos!');
       this.filesAllTemp.push(this.new40Files);
       this.filesAllTemp = this.filesAllTemp[0];
       this.showLoading = false;

@@ -8,6 +8,10 @@
 .modal-dialog {
   max-width: 95% !important;
   height: 95vh !important;
+  @media (max-width: 991px) {
+    max-width: 98% !important;
+    height: 98vh !important;
+  }
 }
 
 .modal-content {
@@ -33,6 +37,10 @@ body {
 
 body .text-muted {
   color: rgb(153, 171, 180) !important;
+}
+
+.no-scroll-x{
+  overflow-x: hidden;
 }
 
 /*! CSS Used from: http://localhost:4200/assets/css/style.css */

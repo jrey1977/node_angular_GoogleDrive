@@ -565,6 +565,9 @@ span.iconInfo {
   border-radius: 3px;
   z-index: 2;
   display: none;
+  &.visible{
+    display: block;
+  }
   ul {
     list-style-type: none;
     text-align: left;
