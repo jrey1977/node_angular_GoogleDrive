@@ -60,10 +60,6 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
 
   @Input() set fotosSeleccionadas(value: Archivo[]) {
     this._fotosSeleccionadas = value;
-    console.log('this._fotosSeleccionadas', this._fotosSeleccionadas);
-    if (this._fotosSeleccionadas) {
-      console.log('this._fotosSeleccionadas 2', this._fotosSeleccionadas);
-    }
   }
 
   stateForm: FormGroup = this._formBuilder.group({
@@ -201,10 +197,8 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     this.subscriptionLabels = await this.etiquetaService
       .obtenerEtiquetas(idParam)
       .subscribe((res: any) => {
-        console.log('Etiquetas del archivo:', res.arrayLabelNames);
         this.etiquetas = Object.values(res.arrayLabelNames);
       });
-    console.log('results', this.subscriptionLabels);
   }
 
   borrarEtiqueta(idEtiqueta: string, nameEtiqueta: string) {
@@ -213,7 +207,6 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
       .borrarEtiqueta(idEtiqueta, this.idArchivo)
       .subscribe((res: any) => {
         if (res.respuesta === 'OK') {
-          console.log('Res es ', res);
           this.mostrarNotificacion('Etiqueta borrada', 'success');
           // Quito la etiqueta del listado de etiquetas en la popup
           if (this.etiquetas.length === 1) {
@@ -241,9 +234,6 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
                 if (resultsLetter) {
                   this.stateGroups.forEach((obj) => {
                     if (obj.letter === letraEtiqueta) {
-                      console.log(
-                        'Etiqueta usada por otros y con letra ya existente; la meto en autocomplete'
-                      );
                       obj.names.push(nameEtiqueta);
                       obj.names.sort(function (a: any, b: any) {
                         return a.toLowerCase().localeCompare(b.toLowerCase());
@@ -277,7 +267,6 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
       let nombreEtiquetaBueno = etiquetaNueva.trim();
       etiquetasSeleccionadas.push(nombreEtiquetaBueno);
     }
-    console.log('etiquetasSeleccionadas', etiquetasSeleccionadas);
 
     // TODO: Cambiar método "agregarEtiqueta" por "agregarEtiquetas" en el etiquetaService
     // Debe poder grabar varias etiquetas de una vez
@@ -324,13 +313,8 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     //             });
     //             if (indexElem != -1) {
     //               this.stateGroups[indexElem].names.splice(indexName, 1);
-    //               console.log(
-    //                 'this.stateGroups[indexElem].names.length',
-    //                 this.stateGroups[indexElem].names.length
-    //               );
     //               // Si es la única dentro del grupo de letra, quitar la letra también
     //               if (this.stateGroups[indexElem].names.length === 0) {
-    //                 console.log('Me cargo la letra !');
     //                 this.stateGroups.splice(indexElem, 1);
     //               }
     //             }
