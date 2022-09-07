@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { EtiquetasComponent } from './etiquetas.component';
 import { ListadoEtiquetasComponent } from './listado-etiquetas/listado-etiquetas.component';
+import { MatChipsModule } from '@angular/material/chips';
 @NgModule({
   declarations: [EtiquetasComponent, ListadoEtiquetasComponent],
   imports: [
@@ -17,6 +18,7 @@ import { ListadoEtiquetasComponent } from './listado-etiquetas/listado-etiquetas
     AngularMaterialModule,
     ReactiveFormsModule,
     FormsModule,
+    MatChipsModule
   ],
   exports: [EtiquetasComponent, ListadoEtiquetasComponent, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

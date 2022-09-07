@@ -31,30 +31,37 @@
           <div class="mt-3 filaForm row mx-0">
             <label class="col col-2">Tags</label>
             <form [formGroup]="stateForm" class="col col-10">
-              <mat-form-field class="w-100">
-                <input
-                  type="text"
-                  matInput
-                  formControlName="stateGroup"
-                  required
-                  [matAutocomplete]="autoGroup"
-                  #etiqueta
-                />
-                <mat-autocomplete #autoGroup="matAutocomplete">
-                  <mat-optgroup
-                    *ngFor="let group of stateGroupOptions | async"
-                    [label]="group.letter"
-                  >
-                    <mat-option *ngFor="let name of group.names" [value]="name">
-                      {{ name }}
-                    </mat-option>
-                  </mat-optgroup>
+              <mat-form-field class="example-chip-list" appearance="fill">
+                <mat-label>Favorite Fruits</mat-label>
+                <mat-chip-list #chipList aria-label="Fruit selection">
+                  <mat-chip
+                    *ngFor="let tag of selectedTags"
+                    #tagsForm
+                    (removed)="remove(tag)">
+                    {{tag}}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input
+                    placeholder="Nueva etiqueta..."
+                    #tagInput
+                    [formControl]="tagCtrl"
+                    [matAutocomplete]="auto"
+                    [matChipInputFor]="chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="add($event)">
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                  <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                    {{tag}}
+                  </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
               <div>
                 <button
                   class="btn w-100"
-                  (click)="agregaEtiqueta(etiqueta.value)"
+                  (click)="agregaEtiqueta(selectedTags,tagInput.value)"
                 >
                   Agregar
                 </button>
@@ -90,7 +97,7 @@
 </div>
 
 <!-- EDICIÓN MÚLTIPLE -->
-<div class="container-fluid px-1 py-2 mx-auto" *ngIf="stateMultiEdit">
+<!-- <div class="container-fluid px-1 py-2 mx-auto" *ngIf="stateMultiEdit">
   <div class="border-bottom py-3 font-weight-bold titleEdit mb-0 ps-4">
     Editar imagenes
   </div>
@@ -126,41 +133,11 @@
           <div class="mt-3 filaDetalles">AÑADIR ETIQUETA COMÚN</div>
           <div class="mt-3 filaForm row mx-0">
             <label class="col col-2">Tags</label>
-            <form [formGroup]="stateForm" class="col col-10">
-              <!-- <mat-form-field class="w-100">
-                <input
-                  type="text"
-                  matInput
-                  formControlName="stateGroup"
-                  required
-                  [matAutocomplete]="autoGroup"
-                  #etiqueta
-                />
-                <mat-autocomplete #autoGroup="matAutocomplete">
-                  <mat-optgroup
-                    *ngFor="let group of stateGroupOptionsMulti | async"
-                    [label]="group.letter"
-                  >
-                    <mat-option *ngFor="let name of group.names" [value]="name">
-                      {{ name }}
-                    </mat-option>
-                  </mat-optgroup>
-                </mat-autocomplete>
-              </mat-form-field> -->
-              <div>
-                <!-- <button
-                  class="btn w-100"
-                  (click)="agregaEtiquetaComun(etiqueta.value)"
-                >
-                  Agregar
-                </button> -->
-              </div>
-            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- EDICIÓN MÚLTIPLE -->
