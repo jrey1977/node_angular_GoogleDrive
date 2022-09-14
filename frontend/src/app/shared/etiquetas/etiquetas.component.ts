@@ -1,9 +1,17 @@
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { DOCUMENT } from '@angular/common';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import { Component, ElementRef, Inject, ViewChild, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormBuilder, FormGroup } from '@angular/forms';
-import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-import {MatChipInputEvent} from '@angular/material/chips';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -75,11 +83,13 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     public popupService: PopupService,
     private _formBuilder: FormBuilder,
-    @Inject(DOCUMENT) private document: Document,
+    @Inject(DOCUMENT) private document: Document
   ) {
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null),
-      map((fruit: string | null) => (fruit ? this._filter(fruit) : this.allTags.slice())),
+      map((fruit: string | null) =>
+        fruit ? this._filter(fruit) : this.allTags.slice()
+      )
     );
   }
 
@@ -126,7 +136,6 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     this.subscriptionMultiEditPopUpState.unsubscribe();
   }
 
-
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
@@ -151,7 +160,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.selectedTags.push(event.option.viewValue);
-    if(this.tagInput?.nativeElement){
+    if (this.tagInput?.nativeElement) {
       this.tagInput.nativeElement.value = '';
     }
     this.tagCtrl.setValue(null);
@@ -160,7 +169,9 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.allTags.filter(fruit => fruit.toLowerCase().includes(filterValue));
+    return this.allTags.filter((fruit) =>
+      fruit.toLowerCase().includes(filterValue)
+    );
   }
 
   obtenerEtiquetasAutoComplete(arrayEtiquetasParaExcluir: string[]) {
@@ -185,10 +196,9 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
         return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
       });
       if (this.tagsDisponiblesBBDD) {
-        this.allTags = this.tagsDisponiblesBBDD.map( (obj)=>{
+        this.allTags = this.tagsDisponiblesBBDD.map((obj) => {
           return obj.name;
         });
-
       }
     });
   }
@@ -261,11 +271,20 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
       });
   }
 
-  agregaEtiqueta(etiquetasSeleccionadas: string[], etiquetaNueva: string) {
-    if(etiquetaNueva!=''){
+  agregaEtiquetas(etiquetasSeleccionadas: string[], etiquetaNueva: string) {
+    if (etiquetaNueva != '') {
       // Quito espacios en blanco
       let nombreEtiquetaBueno = etiquetaNueva.trim();
       etiquetasSeleccionadas.push(nombreEtiquetaBueno);
+    }
+
+    if (this._fotoSeleccionada?.id) {
+      let idArchivo = this._fotoSeleccionada.id;
+      this.etiquetaService
+        .agregarEtiquetas(etiquetasSeleccionadas, idArchivo)
+        .subscribe((res) => {
+          console.log('res', res);
+        });
     }
 
     // TODO: Cambiar método "agregarEtiqueta" por "agregarEtiquetas" en el etiquetaService

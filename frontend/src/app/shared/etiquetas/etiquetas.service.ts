@@ -44,10 +44,11 @@ export class EtiquetasService {
     });
   }
 
-  agregarEtiqueta(nombreEtiqueta: string, idArchivo: any) {
+  agregarEtiquetas(nombresEtiqueta: string[], idArchivo: any) {
+    console.log('nombresEtiqueta', nombresEtiqueta);
     const url = `${base_url}etiquetas/grabar`;
     return this.http.post(url, {
-      nombre: nombreEtiqueta,
+      nombres: nombresEtiqueta,
       idArchivo: idArchivo,
     });
   }

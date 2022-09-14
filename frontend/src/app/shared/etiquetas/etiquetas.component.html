@@ -37,8 +37,9 @@
                   <mat-chip
                     *ngFor="let tag of selectedTags"
                     #tagsForm
-                    (removed)="remove(tag)">
-                    {{tag}}
+                    (removed)="remove(tag)"
+                  >
+                    {{ tag }}
                     <button matChipRemove>
                       <mat-icon>cancel</mat-icon>
                     </button>
@@ -50,18 +51,25 @@
                     [matAutocomplete]="auto"
                     [matChipInputFor]="chipList"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                    (matChipInputTokenEnd)="add($event)">
+                    (matChipInputTokenEnd)="add($event)"
+                  />
                 </mat-chip-list>
-                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-                  <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
-                    {{tag}}
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  (optionSelected)="selected($event)"
+                >
+                  <mat-option
+                    *ngFor="let tag of filteredTags | async"
+                    [value]="tag"
+                  >
+                    {{ tag }}
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
               <div>
                 <button
                   class="btn w-100"
-                  (click)="agregaEtiqueta(selectedTags,tagInput.value)"
+                  (click)="agregaEtiquetas(selectedTags, tagInput.value)"
                 >
                   Agregar
                 </button>

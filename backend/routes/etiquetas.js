@@ -3,7 +3,7 @@ var router = express.Router();
 
 const {
   borrarEtiqueta,
-  grabarEtiqueta,
+  grabarEtiquetas,
   obtenerNombresEtiquetas,
   obtenerNombreEtiqueta,
   obtenerUsosEtiqueta,
@@ -12,7 +12,7 @@ const {
 /* Borra la etiqueta recibida por parámetro */
 router.put("/borrar/", borrarEtiqueta);
 
-router.post("/grabar/", grabarEtiqueta);
+router.post("/grabar/", grabarEtiquetas);
 
 router.post("/nombres/", obtenerNombresEtiquetas);
 

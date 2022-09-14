@@ -63,17 +63,60 @@ const borrarEtiqueta = async (req, res) => {
   }
 };
 
-const grabarEtiqueta = async (req, res) => {
-  let nombreEtiqueta = req.body.nombre;
+let idEtiquetas = [];
+
+function grabaEtiquetaIterada(tagName, idArchivo){
+  return new Promise( async(resolve, reject) => {
+      var etiquetaExistente = await Etiqueta.find({ name: tagName });
+      if (etiquetaExistente.length) {
+        // Obtengo la id de la etiqueta que ya existe
+        console.log("Ya existia esta etiqueta");
+        var idEtiqueta = etiquetaExistente[0]._id;
+        console.log("Y su id es:", idEtiqueta);
+      } else {
+        // Grabo la etiquqeta
+        var nuevaEtiqueta = new Etiqueta({
+          name: tagName,
+          categoria: "no",
+        });
+        await nuevaEtiqueta.save();
+        // Obtengo la id de la etiqueta que acabo de grabar
+        var idEtiqueta = nuevaEtiqueta._id;
+      }
+      // Meto la etiqueta en el archivo
+      await Archivo.updateOne(
+        { id: idArchivo },
+        { $push: { etiquetas: idEtiqueta } }
+      );
+      idEtiquetas.push(idEtiqueta);
+      resolve(true);
+  });
+}
+
+const grabarEtiquetas = async (req, res) => {
+  let nombreEtiquetas = req.body.nombres;
   let idArchivo = req.body.idArchivo;
-  try {
+  let archivo = await Archivo.find({ id: idArchivo });
+  let etiquetasArchivo = archivo[0].etiquetas.length;
+
+  for( const tagName of nombreEtiquetas ){
+        await grabaEtiquetaIterada(tagName, idArchivo);
+  }
+
+  res.json({
+    respuesta: "OK",
+    etiquetasPrevias: etiquetasArchivo,
+    idNuevasEtiquetas: idEtiquetas,
+  });
+
+ /*  try {
     // Compruebo si este archivo no tiene ninguna etiqueta previa,
     // ya que si es así lo pasaré al listado de archivos etiquetados
     let archivo = await Archivo.find({ id: idArchivo });
     let etiquetasArchivo = archivo[0].etiquetas.length;
 
     // Primero compruebo si hay ya alguna etiqueta con ese nombre
-    var etiquetaExistente = await Etiqueta.find({ name: nombreEtiqueta });
+    var etiquetaExistente = await Etiqueta.find({ name: nombreEtiquetas });
     if (etiquetaExistente.length) {
       // Obtengo la id de la etiqueta que ya existe
       console.log("Ya existia esta etiqueta");
@@ -104,7 +147,7 @@ const grabarEtiqueta = async (req, res) => {
     res.json({
       respuesta: error,
     });
-  }
+  } */
 };
 
 const obtenerNombresEtiquetas = async (req, res) => {
@@ -153,7 +196,7 @@ const obtenerUsosEtiqueta = async (req, res) => {
 
 module.exports = {
   borrarEtiqueta,
-  grabarEtiqueta,
+  grabarEtiquetas,
   obtenerNombresEtiquetas,
   obtenerNombreEtiqueta,
   obtenerUsosEtiqueta,
