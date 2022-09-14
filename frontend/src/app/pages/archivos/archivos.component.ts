@@ -108,13 +108,15 @@ export class ArchivosComponent implements OnInit {
     this.etiquetaService.getArchivosActualizados$().subscribe((data: any) => {
       this.filesAllTemp.forEach(function (item: any, index: number) {
         if (item.id == data.idArchivoData) {
-          var etiquetaData = data.idNuevaEtiquetaData;
-          var indexEtiqueta = item.etiquetas.indexOf(etiquetaData);
-          if (item.etiquetas.indexOf(etiquetaData) != -1) {
-            item.etiquetas.splice(indexEtiqueta, 1);
-          } else {
-            item.etiquetas.push(etiquetaData);
-          }
+          var etiquetasData = data.idNuevasEtiquetasData;
+          etiquetasData.forEach( (tag:any)=>{
+              var indexEtiqueta = item.etiquetas.indexOf(tag);
+              if (item.etiquetas.indexOf(tag) != -1) {
+                item.etiquetas.splice(indexEtiqueta, 1);
+              } else {
+                item.etiquetas.push(tag);
+              }
+          });
         }
       });
     });

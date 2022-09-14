@@ -150,8 +150,8 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     this.tagCtrl.setValue(null);
   }
 
-  remove(fruit: string): void {
-    const index = this.selectedTags.indexOf(fruit);
+  remove(tag: string): void {
+    const index = this.selectedTags.indexOf(tag);
 
     if (index >= 0) {
       this.selectedTags.splice(index, 1);
@@ -169,8 +169,8 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.allTags.filter((fruit) =>
-      fruit.toLowerCase().includes(filterValue)
+    return this.allTags.filter((tag) =>
+      tag.toLowerCase().includes(filterValue)
     );
   }
 
@@ -282,8 +282,53 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
       let idArchivo = this._fotoSeleccionada.id;
       this.etiquetaService
         .agregarEtiquetas(etiquetasSeleccionadas, idArchivo)
-        .subscribe((res) => {
-          console.log('res', res);
+        .subscribe((res: any) => {
+          let etiquetasPrevias = res.etiquetasPrevias;
+          let idNuevasEtiquetas = res.idNuevasEtiquetas;
+          if (res.respuesta === 'OK') {
+            this.subscriptionLabels.unsubscribe();
+            this.obtenerEtiquetas(idArchivo);
+            this.etiquetaService.actualizaArchivo(idNuevasEtiquetas, idArchivo);
+            this.stateForm.reset();
+
+            //Refresco lista de etiquetas de autocomplete
+            //quitando la etiqueta que acabo de meter (si es que estaba)
+            var mayLet = etiquetaNueva[0].toUpperCase();
+            var resultsLetter = this.stateGroups.find((obj) => {
+              return obj.letter === mayLet;
+            });
+            // Busco la primera letra, a ver si ya estaba en el autocomplete
+            if (resultsLetter) {
+              // Estaba la letra. Ahora busco la etiqueta
+              var results = this.stateGroups.find((obj) => {
+                return obj.names.includes(etiquetaNueva);
+              });
+              // Estaba la etiqueta también, la quito del autocomplete
+              // para evitar duplicidades
+              if (results != undefined) {
+                var indexElem = -1;
+                var indexName = -1;
+                this.stateGroups.forEach((obj, i) => {
+                  if (obj.letter === mayLet) {
+                    if (obj.names.indexOf(etiquetaNueva) != -1) {
+                      indexElem = i;
+                      indexName = obj.names.indexOf(etiquetaNueva);
+                    }
+                  }
+                });
+                if (indexElem != -1) {
+                  this.stateGroups[indexElem].names.splice(indexName, 1);
+                  // Si es la única dentro del grupo de letra, quitar la letra también
+                  if (this.stateGroups[indexElem].names.length === 0) {
+                    this.stateGroups.splice(indexElem, 1);
+                  }
+                }
+              }
+            }
+            this.mostrarNotificacion('Etiqueta grabada', 'success');
+          } else {
+            this.mostrarNotificacion(`Error: ${res.respuesta}`, 'danger');
+          }
         });
     }
 

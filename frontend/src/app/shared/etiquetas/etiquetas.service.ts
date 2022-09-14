@@ -67,9 +67,9 @@ export class EtiquetasService {
     return this.filesUpdated$.asObservable();
   }
 
-  actualizaArchivo(idNuevaEtiqueta: string, idArchivo: string) {
+  actualizaArchivo(idNuevasEtiquetas: string | string[], idArchivo: string) {
     let data: any = {
-      idNuevaEtiquetaData: idNuevaEtiqueta,
+      idNuevasEtiquetasData: idNuevasEtiquetas,
       idArchivoData: idArchivo,
     };
     this.filesUpdated$.next(data);
