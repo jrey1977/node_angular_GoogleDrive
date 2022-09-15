@@ -88,7 +88,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
-        tag ? this._filter(tag) : this.allTags.slice()
+        tag ? this.getUniqueList(this._filter(tag)) : this.getUniqueList(this.allTags.slice())
       )
     );
   }
@@ -136,13 +136,22 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     this.subscriptionMultiEditPopUpState.unsubscribe();
   }
 
+  getUniqueList(tags: string[]) {
+    return tags.filter(x => this.selectedTags.indexOf(x) === -1);
+  }
+
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
     // Add our fruit
-    if (value) {
-      this.selectedTags.push(value);
+    if ((value || "").trim()) {
+      const filterList = this.getUniqueList(this.selectedTags);
+      const index = filterList.indexOf(event.value);
+      if (index > -1) {
+        this.selectedTags.push(value.trim());
+      }
     }
+    
 
     // Clear the input value
     event.chipInput!.clear();
@@ -156,10 +165,14 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     if (index >= 0) {
       this.selectedTags.splice(index, 1);
     }
+
+    this.tagCtrl.updateValueAndValidity();
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.selectedTags.push(event.option.viewValue);
+    if(!this.selectedTags.includes(event.option.viewValue)){
+      this.selectedTags.push(event.option.viewValue);
+    }
     if (this.tagInput?.nativeElement) {
       this.tagInput.nativeElement.value = '';
     }
@@ -180,6 +193,8 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
     return this.allTags.filter(
       (tag) => !tag.toLowerCase().includes(filterValue)
     );
+
+    
   }
 
   obtenerEtiquetasAutoComplete(arrayEtiquetasParaExcluir: string[]) {
@@ -303,10 +318,11 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
             //Refresco lista de etiquetas de autocomplete
             //quitando la(s) etiqueta(s) que acabo de meter
             etiquetasSeleccionadas.forEach((tag) => {
+  
+              this.selectedTags = this.selectedTags.filter(e => e !== tag);
+
               var mayLet = tag[0].toUpperCase();
               console.log('mayLet', mayLet);
-              this.allTags = this._filterExclude(mayLet);
-              console.log(this._filterExclude(mayLet));
 
               /* var resultsLetter = this.stateGroups.find((obj) => {
                 return obj.letter === mayLet;
