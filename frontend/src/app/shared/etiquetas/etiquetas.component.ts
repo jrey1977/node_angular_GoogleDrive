@@ -141,13 +141,15 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   }
 
   add(event: MatChipInputEvent): void {
+    console.log('144', event.value);
     const value = (event.value || '').trim();
 
     // Add our fruit
     if ((value || "").trim()) {
       const filterList = this.getUniqueList(this.selectedTags);
       const index = filterList.indexOf(event.value);
-      if (index > -1) {
+      console.log('index', index);
+      if (index === -1) {
         this.selectedTags.push(value.trim());
       }
     }
@@ -170,6 +172,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
+    console.log('selected');
     if(!this.selectedTags.includes(event.option.viewValue)){
       this.selectedTags.push(event.option.viewValue);
     }
@@ -180,6 +183,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
   }
 
   private _filter(value: string): string[] {
+    console.log('_filter');
     const filterValue = value.toLowerCase();
 
     return this.allTags.filter((tag) =>
@@ -241,6 +245,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
       .subscribe((res: any) => {
         if (res.respuesta === 'OK') {
           this.mostrarNotificacion('Etiqueta borrada', 'success');
+          this.allTags.push(nameEtiqueta);
           // Quito la etiqueta del listado de etiquetas en la popup
           if (this.etiquetas.length === 1) {
             this.etiquetas = [];
@@ -323,6 +328,8 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
 
               var mayLet = tag[0].toUpperCase();
               console.log('mayLet', mayLet);
+
+              this.allTags = this.allTags.filter(e => e !== tag);
 
               /* var resultsLetter = this.stateGroups.find((obj) => {
                 return obj.letter === mayLet;

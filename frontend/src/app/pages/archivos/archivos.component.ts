@@ -108,7 +108,9 @@ export class ArchivosComponent implements OnInit {
     this.etiquetaService.getArchivosActualizados$().subscribe((data: any) => {
       this.filesAllTemp.forEach(function (item: any, index: number) {
         if (item.id == data.idArchivoData) {
-          var etiquetasData = data.idNuevasEtiquetasData;
+          let etiquetasData = [];
+          etiquetasData.push(data.idNuevasEtiquetasData);
+          console.log('etiquetasData', etiquetasData)
           etiquetasData.forEach( (tag:any)=>{
               var indexEtiqueta = item.etiquetas.indexOf(tag);
               if (item.etiquetas.indexOf(tag) != -1) {
