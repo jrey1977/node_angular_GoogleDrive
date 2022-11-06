@@ -237,3 +237,10 @@ button:focus {
 *{outline:none;}
 form label{font-weight:400;}
 
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0!important;
+}
+
+::ng-deep .mat-form-field {
+  display: block!important;
+}

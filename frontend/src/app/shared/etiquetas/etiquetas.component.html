@@ -32,7 +32,6 @@
             <label class="col col-2">Tags</label>
             <form [formGroup]="stateForm" class="col col-10">
               <mat-form-field class="example-chip-list mat-form-field example-chip-list ng-tns-c156-5 mat-primary mat-form-field-type-mat-chip-list mat-form-field-appearance-fill mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder" appearance="fill">
-                <mat-label>Favorite Fruits</mat-label>
                 <mat-chip-list #chipList aria-label="Fruit selection">
                   <mat-chip
                     *ngFor="let tag of selectedTags"
@@ -105,7 +104,7 @@
 </div>
 
 <!-- EDICIÓN MÚLTIPLE -->
-<!-- <div class="container-fluid px-1 py-2 mx-auto" *ngIf="stateMultiEdit">
+<div class="container-fluid px-1 py-2 mx-auto" *ngIf="stateMultiEdit">
   <div class="border-bottom py-3 font-weight-bold titleEdit mb-0 ps-4">
     Editar imagenes
   </div>
@@ -114,7 +113,7 @@
       <table class="table tableMultiEdit">
         <thead class="thead">
           <tr class="row">
-            <th class="col-2">Img</th>
+            <th class="col-2"></th>
             <th class="col-4">Nombre</th>
             <th class="col-4">Etiquetas</th>
           </tr>
@@ -129,6 +128,7 @@
               <app-listado-etiquetas
                 *ngIf="item.etiquetas"
                 [arrayEtiquetas]="item.etiquetas"
+                [idArchivo]="item.id"
               ></app-listado-etiquetas>
             </td>
           </tr>
@@ -146,6 +146,6 @@
       </div>
     </div>
   </div>
-</div> -->
+</div>
 
 <!-- EDICIÓN MÚLTIPLE -->

@@ -1,3 +1,4 @@
 <ul class="listadoEtiquetasArchivoMultiEdit">
-  <li *ngFor="let nombre of arrayNombres">{{ nombre.name }}</li>
+  <li *ngFor="let etiqueta of arrayNombres">
+    <i class="icon-close me-1" (click)="borrarEtiqueta(etiqueta._id, etiqueta.name)"></i>{{ etiqueta.name }}</li>
 </ul>

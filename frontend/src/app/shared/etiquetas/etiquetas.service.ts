@@ -53,14 +53,21 @@ export class EtiquetasService {
     });
   }
 
-  obtenerNombresEtiquetas(arrayIds: string[]) {
-    console.log('Agrego a params:', JSON.stringify(arrayIds));
+  obtenerNombresEtiquetas(arrayIds: any[]) {
+    console.log('arrayIds', arrayIds);
+    var arrayIdsSeteadoPrev = new Set(arrayIds.reduce((acc, val) => acc.concat(val), []));
+    var arrayIdsSeteado = [...arrayIdsSeteadoPrev];
+    console.log('arrayIdsSeteado', arrayIdsSeteado);
+    console.log('Agrego a params:', JSON.stringify(arrayIdsSeteado));
+    console.log('Agrego a params2:', JSON.stringify(arrayIds));
     // params.append('etiquetas', { misPatrams: JSON.stringify(arrayIds)});
 
     const url = `${base_url}etiquetas/nombres`;
     return this.http.post(url, {
-      arrayIds: arrayIds,
+      arrayIds: arrayIdsSeteado,
     });
+
+
   }
 
   getArchivosActualizados$(): Observable<boolean> {
@@ -68,6 +75,7 @@ export class EtiquetasService {
   }
 
   actualizaArchivo(idNuevasEtiquetas: string | string[], idArchivo: string) {
+    console.log('Actualizo');
     let data: any = {
       idNuevasEtiquetasData: idNuevasEtiquetas,
       idArchivoData: idArchivo,

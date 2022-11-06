@@ -331,41 +331,6 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
 
               this.allTags = this.allTags.filter(e => e !== tag);
 
-              /* var resultsLetter = this.stateGroups.find((obj) => {
-                return obj.letter === mayLet;
-              });
-              // Busco la primera letra, a ver si ya estaba en el autocomplete
-              if (resultsLetter) {
-                console.log('Estaba la letra');
-                // Estaba la letra. Ahora busco la etiqueta
-                var results = this.stateGroups.find((obj) => {
-                  return obj.names.includes(etiquetaNueva);
-                });
-                // Estaba la etiqueta también, la quito del autocomplete
-                // para evitar duplicidades
-                if (results != undefined) {
-                  console.log('Estaba la etiqueta');
-                  var indexElem = -1;
-                  var indexName = -1;
-                  this.stateGroups.forEach((obj, i) => {
-                    if (obj.letter === mayLet) {
-                      if (obj.names.indexOf(etiquetaNueva) != -1) {
-                        indexElem = i;
-                        indexName = obj.names.indexOf(etiquetaNueva);
-                        console.log('Esta es la etiqueta:', indexName);
-                      }
-                    }
-                  });
-                  if (indexElem != -1) {
-                    console.log('Ahora la borro');
-                    this.stateGroups[indexElem].names.splice(indexName, 1);
-                    // Si es la única dentro del grupo de letra, quitar la letra también
-                    if (this.stateGroups[indexElem].names.length === 0) {
-                      this.stateGroups.splice(indexElem, 1);
-                    }
-                  }
-                }
-              } */
             });
             this.mostrarNotificacion('Etiqueta grabada', 'success');
           } else {
@@ -373,65 +338,7 @@ export class EtiquetasComponent implements OnInit, OnDestroy {
           }
         });
     }
-
-    // TODO: Cambiar método "agregarEtiqueta" por "agregarEtiquetas" en el etiquetaService
-    // Debe poder grabar varias etiquetas de una vez
-
-    // Quito espacios en blanco
-    // let nombreEtiquetaBueno = nombreEtiqueta.trim();
-    // if (this._fotoSeleccionada?.id) {
-    //   let idArchivo = this._fotoSeleccionada.id;
-    //   this.etiquetaService
-    //     .agregarEtiqueta(nombreEtiquetaBueno, idArchivo)
-    //     .subscribe((res: any) => {
-    //       let etiquetasPrevias = res.etiquetasPrevias;
-    //       let idNuevaEtiqueta = res.idNuevaEtiqueta;
-    //       if (res.respuesta === 'OK') {
-    //         this.subscriptionLabels.unsubscribe();
-    //         this.obtenerEtiquetas(idArchivo);
-    //         this.etiquetaService.actualizaArchivo(idNuevaEtiqueta, idArchivo);
-    //         this.stateForm.reset();
-
-    //         // Refresco lista de etiquetas de autocomplete
-    //         // quitando la etiqueta que acabo de meter (si es que estaba)
-    //         var mayLet = nombreEtiqueta[0].toUpperCase();
-    //         var resultsLetter = this.stateGroups.find((obj) => {
-    //           return obj.letter === mayLet;
-    //         });
-    //         // Busco la primera letra, a ver si ya estaba en el autocomplete
-    //         if (resultsLetter) {
-    //           // Estaba la letra. Ahora busco la etiqueta
-    //           var results = this.stateGroups.find((obj) => {
-    //             return obj.names.includes(nombreEtiqueta);
-    //           });
-    //           // Estaba la etiqueta también, la quito del autocomplete
-    //           // para evitar duplicidades
-    //           if (results != undefined) {
-    //             var indexElem = -1;
-    //             var indexName = -1;
-    //             this.stateGroups.forEach((obj, i) => {
-    //               if (obj.letter === mayLet) {
-    //                 if (obj.names.indexOf(nombreEtiqueta) != -1) {
-    //                   indexElem = i;
-    //                   indexName = obj.names.indexOf(nombreEtiqueta);
-    //                 }
-    //               }
-    //             });
-    //             if (indexElem != -1) {
-    //               this.stateGroups[indexElem].names.splice(indexName, 1);
-    //               // Si es la única dentro del grupo de letra, quitar la letra también
-    //               if (this.stateGroups[indexElem].names.length === 0) {
-    //                 this.stateGroups.splice(indexElem, 1);
-    //               }
-    //             }
-    //           }
-    //         }
-    //         this.mostrarNotificacion('Etiqueta grabada', 'success');
-    //       } else {
-    //         this.mostrarNotificacion(`Error: ${res.respuesta}`, 'danger');
-    //       }
-    //     });
-    // }
+  
   }
 
   mostrarNotificacion(mensaje: string, tipo: string, fixed?: boolean) {
